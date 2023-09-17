@@ -1,18 +1,24 @@
 package com.example.fastcampus.part3.design
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import coil.load
 import com.example.fastcampus.part3.design.databinding.FragmentTimeBinding
+import com.example.fastcampus.part3.design.model.ImageResponse
 import com.example.fastcampus.part3.design.model.Todo
 import com.example.fastcampus.part3.design.model.Type
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class TimeFragment : Fragment() {
 
-    private lateinit var binding: FragmentTimeBinding
+    private var binding: FragmentTimeBinding? = null
 
     private val adapter = TodoListAdapter()
 
@@ -21,14 +27,50 @@ class TimeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentTimeBinding.inflate(inflater, container, false)
+        return FragmentTimeBinding.inflate(inflater, container, false).apply {
+            binding = this
+        }.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initView()
         adapter.submitList(mockData())
-        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     private fun initView() {
-        binding.recyclerView.adapter = adapter
+        loadImage()
+        binding?.recyclerView?.adapter = adapter
+    }
+
+    private fun loadImage() {
+        RetrofitManager.imageService.getRandomImage()
+            .enqueue(object : Callback<ImageResponse> {
+                override fun onResponse(
+                    call: Call<ImageResponse>,
+                    response: Response<ImageResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val image = response.body()
+                        image?.let {
+                            binding!!.imageView.apply {
+                                setBackgroundColor(Color.parseColor(image.color))
+                                load(image.urls.regular)
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<ImageResponse>, t: Throwable) {
+
+                }
+
+            })
     }
 
     private fun mockData(): List<Todo> {

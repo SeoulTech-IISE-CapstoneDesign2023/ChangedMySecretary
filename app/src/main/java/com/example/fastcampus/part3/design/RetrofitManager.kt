@@ -9,9 +9,9 @@ import java.util.concurrent.TimeUnit
 object RetrofitManager {
 
     private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(5,TimeUnit.SECONDS)
-        .writeTimeout(5,TimeUnit.SECONDS)
-        .readTimeout(5,TimeUnit.SECONDS)
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .writeTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
         .build()
 
     private val gson = Gson().newBuilder().setLenient().create()
@@ -22,5 +22,5 @@ object RetrofitManager {
         .client(okHttpClient)
         .build()
 
-    val imageService :ImageService by lazy { retrofit.create(ImageService::class.java) }
+    val imageService: ImageService by lazy { retrofit.create(ImageService::class.java) }
 }

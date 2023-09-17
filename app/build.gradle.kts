@@ -54,6 +54,11 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     //coil 이미지처리
     implementation("io.coil-kt:coil:2.2.2")
+    // 네이버 지도 SDK
+    implementation ("com.naver.maps:map-sdk:3.17.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    //lottie 애니메이션이미지
+    implementation ("com.airbnb.android:lottie:6.1.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
