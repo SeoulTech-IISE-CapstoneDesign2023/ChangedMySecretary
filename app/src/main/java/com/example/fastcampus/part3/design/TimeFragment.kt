@@ -44,34 +44,9 @@ class TimeFragment : Fragment() {
     }
 
     private fun initView() {
-        loadImage()
         binding?.recyclerView?.adapter = adapter
     }
 
-    private fun loadImage() {
-        RetrofitManager.imageService.getRandomImage()
-            .enqueue(object : Callback<ImageResponse> {
-                override fun onResponse(
-                    call: Call<ImageResponse>,
-                    response: Response<ImageResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val image = response.body()
-                        image?.let {
-                            binding!!.imageView.apply {
-                                setBackgroundColor(Color.parseColor(image.color))
-                                load(image.urls.regular)
-                            }
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<ImageResponse>, t: Throwable) {
-
-                }
-
-            })
-    }
 
     private fun mockData(): List<Todo> {
         fun createDate(day: Int, dayOfWeek: String, time: String) = "${day}일($dayOfWeek) $time"

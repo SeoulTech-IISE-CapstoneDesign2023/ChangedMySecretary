@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Recycler
 import com.example.fastcampus.part3.design.databinding.ItemLocationBinding
 
-class LocationAdapter : ListAdapter<Poi, LocationAdapter.ViewHolder>(diffUtil) {
+class LocationAdapter(private val onClick :(Poi) -> Unit) : ListAdapter<Poi, LocationAdapter.ViewHolder>(diffUtil) {
 
     inner class ViewHolder(private val binding: ItemLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -22,6 +22,7 @@ class LocationAdapter : ListAdapter<Poi, LocationAdapter.ViewHolder>(diffUtil) {
             binding.root.setOnClickListener {
                 val x = item.frontLat
                 val y = item.frontLon
+                onClick(item)
                 Log.e("위경도", "$x $y")
             }
         }
