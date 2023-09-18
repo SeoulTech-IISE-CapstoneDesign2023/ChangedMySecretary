@@ -10,7 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -27,13 +29,14 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MapFragment : Fragment(), OnMapReadyCallback {
-    private var binding : FragmentMapBinding? = null
+    private var binding: FragmentMapBinding? = null
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
@@ -46,42 +49,68 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
-        return FragmentMapBinding.inflate(inflater,container,false).apply {
+        return FragmentMapBinding.inflate(inflater, container, false).apply {
             binding = this
         }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding?.let {binding ->
+        binding?.let { binding ->
             mapView = binding.mapView
             mapView.onCreate(savedInstanceState)
             mapView.getMapAsync(this)
 
-            val bottomBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout.root)
-            bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            binding.searchButton.setOnClickListener {
-                //완전 펴져있으면은 접어버림 아니면은 닫아버림
-                if (bottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                    bottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                } else {
-                    bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                }
-            }
-            locationAdapter = LocationAdapter()
+            initBottomSheet(binding)
+            initLocationAdapter(binding)
             binding.bottomSheetLayout.searchRecyclerView.adapter = locationAdapter
             binding.bottomSheetLayout.searchEditText.addTextChangedListener {
                 val runnable = Runnable {
                     searchLocation(it.toString())
                 }
                 handler.removeCallbacks(runnable)
-                handler.postDelayed(runnable,300)
+                handler.postDelayed(runnable, 300)
             }
-            binding.chip.setOnClickListener {
-                binding.loadingView.isVisible = true
-            }
+            initChip(binding)
         }
 
+    }
+
+    private fun initChip(binding: FragmentMapBinding) {
+        binding.chip.setOnClickListener {
+            binding.loadingView.isVisible = true
+        }
+    }
+
+    private fun initBottomSheet(binding: FragmentMapBinding) {
+        val bottomBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout.root)
+        bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        binding.searchButton.setOnClickListener {
+            //완전 펴져있으면은 접어버림 아니면은 닫아버림
+            if (bottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            } else {
+                bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
+    }
+
+    private fun initLocationAdapter(binding: FragmentMapBinding) {
+        locationAdapter = LocationAdapter {
+            val name = it.name
+            val lat = it.frontLat.toDouble()
+            val lng = it.frontLon.toDouble()
+            val cameraUpdate = CameraUpdate.scrollTo(LatLng(lat, lng))
+            cameraUpdate.animate(CameraAnimation.Fly, 500)
+            naverMap.moveCamera(cameraUpdate)
+            naverMap.minZoom = 5.0
+            naverMap.maxZoom = 18.0
+            val bottomBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout.root)
+            bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            val imm =
+                requireActivity().getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.bottomSheetLayout.searchEditText.windowToken, 0)
+        }
     }
 
     override fun onStart() {
@@ -149,8 +178,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if(locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)){
-            if(!locationSource.isActivated){//권한 거부됨
+        if (locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            if (!locationSource.isActivated) {//권한 거부됨
                 checkPermission()
                 naverMap.locationTrackingMode = LocationTrackingMode.None
             }
@@ -205,7 +234,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+        const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
 
     override fun onMapReady(map: NaverMap) {
@@ -214,7 +243,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding!!.locationButton.map = map
         //위치변화할때 내 위경도 데이터 업데이트
         map.addOnLocationChangeListener { location ->
-           Log.e("myLocation","${location.latitude},${location.longitude}")
+            Log.e("myLocation", "${location.latitude},${location.longitude}")
         }
     }
 
