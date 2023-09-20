@@ -54,6 +54,7 @@
             android:textSize="20sp" />
 
         <ImageView
+            android:id="@+id/importanceView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
