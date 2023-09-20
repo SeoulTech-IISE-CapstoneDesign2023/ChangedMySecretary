@@ -36,7 +36,7 @@
         style="@style/Widget.MaterialComponents.Chip.Action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="언주로 121길 6 -> 서울과학기술대학교"
+        android:text="@string/start_to_arrive"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="45dp"
         app:chipIcon="@drawable/baseline_place_24" />
@@ -59,11 +59,15 @@
         android:hint="추억을 남기기 위해 기록하세요" />
 
     <include
-        android:id="@+id/bottomSheetLayout"
+        android:id="@+id/dateBottomSheetLayout"
         layout="@layout/date_picker_bottom_sheet" />
 
     <include
-        android:id="@+id/bottomSheetLayout2"
+        android:id="@+id/mapBottomSheetLayout"
         layout="@layout/map_picker_bottom_sheet"/>
+
+    <include
+        android:id="@+id/searchBottomSheetLayout"
+        layout="@layout/search_bottom_sheet"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import coil.load
 import com.example.fastcampus.part3.design.databinding.ActivityMainBinding
-import com.example.fastcampus.part3.design.model.ImageResponse
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import retrofit2.Call
