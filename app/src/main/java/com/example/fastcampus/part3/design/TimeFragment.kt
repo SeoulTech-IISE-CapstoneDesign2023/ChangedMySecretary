@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import coil.load
 import com.example.fastcampus.part3.design.databinding.FragmentTimeBinding
-import com.example.fastcampus.part3.design.model.ImageResponse
 import com.example.fastcampus.part3.design.model.Todo
 import com.example.fastcampus.part3.design.model.Type
 import retrofit2.Call

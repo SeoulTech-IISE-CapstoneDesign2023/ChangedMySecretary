@@ -55,7 +55,7 @@
         app:lottie_rawRes="@raw/loading_chip_animation" />
 
     <include
-        android:id="@+id/bottomSheetLayout"
+        android:id="@+id/searchBottomSheetyLayout"
         layout="@layout/search_bottom_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

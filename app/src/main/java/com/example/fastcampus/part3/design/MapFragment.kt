@@ -63,8 +63,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
             initBottomSheet(binding)
             initLocationAdapter(binding)
-            binding.bottomSheetLayout.searchRecyclerView.adapter = locationAdapter
-            binding.bottomSheetLayout.searchEditText.addTextChangedListener {
+            binding.searchBottomSheetyLayout.searchRecyclerView.adapter = locationAdapter
+            binding.searchBottomSheetyLayout.searchEditText.addTextChangedListener {
                 val runnable = Runnable {
                     searchLocation(it.toString())
                 }
@@ -83,7 +83,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun initBottomSheet(binding: FragmentMapBinding) {
-        val bottomBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout.root)
+        val bottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetyLayout.root)
         bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         binding.searchButton.setOnClickListener {
             //완전 펴져있으면은 접어버림 아니면은 닫아버림
@@ -105,11 +105,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             naverMap.moveCamera(cameraUpdate)
             naverMap.minZoom = 5.0
             naverMap.maxZoom = 18.0
-            val bottomBehavior = BottomSheetBehavior.from(binding.bottomSheetLayout.root)
+            val bottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetyLayout.root)
             bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             val imm =
                 requireActivity().getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(binding.bottomSheetLayout.searchEditText.windowToken, 0)
+            imm.hideSoftInputFromWindow(binding.searchBottomSheetyLayout.searchEditText.windowToken, 0)
         }
     }
 

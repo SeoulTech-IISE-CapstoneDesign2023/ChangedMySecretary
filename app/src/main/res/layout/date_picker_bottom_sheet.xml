@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bottom_sheet_background"
-    app:behavior_expandedOffset="100dp"
     app:behavior_fitToContents="true"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -94,14 +93,17 @@
         app:layout_constraintEnd_toEndOf="@id/dateTextView"
         app:layout_constraintTop_toBottomOf="@id/dateTextView">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/hourEditText"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:clickable="false"
+            android:id="@+id/hourText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
             android:inputType="time"
+            android:maxLength="2"
+            android:maxLines="1"
             android:padding="4dp"
-            android:text="11"
+            android:text="12"
             android:textSize="20sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -111,14 +113,17 @@
             android:text=":"
             android:textSize="20sp" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/minuteEditText"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:clickable="false"
+            android:id="@+id/minuteText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
             android:inputType="time"
+            android:maxLength="3"
+            android:maxLines="1"
             android:padding="4dp"
-            android:text="10"
+            android:text="00"
             android:textSize="20sp" />
     </LinearLayout>
 
@@ -139,7 +144,7 @@
         android:background="@drawable/textview_background"
         android:backgroundTint="@color/gray"
         android:padding="12dp"
-        android:text="현재 시간 적용"
+        android:text="현재 날짜 적용"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -149,17 +154,17 @@
         android:id="@+id/okButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/textview_background"
+        android:backgroundTint="@color/white"
         android:padding="12dp"
         android:text="확인"
-        android:backgroundTint="@color/white"
         android:textSize="20sp"
-        android:layout_marginStart="24dp"
-        app:layout_constraintStart_toEndOf="@id/currentTimeButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/currentTimeButton"
         app:layout_constraintTop_toBottomOf="@id/calendarView" />
 
 
