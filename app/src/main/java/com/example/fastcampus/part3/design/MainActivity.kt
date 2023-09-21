@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -11,6 +12,13 @@ import coil.load
 import com.example.fastcampus.part3.design.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,6 +27,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var auth: FirebaseAuth
 
     private val calendarFragment = CalendarFragment()
     private val fragmentList = listOf(CalendarFragment(), MapFragment())
@@ -30,6 +39,49 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         initViewPager()
 
+        auth = Firebase.auth
+        val user = auth.currentUser
+
+        Log.d("my_log","${user?.email}")
+
+        var count = 0
+        if (user != null) {
+            // 사용자가 로그인한 경우
+            val userData =
+                FirebaseDatabase
+                    .getInstance()
+                    .getReference("user")
+
+            userData
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            if (snapshot.key == user.uid) {
+                                count = 1 // 로그인 되어있을 경우 1
+                                break
+                            } else continue
+                        }
+
+                        // 로그인 안된 경우 0 -> 로그인 화면으로 넘기기
+                        if (count == 0) {
+                            Firebase.auth.signOut()
+                            val intent =
+                                Intent(this@MainActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                    }
+                })
+        } else {
+            // 사용자가 로그아웃한 경우 또는 인증 정보가 없는 경우
+            Firebase.auth.signOut()
+            val intent =
+                Intent(this@MainActivity, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         // 오늘 날짜 받아오기
         val today = Calendar.getInstance()
         val todayYear = today[Calendar.YEAR]
@@ -39,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         binding.floatingActionButton.setOnClickListener {
             startActivity(Intent(this, CreateActivity::class.java))
         }
+
     }
 
     private fun initViewPager() {
