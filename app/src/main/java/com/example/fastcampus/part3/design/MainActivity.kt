@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                         if (count == 0) {
                             Firebase.auth.signOut()
                             val intent =
-                                Intent(this@MainActivity, LoginActivity::class.java)
+                                Intent(this@MainActivity, IntroActivity::class.java)
                             startActivity(intent)
                         }
                     }
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             // 사용자가 로그아웃한 경우 또는 인증 정보가 없는 경우
             Firebase.auth.signOut()
             val intent =
-                Intent(this@MainActivity, LoginActivity::class.java)
+                Intent(this@MainActivity, IntroActivity::class.java)
             startActivity(intent)
         }
 

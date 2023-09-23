@@ -24,6 +24,18 @@ class LoginActivity  : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // 툴바 설정
+        val toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+
+        // 뒤로가기 버튼 활성화
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        // 타이틀 제거
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+
         // Initialize Firebase Auth
         auth = Firebase.auth
 
@@ -66,6 +78,7 @@ class LoginActivity  : AppCompatActivity(){
 //                                finish()
 //                            }
                         } else {
+                            binding.inputPW.text?.clear()
                             // If sign in fails, display a message to the user.
                             Toast.makeText(
                                 baseContext,
@@ -77,10 +90,7 @@ class LoginActivity  : AppCompatActivity(){
             }
         }
 
-        binding.SignUpBtn.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
-        }
+
 
         binding.findPWBtn.setOnClickListener {
             val emailAddress = binding.inputID.text.toString()
@@ -108,5 +118,11 @@ class LoginActivity  : AppCompatActivity(){
                     }
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        // 뒤로가기 버튼 클릭 시 액티비티 종료
+        finish()
+        return true
     }
 }
