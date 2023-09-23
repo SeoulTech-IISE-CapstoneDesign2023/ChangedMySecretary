@@ -24,9 +24,11 @@ class LoginActivity  : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // Initialize Firebase Auth
+        auth = Firebase.auth
+
         // 로그인 버튼 (로그인 과정)
         binding.SignInBtn.setOnClickListener {
-
             val email = binding.inputID.text.toString()
             val password = binding.inputPW.text.toString()
 
@@ -59,8 +61,8 @@ class LoginActivity  : AppCompatActivity(){
 //                                Firebase.database(DB_URL).reference.child(DB_USERS).child(userId)
 //                                    .child(DB_USER_INFO).updateChildren(user)
 //
-//                                val intent = Intent(this, MainActivity::class.java)
-//                                startActivity(intent)
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
 //                                finish()
 //                            }
                         } else {
