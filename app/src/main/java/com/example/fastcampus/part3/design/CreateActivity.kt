@@ -12,15 +12,36 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.fastcampus.part3.design.model.route.PublicTransitRoute
+import com.example.fastcampus.part3.design.model.route.SubPath
 import com.example.fastcampus.part3.design.databinding.ActivityCreateBinding
-import com.example.fastcampus.part3.design.databinding.FragmentMapBinding
+import com.example.fastcampus.part3.design.model.location.Location
+import com.example.fastcampus.part3.design.model.location.LocationAdapter
+import com.example.fastcampus.part3.design.model.car.CarRouteProvider
+import com.example.fastcampus.part3.design.model.car.CarRouteRequest
+import com.example.fastcampus.part3.design.model.car.DepartureInfo
+import com.example.fastcampus.part3.design.model.car.DestinationInfo
+import com.example.fastcampus.part3.design.model.car.RoutesInfo
+import com.example.fastcampus.part3.design.model.route.ResultInfo
+import com.example.fastcampus.part3.design.model.route.RouteProvider
+import com.example.fastcampus.part3.design.model.route.bus.realLocation.BusRealTimeLocationProvider
+import com.example.fastcampus.part3.design.model.route.bus.realtime.BusRealTimeProvider
+import com.example.fastcampus.part3.design.model.route.subway.SubwayTimeTableProvider
+import com.example.fastcampus.part3.design.model.walk.Dto
+import com.example.fastcampus.part3.design.model.walk.RouteData
+import com.example.fastcampus.part3.design.model.walk.WalkingRouteProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -33,11 +54,22 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import java.util.concurrent.CountDownLatch
 
-class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
+class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProvider.Callback,
+    CarRouteProvider.Callback, RouteProvider.Callback {
 
     private lateinit var binding: ActivityCreateBinding
 
@@ -60,12 +92,22 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val startMarker = Marker()
     private val arrivalMarker = Marker()
-
     private var amChecked = false
     private val handler = Handler(Looper.getMainLooper())
+    private val walkProvider = WalkingRouteProvider(this)
+    private val carProvider = CarRouteProvider(this)
+    private val routeProvider = RouteProvider(this)
+    private val subwayTimeTableProvider = SubwayTimeTableProvider()
+    private val busRealTimeLocationProvider = BusRealTimeLocationProvider()
+    private val busRealTimeProvider = BusRealTimeProvider()
     private var isStart = true
     private var startPlace = ""
     private var arrivalPlace = ""
+    private var startX = 0.0
+    private var startY = 0.0
+    private var endX = 0.0
+    private var endY = 0.0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -201,6 +243,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
                         map = naverMap
                     }
                     startPlace = name
+                    startX = lng
+                    startY = lat
                 } else {
                     arrivalEditText.setText(name)
                     arrivalMarker.apply {
@@ -210,6 +254,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
                         map = naverMap
                     }
                     arrivalPlace = name
+                    endX = lng
+                    endY = lat
                 }
             }
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -219,6 +265,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 binding.searchBottomSheetLayout.searchEditText.windowToken,
                 0
             )
+            binding.searchBottomSheetLayout.searchEditText.setText("")
         }
     }
 
@@ -321,27 +368,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
                     minuteText.text = String.format("%02d", picker.minute)
                 }
             }
-            amTextView.setOnClickListener {
-                amChecked = true
-                if (amChecked) {
-                    it.background = AppCompatResources.getDrawable(
-                        this@CreateActivity,
-                        R.drawable.am_pm_background
-                    )
-                    binding.dateBottomSheetLayout.pmTextView.background = null
-                }
-
-            }
-            pmTextView.setOnClickListener {
-                amChecked = false
-                if (!amChecked) {
-                    it.background = AppCompatResources.getDrawable(
-                        this@CreateActivity,
-                        R.drawable.am_pm_background
-                    )
-                    binding.dateBottomSheetLayout.amTextView.background = null
-                }
-            }
         }
 
         binding.mapBottomSheetLayout.startEditText.isClickable = false
@@ -367,6 +393,48 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
+            walkButton.setOnClickListener {
+                if (checkPlace()) return@setOnClickListener
+                Toast.makeText(this@CreateActivity, "이동수단 : 걷기", Toast.LENGTH_SHORT).show()
+                val body = RouteData(
+                    startX = startX,
+                    startY = startY,
+                    endX = endX,
+                    endY = endY,
+                    startName = "%EC%B6%9C%EB%B0%9C%EC%A7%80",
+                    endName = "%EB%8F%84%EC%B0%A9%EC%A7%80",
+                    searchOption = 4
+                )
+                walkProvider.getWalkingRoot(body)
+            }
+            carButton.setOnClickListener {
+                if (checkPlace()) return@setOnClickListener
+                Toast.makeText(this@CreateActivity, "이동수단 : 자동차", Toast.LENGTH_SHORT).show()
+                val startTime = binding.dateTextView.text.toString()
+                val isoDateTime = convertToISODateTime(startTime)
+                val body = CarRouteRequest(
+                    routesInfo = RoutesInfo(
+                        departure = DepartureInfo(
+                            name = "출발지",
+                            lon = startX.toString(),
+                            lat = startY.toString()
+                        ),
+                        destination = DestinationInfo(
+                            name = "도착지",
+                            lon = endX.toString(),
+                            lat = endY.toString()
+                        ),
+                        predictionType = "departure",
+                        predictionTime = "$isoDateTime+0900"
+                    )
+                )
+                carProvider.getCarRoot(body)
+            }
+            publicTransportationButton.setOnClickListener {
+                if (checkPlace()) return@setOnClickListener
+                Toast.makeText(this@CreateActivity, "이동수단 : 대중교통", Toast.LENGTH_SHORT).show()
+                routeProvider.getRoute(startX, startY, endX, endY)
+            }
         }
 
         binding.searchBottomSheetLayout.apply {
@@ -379,6 +447,32 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 handler.postDelayed(runnable, 300)
             }
         }
+    }
+
+    private fun convertToISODateTime(date: String): String {
+        val inputFormat =
+            SimpleDateFormat("yyyy년 M월 d일(EEE), HH:mm", Locale.getDefault()) // 입력 형식 지정
+        val outputFormat =
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()) // 출력 형식 지정
+
+        try {
+            val date = inputFormat.parse(date) // 문자열을 Date 객체로 변환
+            return outputFormat.format(date) // ISO 8601 형식으로 변환한 문자열 반환
+        } catch (e: Exception) {
+            return "날짜 형식이 올바르지 않습니다."
+        }
+    }
+
+    private fun checkPlace(): Boolean {
+        if (startPlace.isEmpty() || arrivalPlace.isEmpty()) {
+            Toast.makeText(
+                this@CreateActivity,
+                "출발장소와 도착장소를 둘다 지정해주세요.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return true
+        }
+        return false
     }
 
     private fun searchLocation(searchKeyWord: String) {
@@ -394,7 +488,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
                     val name = response.body()?.searchPoiInfo?.pois?.poi?.map { it.name }
                     val address =
                         response.body()?.searchPoiInfo?.pois?.poi?.map { it.newAddressList.newAddress.map { it.fullAddressRoad } }
-                    Log.e("result", "$name $address")
                     locationAdapter.submitList(response.body()?.searchPoiInfo?.pois?.poi)
                 }
 
@@ -404,4 +497,193 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
             })
     }
+
+    private fun formatTotalTime(totalTime: Int): String {
+        val hours = (totalTime / 60) / 60
+        val minutes = (totalTime / 60) % 60
+        return if (hours != 0) "약 $hours 시간 $minutes 분" else "약 $minutes 분"
+    }
+
+    private fun parseDateTime(dateTime: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
+        val zonedDateTime = ZonedDateTime.parse(dateTime, formatter)
+            .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+        return zonedDateTime.format(DateTimeFormatter.ofPattern("MM월 dd일 HH시 mm분"))
+    }
+
+    override fun loadWalkingRoot(data: Dto) {
+        binding.mapBottomSheetLayout.recyclerView.isVisible = false
+        val result =
+            data.features?.filter { it.properties.index == 0 }?.map { it.properties }?.first()
+                ?: return
+        val totalTime = formatTotalTime(result.totalTime)
+        binding.mapBottomSheetLayout.resultTextView.apply {
+            isVisible = true
+            text =
+                "총 소요시간 : $totalTime\n총 거리 : ${DecimalFormat("###,###").format(result.totalDistance)}m"
+        }
+    }
+
+    override fun loadCarRoot(data: com.example.fastcampus.part3.design.model.car.Dto) {
+        binding.mapBottomSheetLayout.recyclerView.isVisible = false
+        val result = data.features?.map { it.properties }?.firstOrNull() ?: return
+        val totalTime = formatTotalTime(result.totalTime)
+        val departure = parseDateTime(result.departureTime)
+        val arrival = parseDateTime(result.arrivalTime)
+        val totalFare =
+            if (result.totalFare > 0) DecimalFormat("###,###").format(result.totalFare) else "통행요금 없음"
+        val taxiFare = DecimalFormat("###,###").format(result.taxiFare) + "원"
+        binding.mapBottomSheetLayout.resultTextView.apply {
+            isVisible = true
+            text =
+                "총 소요시간 : $totalTime\n총 톨게이트비 : $totalFare\n총 택시비 : $taxiFare\n출발시간 : $departure\n도착 예정시간 : $arrival"
+        }
+    }
+
+    override fun loadRoute(data: PublicTransitRoute?) {
+        //제일 최단 길정보를 가져옴
+        Thread {
+            try {
+                val minTimePath = data?.result?.path?.minByOrNull { it.info.totalTime }
+                var minSubPathList = mutableListOf<SubPath>()
+                minTimePath?.subPath?.forEach { subPath ->
+                    if (subPath.sectionTime == 0 && subPath.trafficType == 3) {
+
+                    } else minSubPathList.add(subPath)
+                }
+                //가져온 정보를 정제 info가 최종 정제 데이터
+                val info = mutableListOf<ResultInfo>()
+                val countDownLatch = CountDownLatch(minSubPathList.size)
+                for (item in minSubPathList) {
+                    //데이터를 정제해서 넣어주기
+                    val innerCountDownLatch = CountDownLatch(1)
+                    trafficTypeCase(item) { data ->
+                        info.add(data)
+                        innerCountDownLatch.countDown()
+                    }
+                    innerCountDownLatch.await()
+                    countDownLatch.countDown()
+                }
+                countDownLatch.await()
+                info.forEach { Log.e("aa", it.toString()) }
+                //맨처음 도착지점 같은 경우 두번째 리스트에 있는 것으로 설정
+                for (i in 0 until info.size) {
+                    if (i > 0 && i < info.size - 1 && info[i].endName == null) {
+                        info[i].endName = info[i + 1].startName
+                    }
+                    if (i > 0 && info[i].startName == null) {
+                        info[i].startName = info[i - 1].endName
+                    }
+                }
+
+                info[0].startName = "출발지"
+                info[info.size - 1].endName = "도착지"
+                info[0].endName = info[1].startName
+                info[info.size - 1].startName = info[info.size - 2].endName
+                runOnUiThread {
+                    val routeAdapter = RouteAdapter(info)
+                    binding.mapBottomSheetLayout.resultTextView.visibility = View.INVISIBLE
+                    binding.mapBottomSheetLayout.recyclerView.apply {
+                        isVisible = true
+                        adapter = routeAdapter
+                        val dividerItemDecoration =
+                            DividerItemDecoration(this@CreateActivity, LinearLayoutManager.VERTICAL)
+                        addItemDecoration(dividerItemDecoration)
+                    }
+                }
+
+
+            } catch (e: Exception) {
+                Toast.makeText(this, "거리가 너무 가깝습니다.(700m이내)", Toast.LENGTH_SHORT).show()
+            }
+        }.start()
+
+    }
+
+    private fun trafficTypeCase(subPath: SubPath, callback: (ResultInfo) -> Unit) {
+        val trafficType = subPath.trafficType //1-지하철, 2-버스, 3-도보
+        var startName: String? = null
+        var endName: String? = null
+        var sectionTime: Int?
+        var lane: Int? = null
+        var busno: String? = null
+        var subwayCode: String? = null // 지하철 코드
+        var wayCode: Int? = null // 1.상행 2. 하행
+        var busId: Int? = null
+        when (trafficType) {
+            //지하철일때
+            1 -> {
+                startName = subPath.startName
+                endName = subPath.endName
+                sectionTime = subPath.sectionTime
+                subwayCode = subPath.startID.toString()
+                wayCode = subPath.wayCode
+                lane = subPath.lane.map { it.subwayCode }.firstOrNull()
+                //비동기작업수행
+                subwayTimeTableProvider.getSubwayTimeTable(subwayCode, wayCode) { latestTime ->
+                    val info = ResultInfo(
+                        trafficType,
+                        startName,
+                        endName,
+                        sectionTime,
+                        lane,
+                        busno,
+                        subwayCode,
+                        wayCode,
+                        latestTime,
+                        busId
+                    )
+                    callback(info)
+                }
+            }
+            //버스일때
+            2 -> {
+                startName = subPath.startName
+                endName = subPath.endName
+                busno = subPath.lane.map { it.busNo }.firstOrNull()
+                sectionTime = subPath.sectionTime
+                subwayCode = subPath.startID.toString()
+                wayCode = subPath.wayCode
+                busId = subPath.lane.map { it.busID }.firstOrNull()
+                // busID를 입력하게 되면 routeID를 얻게 된다.
+                busRealTimeLocationProvider.getBusRealTimeLocation(busId!!) { routeId ->
+                    busRealTimeProvider.getBusRealTime(subwayCode.toInt(), routeId){
+                        val info = ResultInfo(
+                            trafficType,
+                            startName,
+                            endName,
+                            sectionTime,
+                            lane,
+                            busno,
+                            subwayCode,
+                            wayCode,
+                            it,
+                            busId
+                        )
+                        callback(info)
+                    }
+                } //여기서 routeid를 업데이트해주게됨
+            }
+            //도보일때
+            3 -> {
+                sectionTime = subPath.sectionTime
+                val info = ResultInfo(
+                    trafficType,
+                    startName,
+                    endName,
+                    sectionTime,
+                    lane,
+                    busno,
+                    subwayCode,
+                    wayCode,
+                    null,
+                    busId
+                )
+                callback(info)
+            }
+        }
+    }
+
 }
+
+
