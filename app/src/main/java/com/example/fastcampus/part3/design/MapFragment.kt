@@ -11,16 +11,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import com.airbnb.lottie.LottieComposition
-import com.airbnb.lottie.LottieCompositionFactory
 import com.example.fastcampus.part3.design.databinding.FragmentMapBinding
+import com.example.fastcampus.part3.design.model.location.Location
+import com.example.fastcampus.part3.design.model.location.LocationAdapter
+import com.example.fastcampus.part3.design.model.location.LocationProvider
+import com.example.fastcampus.part3.design.model.location.SearchLocationService
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -29,19 +30,19 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
-import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback {
     private var binding: FragmentMapBinding? = null
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var locationAdapter: LocationAdapter
     private val handler = Handler(Looper.getMainLooper())
+    private val locationProvider = LocationProvider(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +67,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             binding.searchBottomSheetyLayout.searchRecyclerView.adapter = locationAdapter
             binding.searchBottomSheetyLayout.searchEditText.addTextChangedListener {
                 val runnable = Runnable {
-                    searchLocation(it.toString())
+                    locationProvider.searchLocation(it.toString())
                 }
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 300)
@@ -109,7 +110,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             val imm =
                 requireActivity().getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(binding.searchBottomSheetyLayout.searchEditText.windowToken, 0)
+            imm.hideSoftInputFromWindow(
+                binding.searchBottomSheetyLayout.searchEditText.windowToken,
+                0
+            )
         }
     }
 
@@ -149,30 +153,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView.onLowMemory()
     }
 
-    private fun searchLocation(searchKeyWord: String) {
-        LocationRetrofitManager.searchLocationService.getLocation(
-            "1",
-            searchKeyWord,
-            "WGS84GEO",
-            "WGS84GEO",
-            200
-        )
-            .enqueue(object : Callback<Location> {
-                override fun onResponse(call: Call<Location>, response: Response<Location>) {
-                    val name = response.body()?.searchPoiInfo?.pois?.poi?.map { it.name }
-                    val address =
-                        response.body()?.searchPoiInfo?.pois?.poi?.map { it.newAddressList.newAddress.map { it.fullAddressRoad } }
-                    Log.e("result", "$name $address")
-                    locationAdapter.submitList(response.body()?.searchPoiInfo?.pois?.poi)
-                }
-
-                override fun onFailure(call: Call<Location>, t: Throwable) {
-                    t.printStackTrace()
-                }
-
-            })
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -209,7 +189,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 requestLocationTrack()
             }
         }
-
     }
 
     private fun showPermissionDialog() {
@@ -245,6 +224,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         map.addOnLocationChangeListener { location ->
             Log.e("myLocation", "${location.latitude},${location.longitude}")
         }
+    }
+
+    override fun loadLocation(data: Location) {
+        locationAdapter.submitList(data.searchPoiInfo?.pois?.poi)
     }
 
 

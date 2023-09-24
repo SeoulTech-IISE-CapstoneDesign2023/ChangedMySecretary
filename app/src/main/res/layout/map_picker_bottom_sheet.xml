@@ -56,6 +56,7 @@
         android:background="@drawable/textview_background"
         android:drawableStart="@drawable/baseline_place_24"
         android:hint="출발 장소를 입력해주세요"
+        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/startTextView"
         app:layout_constraintTop_toBottomOf="@id/startTextView" />
@@ -79,32 +80,90 @@
         android:background="@drawable/textview_background"
         android:drawableStart="@drawable/baseline_place_24"
         android:hint="도착 장소를 입력해주세요"
+        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/arrivalTextView"
         app:layout_constraintTop_toBottomOf="@id/arrivalTextView" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/carButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/baseline_directions_car_24"
+        app:layout_constraintStart_toStartOf="@id/arrivalEditText"
+        app:layout_constraintTop_toBottomOf="@id/arrivalEditText" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/publicTransportationButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/baseline_subway_24"
+        app:layout_constraintEnd_toStartOf="@id/walkButton"
+        app:layout_constraintStart_toEndOf="@id/carButton"
+        app:layout_constraintTop_toBottomOf="@id/arrivalEditText" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/walkButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/baseline_directions_walk_24"
+        app:layout_constraintEnd_toEndOf="@id/arrivalEditText"
+        app:layout_constraintTop_toBottomOf="@id/arrivalEditText" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/resultTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/white_8"
+        android:padding="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/okButton"
+        app:layout_constraintEnd_toEndOf="@id/walkButton"
+        app:layout_constraintStart_toStartOf="@id/carButton"
+        app:layout_constraintTop_toBottomOf="@id/publicTransportationButton"
+        app:layout_goneMarginBottom="15dp"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/white_8"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/okButton"
+        app:layout_constraintEnd_toEndOf="@id/resultTextView"
+        app:layout_constraintStart_toStartOf="@id/resultTextView"
+        app:layout_constraintTop_toBottomOf="@id/publicTransportationButton" />
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/cancelButton"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="15dp"
         android:text="취소"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/arrivalEditText"
-        app:layout_constraintTop_toBottomOf="@id/arrivalEditText" />
+        app:layout_constraintStart_toStartOf="@id/arrivalEditText" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/okButton"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="15dp"
         android:backgroundTint="@color/white"
         android:text="확인"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/arrivalEditText"
-        app:layout_constraintTop_toBottomOf="@id/arrivalEditText" />
+        app:layout_constraintEnd_toEndOf="@id/arrivalEditText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
