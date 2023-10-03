@@ -1,5 +1,6 @@
 package com.example.fastcampus.part3.design
 
+import com.example.fastcampus.part3.design.model.location.Location
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

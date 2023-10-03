@@ -1,5 +1,10 @@
 package com.example.fastcampus.part3.design.model
 
-enum class Type {
-    CAR,WALK,PUBLIC
+object Type {
+
+    const val CAR = "CAR"
+
+    const val WALK = "WALK"
+
+    const val PUBLIC = "PUBLIC"
 }
