@@ -1,4 +1,4 @@
-package com.example.fastcampus.part3.design;
+package com.example.fastcampus.part3.design.calendar;
 
 import android.graphics.Color;
 import android.text.style.ForegroundColorSpan;

@@ -10,7 +10,7 @@
         android:id="@+id/typeImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/baseline_mood_24"
+        android:background="@android:drawable/presence_online"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,32 +34,33 @@
 
     <LinearLayout
         android:id="@+id/container"
+        android:gravity="center_vertical"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="1dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/item_background"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/divider"
-        app:layout_constraintTop_toBottomOf="@id/typeImageView">
+        app:layout_constraintTop_toBottomOf="@+id/dateTextView">
 
         <TextView
             android:id="@+id/todoTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="15dp"
-            android:layout_weight="3"
-            android:textSize="20sp" />
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="일정 내용" />
 
         <ImageView
             android:id="@+id/importanceView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="15dp"
-            android:layout_weight="1"
+            android:layout_margin="10dp"
             android:src="@drawable/baseline_gray_star_24" />
     </LinearLayout>
 

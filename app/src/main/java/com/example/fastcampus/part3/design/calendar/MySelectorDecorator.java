@@ -1,4 +1,4 @@
-package com.example.fastcampus.part3.design;
+package com.example.fastcampus.part3.design.calendar;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
