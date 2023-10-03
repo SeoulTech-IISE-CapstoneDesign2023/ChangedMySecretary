@@ -139,7 +139,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private val subwayTimeTableProvider = SubwayTimeTableProvider()
     private val busRealTimeLocationProvider = BusRealTimeLocationProvider()
     private val busRealTimeProvider = BusRealTimeProvider()
-    private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(EEE), HH:mm", Locale.KOREA)
+    private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (EEE), HH:mm", Locale.KOREA)
     private var isStart = true
     private var startPlace = ""
     private var arrivalPlace = ""
@@ -147,27 +147,22 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var startY = 0.0
     private var endX = 0.0
     private var endY = 0.0
-    private var type: Type? = null
+    private var type: String? = null
     private var notificationId: String? = null
     private var alarmData = mutableMapOf<String, Any>()
     private lateinit var user: String
-    private var todoKeys: java.util.ArrayList<String> = arrayListOf()
+    private var todoKeys: ArrayList<String> = arrayListOf()
     private var timeString = ""
     private var dateString = ""
     private var title = ""
     private var startTime = ""
     private var endDate = ""
     private var endTime = ""
-    private var totalTime = ""
     private var todoId = ""
-//    private var startLat = 0.0
-//    private var startLng = 0.0
-//    private var arrivalLat = 0.0
-//    private var arrivalLng = 0.0
     private var isEditMode = false  // 편집 모드 여부를 나타내는 변수
     private var usingAlarm = false
     private var startTimeToString = "" //약속시간을 저장하는 변수
-    private var arrivalTimeToString= "" //약속시간을 저장하는 변수
+    private var arrivalTimeToString = "" //약속시간을 저장하는 변수
     private var editTextLength = 0
     private var previousMemo = ""
     private var changedMemo = ""
@@ -407,25 +402,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
         }
 
-        binding.createButton.setOnClickListener {
-            //메모가 없으면은 생성 막기
-            if (binding.memoEditText.text.isNullOrBlank()) {
-                Toast.makeText(this@CreateActivity, "추억의 글을 먼저 남겨주세요.", Toast.LENGTH_SHORT).show()
-            } else {
-                if (notificationId == null) {
-                    //todo 일정만 생성 알람 기능은 사용 x
-                } else {
-                    FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
-                    val memo = binding.memoEditText.text.toString()
-                    val message = "${memo}할 시간이에요~"
-                    val appointmentTime = alarmData["appointmentTime"].toString()
-                    AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, message)
-                }
-                finish()
-            }
-        }
-
-
         binding.memoEditText.apply {
             setOnClickListener {
                 dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -629,7 +605,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 binding.createButton.background = AppCompatResources.getDrawable(
                     this@CreateActivity, R.drawable.baseline_check_gray_24
                 )
-                Toast.makeText(this, "일정 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "추억의 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
             // 일정 시작시간이 종료시간보다 늦을 경우 일정 생성 불가 토스트
             else if (!checkDate()) {
@@ -653,7 +629,16 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 } else {
                     Log.d("create", "initailize create mode")
                     // 새로운 Todo를 생성하는 경우
+                    if (notificationId != null) {//알람을 설정할때
+                        usingAlarm = true
+                        FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
+                        val memo = binding.memoEditText.text.toString()
+                        val message = "${memo}할 시간이에요~"
+                        val appointmentTime = alarmData["appointmentTime"].toString()
+                        AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, message)
+                    }
                     createTodo()
+
                     finish()
                 }
             }
@@ -665,6 +650,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             true
         }
     }
+
     private fun initializeEditMode(todo: Todo) {
         // 기존의 Todo를 수정하는 경우, 해당 Todo의 정보를 사용하여 화면을 초기화
         isEditMode = true  // 기존 Todo를 수정하는 편집 모드임을 나타냄
@@ -677,33 +663,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         // 도착 날짜 및 시간
         binding.dateBottomSheetLayout.endDateTextView.text = todo.enDate
         binding.dateBottomSheetLayout.endTimeText.text = todo.enTime
-//        startLat = todo.startLat ?: 0.0
-//        startLng = todo.startLng ?: 0.0
-//        arrivalLat = todo.arrivalLat ?: 0.0
-//        arrivalLng = todo.arrivalLng ?: 0.0
-//        if(todo.usingAlarm == true) {
-//            usingAlarm = true
-//            binding.alarmImageView.setBackgroundResource(R.drawable.baseline_alarm_on_24)
-//        }else {
-//            usingAlarm = false
-//            binding.alarmImageView.setBackgroundResource(R.drawable.baseline_alarm_off_24)
-//        }
-        //address더미만들기 만든것을 가지고 editMappingFragment에 넘겨줘야함
-        val addressData = mutableMapOf<String, Any>()
-        addressData["startLat"] = todo.startLat ?: 0.0
-        addressData["startLng"] = todo.startLng ?: 0.0
-        addressData["arrivalLat"] = todo.arrivalLat ?: 0.0
-        addressData["arrivalLng"] = todo.arrivalLng ?: 0.0
-        addressData["startAddress"] = todo.startPlace ?: ""
-        addressData["arrivalAddress"] = todo.arrivePlace ?: ""
-//        Firebase.database.reference.child(DB_ADDRESS).child(user).updateChildren(addressData)
-//        //여기서 위경도를 넘겨줘야한다 mappingFragment에게
-//        val bundle = Bundle()
-//        bundle.putDouble("startLat",startLat)
-//        bundle.putDouble("startLng",startLng)
-//        bundle.putDouble("arrivalLat",arrivalLat)
-//        bundle.putDouble("arrivalLng",arrivalLng)
-//        EditMappingFragment().arguments = bundle
 
     }
 
@@ -711,10 +670,12 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         // 새로운 일정을 생성하는 경우, 화면을 초기화하는 작업 수행
         binding.titleEditText.setText(if (title != "") title else "")
         binding.dateBottomSheetLayout.startDateTextView.text = startDate
-        binding.dateBottomSheetLayout.startTimeText.text = if (startTime != "") startTime else "00:00"
+        binding.dateBottomSheetLayout.startTimeText.text =
+            if (startTime != "") startTime else "00:00"
         binding.dateBottomSheetLayout.endDateTextView.text = if (endDate != "") endDate else ""
         binding.dateBottomSheetLayout.endTimeText.text = if (endTime != "") endTime else ""
     }
+
     private fun convertToNumericInt(inputString: String): String {
         // "년 월 일" 부분을 추출하여 빈 칸으로 구분된 숫자로 분할
         val datePattern = Regex("(\\d+)년 (\\d+)월 (\\d+)일")
@@ -753,14 +714,15 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
             startTimeToString = convertToNumericInt(startTimeText)
             arrivalTimeToString = convertToNumericInt(arrivalTimeText)
-            Log.e("날짜 확인", startTimeToString.toString())
-            Log.e("날짜 확인", arrivalTimeToString.toString())
+            Log.e("날짜 확인", startTimeToString)
+            Log.e("날짜 확인", arrivalTimeToString)
             return startTimeToString <= arrivalTimeToString
         }
     }
+
     private fun setDate(separator: Int) {
 //        datePicker.show(supportFragmentManager, "datePickerDialog")
-        datePicker.addOnPositiveButtonClickListener  {
+        datePicker.addOnPositiveButtonClickListener {
             val calendar = Calendar.getInstance()
             val selectedDate = Date(datePicker.selection!!)
             calendar.time = selectedDate
@@ -786,6 +748,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
         datePicker.show(supportFragmentManager, "datePickerDialog")
     }
+
     private fun setTime(separator: Int) {
         Log.d("setTime", "언제나옴1")
         timePicker.addOnPositiveButtonClickListener {
@@ -816,11 +779,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val enDate = binding.dateBottomSheetLayout.endDateTextView.text.toString()
         val enTime = binding.dateBottomSheetLayout.endTimeText.text.toString()
         val memo = binding.memoEditText.toString()
-        val startPlace = binding.mapBottomSheetLayout.startEditText.text.toString()
-        val arrivePlace = binding.mapBottomSheetLayout.arrivalEditText.text.toString()
-        val totalTime = totalTime
         val todoId = todoId
-
         val check = splitDate(stDate)
         val clickedYear = check[0].trim()
         val clickedMonth = check[1].trim()
@@ -830,19 +789,18 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             Todo(
                 todoId = todoId,
                 title = title,
-                stDate =  stDate,
+                stDate = stDate,
                 stTime = stTime,
                 enDate = enDate,
                 enTime = enTime,
                 memo = memo,
                 startPlace = startPlace,
-                arrivePlace = arrivePlace,
-                totalTime = totalTime,
+                arrivePlace = arrivalPlace,
                 notificationId = notificationId,
-//                startLat = startLat,
-//                startLng = startLng,
-//                arrivalLat = arrivalLat,
-//                arrivalLng = arrivalLng,
+                startLat = startY,
+                startLng = startX,
+                arrivalLat = endY,
+                arrivalLng = endX,
                 usingAlarm = usingAlarm,
             )
 
@@ -864,6 +822,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             Log.i("FirebaseData", "데이터 전송에 실패하였습니다")
         }
     }
+
     private fun updateTodo(todoKey: String, todo: Todo) {
         val todoKey = intent.getStringExtra("todoKey")
         val todo = intent.getParcelableExtra<Todo>("todo")
@@ -878,8 +837,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val enDate = binding.dateBottomSheetLayout.endDateTextView.text.toString()
         val enTime = binding.dateBottomSheetLayout.endTimeText.text.toString()
         val memo = binding.memoEditText.text.toString()
-        val startPlace = binding.mapBottomSheetLayout.startEditText.text.toString()
-        val arrivePlace = binding.mapBottomSheetLayout.arrivalEditText.text.toString()
+        val startPlace = startPlace
+        val arrivePlace = arrivalPlace
         val todoId = todo?.todoId
 
 
@@ -893,10 +852,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         todoUpdates["startPlace"] = startPlace
         todoUpdates["arrivePlace"] = arrivePlace
         todoUpdates["todoId"] = todoId!!
-//        todoUpdates["startLng"] = startLng
-//        todoUpdates["startLat"] = startLat
-//        todoUpdates["arrivalLng"] = arrivalLng
-//        todoUpdates["arrivalLat"] = arrivalLat
+        todoUpdates["startLng"] = startX
+        todoUpdates["startLat"] = startY
+        todoUpdates["arrivalLng"] = endX
+        todoUpdates["arrivalLat"] = endY
         todoUpdates["usingAlarm"] = usingAlarm
 
         // 변경된 일정 시작 날짜
@@ -985,6 +944,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
         }
     }
+
     private fun splitDate(date: String): Array<String> {
         Log.e("splitDate", date)
         val splitText = date.split(" ")
@@ -994,10 +954,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         resultDate[2] = splitText[2]  //day
         return resultDate
     }
+
     // 날짜로 요일 구하는 함수
     private fun getDayOfWeek(year: Int, month: Int, day: Int): String {
         val cal: Calendar = Calendar.getInstance()
-        cal.set(year, month-1, day)
+        cal.set(year, month - 1, day)
 
         return when (cal.get(Calendar.DAY_OF_WEEK)) {
             Calendar.SUNDAY -> "일"
@@ -1010,6 +971,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             else -> ""
         }
     }
+
     private fun showAlertDialog() {
         AlertDialog.Builder(this).apply {
             setMessage("추억 생성을 그만두시겠습니까?")

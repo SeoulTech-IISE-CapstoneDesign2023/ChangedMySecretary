@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fastcampus.part3.design.Poi
 import com.example.fastcampus.part3.design.databinding.ItemLocationBinding
+import com.example.fastcampus.part3.design.model.location.Poi
 
 class LocationAdapter(private val onClick :(Poi) -> Unit) : ListAdapter<Poi, LocationAdapter.ViewHolder>(
     diffUtil

@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.fastcampus.part3.design.Friend.FriendListActivity
 import com.example.fastcampus.part3.design.adapter.ViewPagerAdapter
 import com.example.fastcampus.part3.design.databinding.ActivityMainBinding
+import com.example.fastcampus.part3.design.util.FirebaseUtil
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth

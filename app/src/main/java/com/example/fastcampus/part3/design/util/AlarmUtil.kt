@@ -148,6 +148,19 @@ object AlarmUtil {
                 )
             }
         }
+    }
 
+    fun deleteAlarm(notificationId: Int,context:Context) {
+        FirebaseUtil.alarmDataBase.child(notificationId.toString()).removeValue()
+        val notificationIntent = Intent(context, NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            notificationId,
+            notificationIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
     }
 }

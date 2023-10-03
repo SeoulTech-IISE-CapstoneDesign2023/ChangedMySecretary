@@ -48,7 +48,7 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
     private var startY = 0.0
     private var endX = 0.0
     private var endY = 0.0
-    private var type: Type? = null
+    private var type: String? = null
     private var dateTime = ""
     private var message = ""
     override fun onBind(p0: Intent?): IBinder? {
@@ -134,6 +134,7 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
         createAlarm()
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun loadRoute(data: PublicTransitRoute?) {
         val minTimePath = data?.result?.path?.minByOrNull { it.info.totalTime }
         val date = dateFormat.parse(dateTime)
@@ -144,6 +145,7 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
         createAlarm()
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun createAlarm() {
         //알람을 설정하고
         newAppointmentTime?.let { AlarmUtil.createAlarm(it, this, message) }

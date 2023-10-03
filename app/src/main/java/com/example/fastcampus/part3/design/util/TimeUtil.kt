@@ -22,7 +22,7 @@ object TimeUtil {
 
     fun convertToISODateTime(date: String): String {
         val inputFormat =
-            SimpleDateFormat("yyyy년 M월 d일(EEE), HH:mm", Locale.getDefault()) // 입력 형식 지정
+            SimpleDateFormat("yyyy년 MM월 dd일 (EEE), HH:mm", Locale.getDefault()) // 입력 형식 지정
         val outputFormat =
             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()) // 출력 형식 지정
 

@@ -9,6 +9,7 @@ import com.example.fastcampus.part3.design.adapter.AlarmListAdapter
 import com.example.fastcampus.part3.design.databinding.ActivityAlarmBinding
 import com.example.fastcampus.part3.design.model.Type
 import com.example.fastcampus.part3.design.model.alarm.AlarmItem
+import com.example.fastcampus.part3.design.util.AlarmUtil
 import com.example.fastcampus.part3.design.util.FirebaseUtil
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -17,7 +18,7 @@ import com.google.firebase.database.DatabaseError
 class AlarmActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAlarmBinding
 
-    private val alarmAdapter by lazy { AlarmListAdapter() }
+    private lateinit var alarmAdapter: AlarmListAdapter
     private val alarmList = mutableListOf<AlarmItem>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +26,12 @@ class AlarmActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarLayout)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        alarmAdapter = AlarmListAdapter {
+            val notificationId = it.notificationId ?: ""
+            //알람 데이터 삭제
+            AlarmUtil.deleteAlarm(notificationId.toInt(), this)
+            //todo 일정또한 삭제해야함
+        }
         binding.recyclerView.adapter = alarmAdapter
         updateRecyclerView()
     }
@@ -91,7 +98,7 @@ class AlarmActivity : AppCompatActivity() {
             arrivalLat = data["arrivalLat"] as Double?,
             arrivalLng = data["arrivalLng"] as Double?,
             appointmentTime = data["appointmentTime"] as String?,
-            type = data["type"] as Type?,
+            type = data["type"] as String?,
             startPlace = data["startPlace"] as String?,
             arrivalPlace = data["arrivalPlace"] as String?,
             dateTime = data["dateTime"] as String?,

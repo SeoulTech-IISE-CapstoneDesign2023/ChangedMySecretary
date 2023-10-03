@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fastcampus.part3.design.databinding.ItemAlarmBinding
 import com.example.fastcampus.part3.design.model.alarm.AlarmItem
 
-class AlarmListAdapter : ListAdapter<AlarmItem, AlarmListAdapter.ViewHolder>(diffUtil) {
+class AlarmListAdapter(private val onClick : (AlarmItem) -> Unit) : ListAdapter<AlarmItem, AlarmListAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -30,6 +30,9 @@ class AlarmListAdapter : ListAdapter<AlarmItem, AlarmListAdapter.ViewHolder>(dif
         fun bind(item: AlarmItem) {
             binding.messageTextView.text = item.message
             binding.dateTimeTextView.text = item.dateTime
+            binding.cancelButton.setOnClickListener {
+                onClick(item)
+            }
         }
     }
 

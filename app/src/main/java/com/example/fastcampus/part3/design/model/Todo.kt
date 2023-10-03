@@ -17,7 +17,6 @@ data class Todo(
     val importance : Boolean? = null,           // 중요도
     val startPlace: String? = null,     // 일정 출발지
     val arrivePlace: String? = null,    // 일정 도착지
-    val totalTime: String? = null,      // 걸리는 총 시간
     val trackTime: String? = null,      // 알림 추적 시간
     val notificationId: String? = null, // 알람 구별 아이디
     val startLat: Double? = null,       // 출발 위도?
@@ -41,7 +40,6 @@ data class Todo(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: "",
         startLat = parcel.readDouble(),
         startLng = parcel.readDouble(),
         arrivalLat = parcel.readDouble(),
@@ -62,7 +60,6 @@ data class Todo(
         importance?.let { parcel.writeBoolean(it) }
         parcel.writeString(startPlace)
         parcel.writeString(arrivePlace)
-        parcel.writeString(totalTime)
         parcel.writeString(trackTime)
         parcel.writeString(notificationId)
         startLat?.let { parcel.writeDouble(it) }

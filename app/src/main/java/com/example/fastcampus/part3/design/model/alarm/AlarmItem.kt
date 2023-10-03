@@ -9,7 +9,7 @@ data class AlarmItem(
     val arrivalLat: Double? = null,
     val arrivalLng: Double? = null,
     var appointmentTime: String? = null,
-    val type: Type? = null, //이동수단,
+    val type: String? = null, //이동수단,
     val startPlace : String? = null,
     val arrivalPlace : String? = null,
     val dateTime : String? = null,
