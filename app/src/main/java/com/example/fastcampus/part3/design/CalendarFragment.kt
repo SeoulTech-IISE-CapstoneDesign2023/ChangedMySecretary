@@ -12,10 +12,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.fastcampus.part3.design.databinding.FragmentCalendarBinding
-import com.example.fastcampus.part3.design.Key.Companion.DB_CALENDAR
+import com.example.fastcampus.part3.design.util.Key.Companion.DB_CALENDAR
 import com.example.fastcampus.part3.design.Listener.OnItemLongClickListener
 import com.example.fastcampus.part3.design.Listener.OnItemShortClickListener
-import com.example.fastcampus.part3.design.databinding.FragmentMapBinding
+import com.example.fastcampus.part3.design.adapter.TodoListAdapter
 import com.example.fastcampus.part3.design.model.Todo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

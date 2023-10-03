@@ -1,8 +1,7 @@
 package com.example.fastcampus.part3.design.model.location
 
-import com.example.fastcampus.part3.design.LocationRetrofitManager
+import com.example.fastcampus.part3.design.util.LocationRetrofitManager
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 
 class LocationProvider(private val callback : Callback) {

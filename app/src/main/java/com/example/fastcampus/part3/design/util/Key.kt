@@ -1,4 +1,4 @@
-package com.example.fastcampus.part3.design
+package com.example.fastcampus.part3.design.util
 
 class Key {
 
