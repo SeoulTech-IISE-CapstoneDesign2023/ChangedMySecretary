@@ -1,6 +1,6 @@
 package com.example.fastcampus.part3.design.model.route.bus.realtime
 
-import com.example.fastcampus.part3.design.LocationRetrofitManager
+import com.example.fastcampus.part3.design.util.LocationRetrofitManager
 import retrofit2.Call
 import retrofit2.Response
 

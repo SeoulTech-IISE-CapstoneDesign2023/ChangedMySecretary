@@ -3,18 +3,24 @@ package com.example.fastcampus.part3.design
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -24,9 +30,11 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.fastcampus.part3.design.adapter.RouteAdapter
 import com.example.fastcampus.part3.design.model.route.PublicTransitRoute
 import com.example.fastcampus.part3.design.model.route.SubPath
 import com.example.fastcampus.part3.design.databinding.ActivityCreateBinding
+import com.example.fastcampus.part3.design.model.Type
 import com.example.fastcampus.part3.design.model.location.Location
 import com.example.fastcampus.part3.design.model.location.LocationAdapter
 import com.example.fastcampus.part3.design.model.car.CarRouteProvider
@@ -42,7 +50,12 @@ import com.example.fastcampus.part3.design.model.route.subway.SubwayTimeTablePro
 import com.example.fastcampus.part3.design.model.walk.Dto
 import com.example.fastcampus.part3.design.model.walk.RouteData
 import com.example.fastcampus.part3.design.model.walk.WalkingRouteProvider
+import com.example.fastcampus.part3.design.util.AlarmUtil
+import com.example.fastcampus.part3.design.util.FirebaseUtil
+import com.example.fastcampus.part3.design.util.LocationRetrofitManager
+import com.example.fastcampus.part3.design.util.TimeUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.naver.maps.geometry.LatLng
@@ -54,17 +67,12 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.CountDownLatch
 
@@ -90,9 +98,25 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         .setTitleText("약속시간을 정하세요.")
         .build()
 
+    //알람권한요청
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // FCM SDK (and your app) can post notifications.
+        } else {
+            //알림권한 없음 -> 설정창으로 한번더 보내서 알림 권한 하라고 요청
+            Toast.makeText(this, "알림 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
+            finish()
+        }
+    }
+
     private val startMarker = Marker()
     private val arrivalMarker = Marker()
-    private var amChecked = false
     private val handler = Handler(Looper.getMainLooper())
     private val walkProvider = WalkingRouteProvider(this)
     private val carProvider = CarRouteProvider(this)
@@ -100,6 +124,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private val subwayTimeTableProvider = SubwayTimeTableProvider()
     private val busRealTimeLocationProvider = BusRealTimeLocationProvider()
     private val busRealTimeProvider = BusRealTimeProvider()
+    private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(EEE), HH:mm", Locale.KOREA)
     private var isStart = true
     private var startPlace = ""
     private var arrivalPlace = ""
@@ -107,8 +132,12 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var startY = 0.0
     private var endX = 0.0
     private var endY = 0.0
+    private var type: Type? = null
+    private var notificationId: String? = null
+    private var alarmData = mutableMapOf<String, Any>()
 
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateBinding.inflate(layoutInflater)
@@ -119,6 +148,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         mapView.getMapAsync(this)
         initLocationAdapter(binding)
         initView()
+        AlarmUtil.askNotificationPermission(this, requestPermissionLauncher)
     }
 
     override fun onStart() {
@@ -269,6 +299,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         //키보드 통제
@@ -295,6 +326,15 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             binding.locationChip.text = "추억의 장소를 지정해주세요."
         }
 
+        binding.cancelImageView.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("일정 취소")
+                .setMessage("일정을 취소하시겠습니까?")
+                .setNegativeButton("아니요"){_,_ ->}
+                .setPositiveButton("네"){ _, _ -> finish() }
+                .show()
+        }
+
 
 
         binding.dateTextView.setOnClickListener {
@@ -315,6 +355,24 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 mapBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
                 mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
+
+        binding.createButton.setOnClickListener {
+            //메모가 없으면은 생성 막기
+            if (binding.memoEditText.text.isNullOrBlank()) {
+                Toast.makeText(this@CreateActivity, "추억의 글을 먼저 남겨주세요.", Toast.LENGTH_SHORT).show()
+            } else {
+                if(notificationId == null){
+                    //todo 일정만 생성 알람 기능은 사용 x
+                }else {
+                    FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
+                    val memo = binding.memoEditText.text.toString()
+                    val message = "${memo}할 시간이에요~"
+                    val appointmentTime = alarmData["appointmentTime"].toString()
+                    AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, message)
+                }
+                finish()
             }
         }
 
@@ -386,15 +444,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
-            okButton.setOnClickListener {
-                if (startPlace.isNotEmpty() && arrivalPlace.isNotEmpty()) {
-                    binding.locationChip.text =
-                        getString(R.string.start_to_arrive, startPlace, arrivalPlace)
-                }
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            }
             walkButton.setOnClickListener {
                 if (checkPlace()) return@setOnClickListener
+                type = Type.WALK
                 Toast.makeText(this@CreateActivity, "이동수단 : 걷기", Toast.LENGTH_SHORT).show()
                 val body = RouteData(
                     startX = startX,
@@ -409,9 +461,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
             carButton.setOnClickListener {
                 if (checkPlace()) return@setOnClickListener
+                type = Type.CAR
                 Toast.makeText(this@CreateActivity, "이동수단 : 자동차", Toast.LENGTH_SHORT).show()
                 val startTime = binding.dateTextView.text.toString()
-                val isoDateTime = convertToISODateTime(startTime)
+                val isoDateTime = TimeUtil.convertToISODateTime(startTime)
                 val body = CarRouteRequest(
                     routesInfo = RoutesInfo(
                         departure = DepartureInfo(
@@ -431,9 +484,17 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 carProvider.getCarRoot(body)
             }
             publicTransportationButton.setOnClickListener {
+                type = Type.PUBLIC
                 if (checkPlace()) return@setOnClickListener
                 Toast.makeText(this@CreateActivity, "이동수단 : 대중교통", Toast.LENGTH_SHORT).show()
                 routeProvider.getRoute(startX, startY, endX, endY)
+            }
+            okButton.setOnClickListener {
+                if (startPlace.isNotEmpty() && arrivalPlace.isNotEmpty()) {
+                    binding.locationChip.text =
+                        getString(R.string.start_to_arrive, startPlace, arrivalPlace)
+                }
+                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
 
@@ -446,20 +507,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 300)
             }
-        }
-    }
-
-    private fun convertToISODateTime(date: String): String {
-        val inputFormat =
-            SimpleDateFormat("yyyy년 M월 d일(EEE), HH:mm", Locale.getDefault()) // 입력 형식 지정
-        val outputFormat =
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()) // 출력 형식 지정
-
-        try {
-            val date = inputFormat.parse(date) // 문자열을 Date 객체로 변환
-            return outputFormat.format(date) // ISO 8601 형식으로 변환한 문자열 반환
-        } catch (e: Exception) {
-            return "날짜 형식이 올바르지 않습니다."
         }
     }
 
@@ -498,25 +545,22 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             })
     }
 
-    private fun formatTotalTime(totalTime: Int): String {
-        val hours = (totalTime / 60) / 60
-        val minutes = (totalTime / 60) % 60
-        return if (hours != 0) "약 $hours 시간 $minutes 분" else "약 $minutes 분"
-    }
-
-    private fun parseDateTime(dateTime: String): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
-        val zonedDateTime = ZonedDateTime.parse(dateTime, formatter)
-            .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-        return zonedDateTime.format(DateTimeFormatter.ofPattern("MM월 dd일 HH시 mm분"))
-    }
-
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun loadWalkingRoot(data: Dto) {
         binding.mapBottomSheetLayout.recyclerView.isVisible = false
         val result =
             data.features?.filter { it.properties.index == 0 }?.map { it.properties }?.first()
                 ?: return
-        val totalTime = formatTotalTime(result.totalTime)
+        val totalTime = TimeUtil.formatTotalTime(result.totalTime)// 5655초로나오게됨
+        try {
+            val date = dateFormat.parse(binding.dateTextView.text.toString())
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.add(Calendar.SECOND, -result.totalTime)
+            setAlarm(calendar)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         binding.mapBottomSheetLayout.resultTextView.apply {
             isVisible = true
             text =
@@ -524,15 +568,21 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun loadCarRoot(data: com.example.fastcampus.part3.design.model.car.Dto) {
         binding.mapBottomSheetLayout.recyclerView.isVisible = false
         val result = data.features?.map { it.properties }?.firstOrNull() ?: return
-        val totalTime = formatTotalTime(result.totalTime)
-        val departure = parseDateTime(result.departureTime)
-        val arrival = parseDateTime(result.arrivalTime)
+        val totalTime = TimeUtil.formatTotalTime(result.totalTime)
+        val departure = TimeUtil.parseDateTime(result.departureTime)
+        val arrival = TimeUtil.parseDateTime(result.arrivalTime)
         val totalFare =
             if (result.totalFare > 0) DecimalFormat("###,###").format(result.totalFare) else "통행요금 없음"
         val taxiFare = DecimalFormat("###,###").format(result.taxiFare) + "원"
+        val date = dateFormat.parse(binding.dateTextView.text.toString())
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.add(Calendar.SECOND, -result.totalTime)
+        setAlarm(calendar)
         binding.mapBottomSheetLayout.resultTextView.apply {
             isVisible = true
             text =
@@ -540,6 +590,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun loadRoute(data: PublicTransitRoute?) {
         //제일 최단 길정보를 가져옴
         Thread {
@@ -565,7 +616,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     countDownLatch.countDown()
                 }
                 countDownLatch.await()
-                info.forEach { Log.e("aa", it.toString()) }
+                info.forEach { info ->
+                    info.waitTime
+
+                }
                 //맨처음 도착지점 같은 경우 두번째 리스트에 있는 것으로 설정
                 for (i in 0 until info.size) {
                     if (i > 0 && i < info.size - 1 && info[i].endName == null) {
@@ -576,6 +630,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     }
                 }
 
+                val date = dateFormat.parse(binding.dateTextView.text.toString())
+                val calendar = Calendar.getInstance()
+                calendar.time = date
+                calendar.add(Calendar.SECOND, -(minTimePath?.info?.totalTime!! * 60))
+                setAlarm(calendar)
                 info[0].startName = "출발지"
                 info[info.size - 1].endName = "도착지"
                 info[0].endName = info[1].startName
@@ -594,11 +653,40 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
 
             } catch (e: Exception) {
-                Toast.makeText(this, "거리가 너무 가깝습니다.(700m이내)", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+                runOnUiThread {
+                    Toast.makeText(this, "거리가 너무 가깝습니다.(700m이내)", Toast.LENGTH_SHORT).show()
+                }
             }
         }.start()
-
     }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun setAlarm(calendar: Calendar) {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1 // 월은 0부터 시작하므로 1을 더함
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val appointmentTime =
+            String.format("%04d%02d%02d%02d%02d", year, month, day, hour, minute) //202309160940
+        notificationId = appointmentTime.substring(3)
+        //알람을 설정하는 부분임 먼저 db에 저장을 하는 거 먼저해보자
+        alarmData = mutableMapOf()
+        //들어가야할 정보 출발 도착지 위경도와 도착을 해야하는 시간 notificationId type
+        alarmData["startLng"] = startX
+        alarmData["startLat"] = startY
+        alarmData["arrivalLng"] = endX
+        alarmData["arrivalLat"] = endY
+        alarmData["startPlace"] = startPlace
+        alarmData["arrivalPlace"] = arrivalPlace
+        alarmData["type"] = type.toString()
+        alarmData["notificationId"] = notificationId!!
+        alarmData["appointmentTime"] = appointmentTime
+        alarmData["dateTime"] = binding.dateTextView.text.toString()
+        alarmData["message"] = "${binding.memoEditText.text}할 시간이에요~"
+    }
+
 
     private fun trafficTypeCase(subPath: SubPath, callback: (ResultInfo) -> Unit) {
         val trafficType = subPath.trafficType //1-지하철, 2-버스, 3-도보
@@ -621,6 +709,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 lane = subPath.lane.map { it.subwayCode }.firstOrNull()
                 //비동기작업수행
                 subwayTimeTableProvider.getSubwayTimeTable(subwayCode, wayCode) { latestTime ->
+                    Log.e("aa", latestTime.toString())
                     val info = ResultInfo(
                         trafficType,
                         startName,
@@ -647,7 +736,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 busId = subPath.lane.map { it.busID }.firstOrNull()
                 // busID를 입력하게 되면 routeID를 얻게 된다.
                 busRealTimeLocationProvider.getBusRealTimeLocation(busId!!) { routeId ->
-                    busRealTimeProvider.getBusRealTime(subwayCode.toInt(), routeId){
+                    busRealTimeProvider.getBusRealTime(subwayCode.toInt(), routeId) {
                         val info = ResultInfo(
                             trafficType,
                             startName,

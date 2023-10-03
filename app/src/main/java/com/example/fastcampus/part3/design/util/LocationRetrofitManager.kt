@@ -1,4 +1,4 @@
-package com.example.fastcampus.part3.design
+package com.example.fastcampus.part3.design.util
 
 import com.example.fastcampus.part3.design.model.location.SearchLocationService
 import com.example.fastcampus.part3.design.model.car.SearchCarService
@@ -10,7 +10,6 @@ import com.example.fastcampus.part3.design.model.walk.SearchWalkService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 object LocationRetrofitManager {
 

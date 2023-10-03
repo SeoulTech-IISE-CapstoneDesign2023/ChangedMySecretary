@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -36,6 +39,9 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
+        <activity android:name="com.example.fastcampus.part3.design.AlarmActivity" />
+
+        <service android:name=".alarm.UpdateRouteService" />
         <activity
             android:name=".Friend.ManageFriendActivity"
             android:exported="false" />
@@ -49,6 +55,11 @@
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="48lgtnhsi5" />
+
+        <receiver
+            android:name=".alarm.NotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
