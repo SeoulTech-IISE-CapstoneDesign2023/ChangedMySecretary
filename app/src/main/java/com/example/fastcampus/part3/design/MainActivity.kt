@@ -5,11 +5,15 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import coil.load
+import com.example.fastcampus.part3.design.Friend.FriendListActivity
 import com.example.fastcampus.part3.design.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -39,6 +43,33 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         initViewPager()
 
+        binding.AppCompatImageView.setOnClickListener {
+            val drawerLayout: DrawerLayout = binding.drawerLayout
+            val navView = binding.navView
+            drawerLayout.openDrawer(navView)
+        }
+
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menuitem1 -> {
+                    val intent =
+                        Intent(this, FriendListActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menuitem2 -> {
+                    // 메뉴 항목 2을 클릭한 경우 처리할 코드
+                    // 예: 다른 화면으로 이동
+                    true
+                }
+                // 다른 메뉴 항목에 대한 처리 추가
+                else -> false
+            }
+        }
+
         auth = Firebase.auth
         val user = auth.currentUser
 
@@ -67,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                         if (count == 0) {
                             Firebase.auth.signOut()
                             val intent =
-                                Intent(this@MainActivity, LoginActivity::class.java)
+                                Intent(this@MainActivity, IntroActivity::class.java)
                             startActivity(intent)
                         }
                     }
@@ -78,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             // 사용자가 로그아웃한 경우 또는 인증 정보가 없는 경우
             Firebase.auth.signOut()
             val intent =
-                Intent(this@MainActivity, LoginActivity::class.java)
+                Intent(this@MainActivity, IntroActivity::class.java)
             startActivity(intent)
         }
 
