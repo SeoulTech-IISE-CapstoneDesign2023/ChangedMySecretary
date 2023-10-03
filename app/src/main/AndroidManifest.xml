@@ -36,6 +36,15 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
+        <activity
+            android:name=".Friend.ManageFriendActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Friend.FriendListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Friend.AddFriendActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"

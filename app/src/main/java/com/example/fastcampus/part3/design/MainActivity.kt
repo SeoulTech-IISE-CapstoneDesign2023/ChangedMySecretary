@@ -5,11 +5,15 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import coil.load
+import com.example.fastcampus.part3.design.Friend.FriendListActivity
 import com.example.fastcampus.part3.design.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -38,6 +42,33 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initViewPager()
+
+        binding.AppCompatImageView.setOnClickListener {
+            val drawerLayout: DrawerLayout = binding.drawerLayout
+            val navView = binding.navView
+            drawerLayout.openDrawer(navView)
+        }
+
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menuitem1 -> {
+                    val intent =
+                        Intent(this, FriendListActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menuitem2 -> {
+                    // 메뉴 항목 2을 클릭한 경우 처리할 코드
+                    // 예: 다른 화면으로 이동
+                    true
+                }
+                // 다른 메뉴 항목에 대한 처리 추가
+                else -> false
+            }
+        }
 
         auth = Firebase.auth
         val user = auth.currentUser
