@@ -24,12 +24,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="작성일"
+        android:text="Day of Memories..."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/calendarImageView"
+        android:id="@+id/startCalendarImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -37,73 +37,105 @@
         app:layout_constraintStart_toStartOf="@id/titleTextView"
         app:layout_constraintTop_toBottomOf="@id/titleTextView" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/dateTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/textview_background"
-        android:padding="4dp"
-        android:text="2023년 9월 8일(금),오후 11:10"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@id/calendarImageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/calendarImageView"
-        app:layout_constraintTop_toTopOf="@id/calendarImageView" />
-
-    <LinearLayout
-        android:id="@+id/timeLayout"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/endCalendarImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/baseline_calendar_month_24"
+        app:layout_constraintStart_toStartOf="@id/titleTextView"
+        app:layout_constraintTop_toBottomOf="@id/startCalendarImageView" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/startDateTextView"
+        android:layout_width="265dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/textview_background"
+        android:padding="4dp"
+        android:text="추억의 시작"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@id/startCalendarImageView"
+        app:layout_constraintStart_toEndOf="@id/startCalendarImageView"
+        app:layout_constraintTop_toTopOf="@id/startCalendarImageView" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/endDateTextView"
+        android:layout_width="265dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/textview_background"
+        android:padding="4dp"
+        android:hint="추억이 끝나는 날짜를 정해주세요"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@id/endCalendarImageView"
+        app:layout_constraintStart_toEndOf="@+id/endCalendarImageView"
+        app:layout_constraintTop_toTopOf="@+id/endCalendarImageView" />
+
+    <LinearLayout
+        android:id="@+id/startTimeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/time_edit_text_background"
         android:orientation="horizontal"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="@id/dateTextView"
-        app:layout_constraintTop_toBottomOf="@id/dateTextView">
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/startDateTextView"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toEndOf="@+id/startDateTextView"
+        app:layout_constraintTop_toTopOf="@+id/startDateTextView">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:clickable="false"
-            android:id="@+id/hourText"
+            android:id="@+id/startTimeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:inputType="time"
-            android:maxLength="2"
-            android:maxLines="1"
-            android:padding="4dp"
-            android:text="12"
-            android:textSize="20sp" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:text=":"
-            android:textSize="20sp" />
-
-        <androidx.appcompat.widget.AppCompatTextView
             android:clickable="false"
-            android:id="@+id/minuteText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
             android:inputType="time"
-            android:maxLength="3"
             android:maxLines="1"
-            android:padding="4dp"
-            android:text="00"
+            android:padding="3dp"
+            android:text="시작시간"
             android:textSize="20sp" />
     </LinearLayout>
 
-    <CalendarView
+    <LinearLayout
+        android:id="@+id/endTimeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/time_edit_text_background"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/endDateTextView"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toEndOf="@+id/endDateTextView"
+        app:layout_constraintTop_toTopOf="@+id/endDateTextView">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/endTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:clickable="false"
+            android:hint="종료시간"
+            android:inputType="time"
+            android:maxLines="1"
+            android:padding="1dp"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/timeLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/endDateTextView">
+
+    </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/currentTimeButton"

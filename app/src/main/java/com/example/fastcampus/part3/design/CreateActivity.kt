@@ -34,6 +34,7 @@ import com.example.fastcampus.part3.design.adapter.RouteAdapter
 import com.example.fastcampus.part3.design.model.route.PublicTransitRoute
 import com.example.fastcampus.part3.design.model.route.SubPath
 import com.example.fastcampus.part3.design.databinding.ActivityCreateBinding
+import com.example.fastcampus.part3.design.model.Todo
 import com.example.fastcampus.part3.design.model.Type
 import com.example.fastcampus.part3.design.model.location.Location
 import com.example.fastcampus.part3.design.model.location.LocationAdapter
@@ -52,12 +53,20 @@ import com.example.fastcampus.part3.design.model.walk.RouteData
 import com.example.fastcampus.part3.design.model.walk.WalkingRouteProvider
 import com.example.fastcampus.part3.design.util.AlarmUtil
 import com.example.fastcampus.part3.design.util.FirebaseUtil
+import com.example.fastcampus.part3.design.util.Key.Companion.DB_CALENDAR
 import com.example.fastcampus.part3.design.util.LocationRetrofitManager
 import com.example.fastcampus.part3.design.util.TimeUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -67,13 +76,13 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import com.prolificinteractive.materialcalendarview.CalendarDay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.CountDownLatch
 
 class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProvider.Callback,
@@ -91,11 +100,17 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     private lateinit var locationAdapter: LocationAdapter
 
-    private val picker = MaterialTimePicker.Builder()
+    private val timePicker = MaterialTimePicker.Builder()
+        .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
         .setTimeFormat(TimeFormat.CLOCK_12H)
-        .setHour(12)
-        .setMinute(59)
-        .setTitleText("약속시간을 정하세요.")
+        .setHour(0)
+        .setMinute(0)
+        .setTitleText("시간을 정하세요.")
+        .build()
+
+    private val datePicker = MaterialDatePicker.Builder.datePicker()
+        .setTitleText("종료 날짜를 정하세요")
+        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
         .build()
 
     //알람권한요청
@@ -135,6 +150,27 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var type: Type? = null
     private var notificationId: String? = null
     private var alarmData = mutableMapOf<String, Any>()
+    private lateinit var user: String
+    private var todoKeys: java.util.ArrayList<String> = arrayListOf()
+    private var timeString = ""
+    private var dateString = ""
+    private var title = ""
+    private var startTime = ""
+    private var endDate = ""
+    private var endTime = ""
+    private var totalTime = ""
+    private var todoId = ""
+//    private var startLat = 0.0
+//    private var startLng = 0.0
+//    private var arrivalLat = 0.0
+//    private var arrivalLng = 0.0
+    private var isEditMode = false  // 편집 모드 여부를 나타내는 변수
+    private var usingAlarm = false
+    private var startTimeToString = "" //약속시간을 저장하는 변수
+    private var arrivalTimeToString= "" //약속시간을 저장하는 변수
+    private var editTextLength = 0
+    private var previousMemo = ""
+    private var changedMemo = ""
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -142,6 +178,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         super.onCreate(savedInstanceState)
         binding = ActivityCreateBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        user = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         locationSource = FusedLocationSource(this, MapFragment.LOCATION_PERMISSION_REQUEST_CODE)
         mapView = binding.mapBottomSheetLayout.mapView
         mapView.onCreate(savedInstanceState)
@@ -302,6 +339,18 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
+        //list에서 일정 하나 선택했을 때 내용 수정
+        val todo = intent.getParcelableExtra<Todo>("todo")
+        var startDate = intent.getStringExtra("startDate") // "yyyy/MM/dd" 형식으로 받음
+        Log.e("createActivity", startDate.toString())
+        if (todo != null) {
+            // 기존의 Todo를 수정하는 경우, Todo객체를 사용하여 화면을 초기화
+            Log.d("DataPass", "time is :${todo.stTime}")
+            initializeEditMode(todo)
+        } else {
+            // 새로운 Todo를 생성하는 경우, 화면을 초기화
+            initializeCreateMode(startDate!!)
+        }
         //키보드 통제
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         dateBottomBehavior = BottomSheetBehavior.from(binding.dateBottomSheetLayout.root)
@@ -330,8 +379,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             MaterialAlertDialogBuilder(this)
                 .setTitle("일정 취소")
                 .setMessage("일정을 취소하시겠습니까?")
-                .setNegativeButton("아니요"){_,_ ->}
-                .setPositiveButton("네"){ _, _ -> finish() }
+                .setNegativeButton("아니요") { _, _ -> }
+                .setPositiveButton("네") { _, _ -> finish() }
                 .show()
         }
 
@@ -363,9 +412,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             if (binding.memoEditText.text.isNullOrBlank()) {
                 Toast.makeText(this@CreateActivity, "추억의 글을 먼저 남겨주세요.", Toast.LENGTH_SHORT).show()
             } else {
-                if(notificationId == null){
+                if (notificationId == null) {
                     //todo 일정만 생성 알람 기능은 사용 x
-                }else {
+                } else {
                     FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
                     val memo = binding.memoEditText.text.toString()
                     val message = "${memo}할 시간이에요~"
@@ -405,6 +454,14 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
 
             })
+            // 메모장 글자수가 100자가 넘어가면 error 표시
+            binding.memoEditText.addTextChangedListener {
+                it?.let { text ->
+                    binding.memoEditText.error = if (text.length > 100) {
+                        "글자수를 초과하였습니다."
+                    } else null
+                }
+            }
             setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus) {
                     dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -417,14 +474,69 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
 
         binding.dateBottomSheetLayout.apply {
-            hourText.isFocusable = false
-            minuteText.isClickable = false
-            timeLayout.setOnClickListener {
-                picker.show(supportFragmentManager, "tag")
-                picker.addOnPositiveButtonClickListener {
-                    hourText.text = String.format("%02d", picker.hour)
-                    minuteText.text = String.format("%02d", picker.minute)
-                }
+            endDateTextView.setOnClickListener {
+                setDate(1)
+            }
+            startTimeText.setOnClickListener {
+                endTimeText.isFocusable = false
+                setTime(0)
+            }
+            endTimeText.setOnClickListener {
+                startTimeText.isFocusable = false
+                setTime(1)
+            }
+            // 날짜 선택시 날짜 view 변경
+            calendarView.setOnDateChangedListener { widget, date, selected ->
+                val year = date.year
+                val month = date.month + 1
+                val dayOfMonth = date.day
+                val dayOfWeek = getDayOfWeek(year, month, dayOfMonth)
+                // 월과 일을 각각 두 자리로 포맷팅
+                val formattedMonth = String.format("%02d", month)
+                val formattedDayOfMonth = String.format("%02d", dayOfMonth)
+                val dateText = "${year}년 ${formattedMonth}월 ${formattedDayOfMonth}일"
+                startDateTextView.text = "$dateText ($dayOfWeek)"
+                startTime = "$dateText $timeString"
+            }
+            // 현재 날짜 적용 선택 시
+            currentTimeButton.setOnClickListener(View.OnClickListener {
+                // 오늘 날짜 받아오기
+                val today = Calendar.getInstance()
+                val todayYear = today[Calendar.YEAR]
+                val todayMonth = today[Calendar.MONTH] + 1
+                val todayDay = today[Calendar.DAY_OF_MONTH]
+                val todayOfWeek = getDayOfWeek(todayYear, todayMonth, todayDay)
+                // 월과 일을 각각 두 자리로 포맷팅
+                val formattedMonth = String.format("%02d", todayMonth)
+                val formattedDayOfMonth = String.format("%02d", todayDay)
+                val todayText = "${todayYear}년 ${formattedMonth}월 ${formattedDayOfMonth}일"
+                startDateTextView.text = "$todayText ($todayOfWeek)"
+                // CalendarView에서 오늘 날짜로 설정
+                calendarView.currentDate = CalendarDay.today()
+            })
+            // 확인 선택 시
+            okButton.setOnClickListener {
+//                // 출발시간이 도착시간보다 빠르지 못하게 버튼 누르면 안되게 해야함
+//            val dateTimeFormat = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.KOREA)
+//            try {
+//                val startDate = dateTimeFormat.parse(startTime)
+//                val arrivalDate = dateTimeFormat.parse(endTime)
+//                Log.d("setTime", "$startDate $arrivalDate")
+//                if (startDate != null) {
+//                    if (startDate >= arrivalDate) {
+//                        Log.e("setTime", "$startDate $arrivalDate")
+//                        Toast.makeText(this, "종료 시간이 시작 시간보다 빠를 수 없습니다", Toast.LENGTH_SHORT).show()
+//                        binding.dateBottomSheetLayout.endDateTextView.text = "추억의 끝을 다시 입력해 주세요"
+//                        binding.dateBottomSheetLayout.endTimeText.text = "00:00"
+//                        endTime = ""
+//                        return
+//                    }
+//                }
+//            } catch (e: ParseException) {
+//                e.printStackTrace()
+//            }
+                dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                binding.dateTextView.text = "${startDateTextView.text}, ${startTimeText.text}"
             }
         }
 
@@ -508,6 +620,412 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 handler.postDelayed(runnable, 300)
             }
         }
+
+        binding.createButton.setOnClickListener {
+            val todoKey = intent.getStringExtra("todoKey")
+            val todo = intent.getParcelableExtra<Todo>("todo")
+            // 일정 제목을 입력하지 않으면 일정 생성 불가 토스트
+            if (binding.titleEditText.text.toString().isEmpty()) {
+                binding.createButton.background = AppCompatResources.getDrawable(
+                    this@CreateActivity, R.drawable.baseline_check_gray_24
+                )
+                Toast.makeText(this, "일정 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+            // 일정 시작시간이 종료시간보다 늦을 경우 일정 생성 불가 토스트
+            else if (!checkDate()) {
+                binding.createButton.background = AppCompatResources.getDrawable(
+                    this@CreateActivity, R.drawable.baseline_check_gray_24
+                )
+                Toast.makeText(this, "시작시간은 종료시간보다 늦을 수 없습니다", Toast.LENGTH_SHORT).show()
+            }
+            // 메모장 텍스트 100자 넘어가면 일정 생성 불가 토스트
+            else if (editTextLength > 100) {
+                binding.createButton.background = AppCompatResources.getDrawable(
+                    this@CreateActivity, R.drawable.baseline_check_gray_24
+                )
+                Toast.makeText(this, "메모 글자수가 100을 넘었습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                if (isEditMode) {
+                    Log.d("create", "initailize edit mode")
+                    //기존의 todo를 수정
+                    updateTodo(todoKey!!, todo!!)
+                    finish()
+                } else {
+                    Log.d("create", "initailize create mode")
+                    // 새로운 Todo를 생성하는 경우
+                    createTodo()
+                    finish()
+                }
+            }
+            true
+        }
+
+        binding.cancelImageView.setOnClickListener {
+            showAlertDialog()
+            true
+        }
+    }
+    private fun initializeEditMode(todo: Todo) {
+        // 기존의 Todo를 수정하는 경우, 해당 Todo의 정보를 사용하여 화면을 초기화
+        isEditMode = true  // 기존 Todo를 수정하는 편집 모드임을 나타냄
+        binding.dateTextView.text = "${todo.stDate}, ${todo.stTime}"
+        // Todo의 제목
+        binding.titleEditText.setText(todo.title)
+        // 시작 날짜 및 시간
+        binding.dateBottomSheetLayout.startDateTextView.text = todo.stDate
+        binding.dateBottomSheetLayout.startTimeText.text = todo.stTime
+        // 도착 날짜 및 시간
+        binding.dateBottomSheetLayout.endDateTextView.text = todo.enDate
+        binding.dateBottomSheetLayout.endTimeText.text = todo.enTime
+//        startLat = todo.startLat ?: 0.0
+//        startLng = todo.startLng ?: 0.0
+//        arrivalLat = todo.arrivalLat ?: 0.0
+//        arrivalLng = todo.arrivalLng ?: 0.0
+//        if(todo.usingAlarm == true) {
+//            usingAlarm = true
+//            binding.alarmImageView.setBackgroundResource(R.drawable.baseline_alarm_on_24)
+//        }else {
+//            usingAlarm = false
+//            binding.alarmImageView.setBackgroundResource(R.drawable.baseline_alarm_off_24)
+//        }
+        //address더미만들기 만든것을 가지고 editMappingFragment에 넘겨줘야함
+        val addressData = mutableMapOf<String, Any>()
+        addressData["startLat"] = todo.startLat ?: 0.0
+        addressData["startLng"] = todo.startLng ?: 0.0
+        addressData["arrivalLat"] = todo.arrivalLat ?: 0.0
+        addressData["arrivalLng"] = todo.arrivalLng ?: 0.0
+        addressData["startAddress"] = todo.startPlace ?: ""
+        addressData["arrivalAddress"] = todo.arrivePlace ?: ""
+//        Firebase.database.reference.child(DB_ADDRESS).child(user).updateChildren(addressData)
+//        //여기서 위경도를 넘겨줘야한다 mappingFragment에게
+//        val bundle = Bundle()
+//        bundle.putDouble("startLat",startLat)
+//        bundle.putDouble("startLng",startLng)
+//        bundle.putDouble("arrivalLat",arrivalLat)
+//        bundle.putDouble("arrivalLng",arrivalLng)
+//        EditMappingFragment().arguments = bundle
+
+    }
+
+    private fun initializeCreateMode(startDate: String?) {
+        // 새로운 일정을 생성하는 경우, 화면을 초기화하는 작업 수행
+        binding.titleEditText.setText(if (title != "") title else "")
+        binding.dateBottomSheetLayout.startDateTextView.text = startDate
+        binding.dateBottomSheetLayout.startTimeText.text = if (startTime != "") startTime else "00:00"
+        binding.dateBottomSheetLayout.endDateTextView.text = if (endDate != "") endDate else ""
+        binding.dateBottomSheetLayout.endTimeText.text = if (endTime != "") endTime else ""
+    }
+    private fun convertToNumericInt(inputString: String): String {
+        // "년 월 일" 부분을 추출하여 빈 칸으로 구분된 숫자로 분할
+        val datePattern = Regex("(\\d+)년 (\\d+)월 (\\d+)일")
+        val dateMatchResult = datePattern.find(inputString)
+
+        // "시:분" 부분을 추출하여 ":"으로 구분된 숫자로 분할
+        val timePattern = Regex("(\\d+):(\\d+)")
+        val timeMatchResult = timePattern.find(inputString)
+
+        var result = ""
+
+        if (dateMatchResult != null && timeMatchResult != null) {
+            val (year, month, day) = dateMatchResult.destructured
+            val (hour, minute) = timeMatchResult.destructured
+
+            // 추출한 숫자를 연결하여 원하는 형식으로 재구성
+            result = "${year}${month}${day}${hour}${minute}"
+        }
+        // 추출한 숫자를 연결하여 원하는 형식으로 재구성
+        return result   // 출력 예시: "202310020000"
+    }
+
+    // 일정 생성 할 때 날짜 체크
+    private fun checkDate(): Boolean {
+        if (binding.dateBottomSheetLayout.endDateTextView.text == "" || binding.dateBottomSheetLayout.endTimeText.text == "") {
+            return true
+        } else {
+            val changeStartTime =
+                binding.dateBottomSheetLayout.startTimeText.text.toString()
+            val changeArrivalTime =
+                binding.dateBottomSheetLayout.endTimeText.text.toString()
+            val startTimeText =
+                binding.dateBottomSheetLayout.startDateTextView.text.toString() + changeStartTime
+            val arrivalTimeText =
+                binding.dateBottomSheetLayout.endDateTextView.text.toString() + changeArrivalTime
+
+            startTimeToString = convertToNumericInt(startTimeText)
+            arrivalTimeToString = convertToNumericInt(arrivalTimeText)
+            Log.e("날짜 확인", startTimeToString.toString())
+            Log.e("날짜 확인", arrivalTimeToString.toString())
+            return startTimeToString <= arrivalTimeToString
+        }
+    }
+    private fun setDate(separator: Int) {
+//        datePicker.show(supportFragmentManager, "datePickerDialog")
+        datePicker.addOnPositiveButtonClickListener  {
+            val calendar = Calendar.getInstance()
+            val selectedDate = Date(datePicker.selection!!)
+            calendar.time = selectedDate
+            val dayOfWeek = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                Calendar.SUNDAY -> "일"
+                Calendar.MONDAY -> "월"
+                Calendar.TUESDAY -> "화"
+                Calendar.WEDNESDAY -> "수"
+                Calendar.THURSDAY -> "목"
+                Calendar.FRIDAY -> "금"
+                Calendar.SATURDAY -> "토"
+                else -> ""
+            }
+            val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+            val dateString = dateFormat.format(selectedDate)
+
+            if (separator == 1) {
+                binding.dateBottomSheetLayout.endDateTextView.text = "$dateString ($dayOfWeek)"
+                endTime = "$dateString $timeString"
+            } else {
+
+            }
+        }
+        datePicker.show(supportFragmentManager, "datePickerDialog")
+    }
+    private fun setTime(separator: Int) {
+        Log.d("setTime", "언제나옴1")
+        timePicker.addOnPositiveButtonClickListener {
+            val formatHour = String.format("%02d", timePicker.hour)
+            val formatMinute = String.format("%02d", timePicker.minute)
+            val timeStrings = "${formatHour}:${formatMinute}"
+
+            if (separator == 0) {
+                Log.d("setTime", "start변경하기")
+                binding.dateBottomSheetLayout.startTimeText.text = timeStrings
+                startTime = "$dateString ${formatHour}:${formatMinute}"
+            } else {
+                Log.d("setTime", "end변경하기")
+                binding.dateBottomSheetLayout.endTimeText.text = timeStrings
+                endTime = "$dateString ${formatHour}:${formatMinute}"
+            }
+            timePicker.dismiss()
+            Log.d("setTime", "피커종료")
+        }
+        timePicker.show(supportFragmentManager, "TimePickerDialog")
+        Log.d("setTime", "언제나옴2")
+    }
+
+    private fun createTodo() {
+        val title = binding.titleEditText.text.toString()
+        val stDate = binding.dateBottomSheetLayout.startDateTextView.text.toString()
+        val stTime = binding.dateBottomSheetLayout.startTimeText.text.toString()
+        val enDate = binding.dateBottomSheetLayout.endDateTextView.text.toString()
+        val enTime = binding.dateBottomSheetLayout.endTimeText.text.toString()
+        val memo = binding.memoEditText.toString()
+        val startPlace = binding.mapBottomSheetLayout.startEditText.text.toString()
+        val arrivePlace = binding.mapBottomSheetLayout.arrivalEditText.text.toString()
+        val totalTime = totalTime
+        val todoId = todoId
+
+        val check = splitDate(stDate)
+        val clickedYear = check[0].trim()
+        val clickedMonth = check[1].trim()
+        val clickedDay = check[2].trim()
+
+        val todo =
+            Todo(
+                todoId = todoId,
+                title = title,
+                stDate =  stDate,
+                stTime = stTime,
+                enDate = enDate,
+                enTime = enTime,
+                memo = memo,
+                startPlace = startPlace,
+                arrivePlace = arrivePlace,
+                totalTime = totalTime,
+                notificationId = notificationId,
+//                startLat = startLat,
+//                startLng = startLng,
+//                arrivalLat = arrivalLat,
+//                arrivalLng = arrivalLng,
+                usingAlarm = usingAlarm,
+            )
+
+        val todoRef = Firebase.database.reference.child(DB_CALENDAR)
+            .child(user)
+            .child(clickedYear)
+            .child(clickedMonth)
+            .child(clickedDay)
+            .push()
+
+        val todoKey = todoRef.key   // 자동 생성된 키 값을 가져옴
+        todoKeys.add(todoKey!!)     // 가져온 키 값을 todoKeys 목록에 추가
+        todo.todoId = todoKey       // 생성된 키 값을 객체에 할당
+
+        todoRef.setValue(todo).addOnSuccessListener {
+            Toast.makeText(applicationContext, "새로운 추억", Toast.LENGTH_SHORT).show()
+            Log.i("FirebaseData", "데이터 전송에 성공하였습니다.")
+        }.addOnCanceledListener {
+            Log.i("FirebaseData", "데이터 전송에 실패하였습니다")
+        }
+    }
+    private fun updateTodo(todoKey: String, todo: Todo) {
+        val todoKey = intent.getStringExtra("todoKey")
+        val todo = intent.getParcelableExtra<Todo>("todo")
+
+        // 기존 일정 시작 날짜와 일정 제목
+        val oldStartDate = todo?.stDate.toString()
+        val oldTitle = todo?.title.toString()
+
+        val title = binding.titleEditText.text.toString()
+        val stDate = binding.dateBottomSheetLayout.startDateTextView.text.toString()
+        val stTime = binding.dateBottomSheetLayout.startTimeText.text.toString()
+        val enDate = binding.dateBottomSheetLayout.endDateTextView.text.toString()
+        val enTime = binding.dateBottomSheetLayout.endTimeText.text.toString()
+        val memo = binding.memoEditText.text.toString()
+        val startPlace = binding.mapBottomSheetLayout.startEditText.text.toString()
+        val arrivePlace = binding.mapBottomSheetLayout.arrivalEditText.text.toString()
+        val todoId = todo?.todoId
+
+
+        val todoUpdates: MutableMap<String, Any> = HashMap()
+        todoUpdates["title"] = title
+        todoUpdates["stDate"] = stDate
+        todoUpdates["stTime"] = stTime
+        todoUpdates["enDate"] = enDate
+        todoUpdates["enTime"] = enTime
+        todoUpdates["memo"] = memo
+        todoUpdates["startPlace"] = startPlace
+        todoUpdates["arrivePlace"] = arrivePlace
+        todoUpdates["todoId"] = todoId!!
+//        todoUpdates["startLng"] = startLng
+//        todoUpdates["startLat"] = startLat
+//        todoUpdates["arrivalLng"] = arrivalLng
+//        todoUpdates["arrivalLat"] = arrivalLat
+        todoUpdates["usingAlarm"] = usingAlarm
+
+        // 변경된 일정 시작 날짜
+        val newStartDate = todoUpdates["stDate"].toString()
+
+        // 시작 날짜가 변경될 경우
+        if (oldStartDate != newStartDate) {
+
+            val deleteFirebase = splitDate(oldStartDate)
+            val oldYear = deleteFirebase[0].trim()
+            val oldMonth = deleteFirebase[1].trim()
+            val oldDay = deleteFirebase[2].trim()
+            // 이전 시작 날짜의 경로 참조
+            val oldTodoReference = Firebase.database.reference.child(DB_CALENDAR)
+                .child(user)
+                .child(oldYear)
+                .child(oldMonth)
+                .child(oldDay)
+                .child(todoKey!!)
+
+            // 이전 날짜의 일정 삭제
+            oldTodoReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (data in dataSnapshot.children) {
+                        data.ref.removeValue()
+                            .addOnSuccessListener {
+                                Log.i("FirebaseData", "기존 데이터 삭제")
+                            }
+                            .addOnCanceledListener {
+                                Log.i("FirebaseData", "기존 데이터 삭제 실패.")
+                            }
+                    }
+                }
+            })
+            // 변경한 날짜의 일정 생성
+            val createFirebase = splitDate(newStartDate)
+            val newYear = createFirebase[0].trim()
+            val newMonth = createFirebase[1].trim()
+            val newDay = createFirebase[2].trim()
+            // 변경한 시작 날짜의 경로 참조
+            val newTodoReference = Firebase.database.reference.child(DB_CALENDAR)
+                .child(user)
+                .child(newYear)
+                .child(newMonth)
+                .child(newDay)
+            // 변경한 날짜에 일정 업데이트
+            if (todoKey != null) {
+                newTodoReference
+                    .child(todoKey)
+                    .setValue(todoUpdates)
+                    .addOnSuccessListener {
+                        Toast.makeText(applicationContext, "추억 수정 완료", Toast.LENGTH_SHORT).show()
+                        Log.i("FirebaseData", "데이터 업데이트에 성공하였습니다.")
+                    }
+                    .addOnCanceledListener {
+                        Log.i("FirebaseData", "데이터 업데이트에 실패하였습니다.")
+                    }
+            }
+        }
+        // 시작 날짜 변경 없고 다른 내용 수정인 경우
+        else {
+            val updateFirebase = splitDate(oldStartDate)
+            val originalYear = updateFirebase[0].trim()
+            val originalMonth = updateFirebase[1].trim()
+            val originalDay = updateFirebase[2].trim()
+
+            // 기존 날짜 경로 참조
+            val todoReference = Firebase.database.reference.child(DB_CALENDAR)
+                .child(user)
+                .child(originalYear)
+                .child(originalMonth)
+                .child(originalDay)
+            // 기존 날짜에 일정 업데이트
+            if (todoKey != null) {
+                todoReference
+                    .child(todoKey)
+                    .setValue(todoUpdates)
+                    .addOnSuccessListener {
+                        Toast.makeText(applicationContext, "일정 수정 완료", Toast.LENGTH_SHORT).show()
+                        Log.i("FirebaseData", "데이터 업데이트에 성공하였습니다.")
+                    }
+                    .addOnCanceledListener {
+                        Log.i("FirebaseData", "데이터 업데이트에 실패하였습니다.")
+                    }
+            }
+        }
+    }
+    private fun splitDate(date: String): Array<String> {
+        Log.e("splitDate", date)
+        val splitText = date.split(" ")
+        val resultDate: Array<String> = Array(3) { "" }
+        resultDate[0] = splitText[0]  //year
+        resultDate[1] = splitText[1]  //month
+        resultDate[2] = splitText[2]  //day
+        return resultDate
+    }
+    // 날짜로 요일 구하는 함수
+    private fun getDayOfWeek(year: Int, month: Int, day: Int): String {
+        val cal: Calendar = Calendar.getInstance()
+        cal.set(year, month-1, day)
+
+        return when (cal.get(Calendar.DAY_OF_WEEK)) {
+            Calendar.SUNDAY -> "일"
+            Calendar.MONDAY -> "월"
+            Calendar.TUESDAY -> "화"
+            Calendar.WEDNESDAY -> "수"
+            Calendar.THURSDAY -> "목"
+            Calendar.FRIDAY -> "금"
+            Calendar.SATURDAY -> "토"
+            else -> ""
+        }
+    }
+    private fun showAlertDialog() {
+        AlertDialog.Builder(this).apply {
+            setMessage("추억 생성을 그만두시겠습니까?")
+            setPositiveButton("네") { dialog, id ->
+//                //알람이 존재한다면 알람을 삭제해야함
+//                Log.e("isEditMode", isEditMode.toString())
+//                if (isEditMode) {
+//                    //편집 모드
+//                    deleteAlarmWhenEdit()
+//                }
+                val intent = Intent(this@CreateActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            setNegativeButton("아니오", null)
+        }.show()
     }
 
     private fun checkPlace(): Boolean {

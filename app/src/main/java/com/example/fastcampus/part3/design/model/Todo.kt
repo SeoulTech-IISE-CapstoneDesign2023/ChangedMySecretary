@@ -10,8 +10,8 @@ data class Todo(
     val title: String = "",             // 일정 제목
     val stDate: String = "",           // 일정 시작 날짜
     val stTime: String = "",           // 일정 시작 시간
-    val endDate: String? = "",         // 일정 종료 날짜
-    val endTime: String? = "",         // 일정 종료 시간
+    val enDate: String? = null,         // 일정 종료 날짜
+    val enTime: String? = null,         // 일정 종료 시간
     val place: String? = null,          // 일정 장소
     val memo: String? = null,           // 일정 관련 메모
     val importance : Boolean? = null,           // 중요도
@@ -55,8 +55,8 @@ data class Todo(
         parcel.writeString(title)
         parcel.writeString(stDate)
         parcel.writeString(stTime)
-        parcel.writeString(endDate)
-        parcel.writeString(endTime)
+        parcel.writeString(enDate)
+        parcel.writeString(enTime)
         parcel.writeString(place)
         parcel.writeString(memo)
         importance?.let { parcel.writeBoolean(it) }

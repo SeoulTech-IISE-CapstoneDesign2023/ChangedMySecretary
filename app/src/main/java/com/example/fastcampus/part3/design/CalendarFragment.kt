@@ -11,11 +11,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fastcampus.part3.design.databinding.FragmentCalendarBinding
 import com.example.fastcampus.part3.design.util.Key.Companion.DB_CALENDAR
 import com.example.fastcampus.part3.design.Listener.OnItemLongClickListener
 import com.example.fastcampus.part3.design.Listener.OnItemShortClickListener
 import com.example.fastcampus.part3.design.adapter.TodoListAdapter
+import com.example.fastcampus.part3.design.calendar.MySelectorDecorator
+import com.example.fastcampus.part3.design.calendar.OneDayDecorator
+import com.example.fastcampus.part3.design.calendar.SundayDecorator
 import com.example.fastcampus.part3.design.model.Todo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -35,9 +39,10 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
 
     var todoKeys: ArrayList<String> = arrayListOf()     // 일정 ID (key) 리스트
     val todoList = arrayListOf<Todo>()                  // 일정 리스트
-    private val adapter = TodoListAdapter(todoList)
+    private val adapter = TodoListAdapter(todoList,this,this)
     lateinit var user: String
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
+
     // 선택한 날짜
     lateinit var clickedYear: String
     lateinit var clickedMonth: String
@@ -69,11 +74,24 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
             calendarView.addDecorators(
                 SundayDecorator(),      // 일요일 빨간 글씨
                 OneDayDecorator(),      // 오늘 날짜 색 다르게
-                MySelectorDecorator(requireActivity())   // 선택한 날짜
+                MySelectorDecorator(
+                    requireActivity()
+                )   // 선택한 날짜
             )
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+            // 오늘 날짜 받아오기
+            val today = Calendar.getInstance()
+            val todayYear = today[Calendar.YEAR]
+            val todayMonth = today[Calendar.MONTH] + 1
+            val todayDay = today[Calendar.DAY_OF_MONTH]
+            val todayStr = String.format("%04d/%02d/%02d", todayYear, todayMonth, todayDay)
+            // 시작 할 때 오늘 todolist 불러오기
+            clickedDate(todayStr)
 
             //선택 날짜가 변경될 때 todolist 변경
-            calendarView.setOnDateChangedListener { widget, date, selected ->
+            calendarView.setOnDateChangedListener { _, date, selected ->
                 val year = date.year
                 val month = date.month + 1
                 val dayOfMonth = date.day
@@ -82,15 +100,10 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
                 clickedDate(dateStr)
             }
 
-            toggleCalendarView.setOnClickListener {
-                // 버튼을 클릭할 때 CalendarView의 가시성을 토글 (숨기기 <-> 보이기)
-                toggleCalendarVisibility()
-            }
             todayView.setOnClickListener {
                 // 오늘 날짜로 CalendarView를 설정
                 calendarView.currentDate = CalendarDay.today()
             }
-            recyclerView?.adapter = adapter
         }
 
         // 오늘 날짜 받아오기
@@ -112,9 +125,9 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
 
     private fun clickedDate(date: String) {
         val clicked = splitDate(date)
-        val clickedYear = clicked[0].trim()
-        val clickedMonth = clicked[1].trim()
-        val clickedDay = clicked[2].trim()
+        clickedYear = clicked[0].trim()
+        clickedMonth = clicked[1].trim()
+        clickedDay = clicked[2].trim()
         Firebase.database.reference.child(DB_CALENDAR).child(user)
             .child(clickedYear + "년").child(clickedMonth + "월").child(clickedDay + "일")
             .addValueEventListener(object : ValueEventListener {
@@ -142,7 +155,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         return resultDate
     }
     override fun onShortClick(position: Int) {
-        Log.d("TimetableFragment", "${todoList}")
+        Log.d("TimetableFragment", "$todoList")
         val todo = todoList[position] // 선택한 위치의 Todo객체를 가져옴
         val todoKey = todoKeys[position]
         //Fragment로 데이터 전송
@@ -158,8 +171,8 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
 
     override fun onLongClick(position: Int) {
         AlertDialog.Builder(requireContext())
-            .setTitle("기억 삭제")
-            .setMessage("기억을 삭제하시겠습니까?")
+            .setTitle("추억 삭제")
+            .setMessage("추억을 삭제하시겠습니까?")
             .setPositiveButton("Yes",
                 object : DialogInterface.OnClickListener {
                     override fun onClick(p0: DialogInterface?, p1: Int) {

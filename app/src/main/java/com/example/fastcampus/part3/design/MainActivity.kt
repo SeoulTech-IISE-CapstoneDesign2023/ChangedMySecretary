@@ -18,14 +18,18 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
+    private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
+    private var fullDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
 
-    private val fragmentList = listOf(CalendarFragment(), MapFragment())
+    private val fragmentList = listOf(CalendarFragment(), MapFragment(), TimeTableFragment())
     private val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,8 +115,9 @@ class MainActivity : AppCompatActivity() {
         val todayMonth = today[Calendar.MONTH] + 1
         val todayDay = today[Calendar.DAY_OF_MONTH]
         val todayStr = String.format("%04d/%02d/%02d", todayYear, todayMonth, todayDay)
+
         binding.floatingActionButton.setOnClickListener {
-            startActivity(Intent(this, CreateActivity::class.java))
+            saveDate()
         }
 
     }
@@ -130,12 +135,55 @@ class MainActivity : AppCompatActivity() {
                 tab.text = "시간"
                 tab.icon =
                     AppCompatResources.getDrawable(this, R.drawable.baseline_calendar_month_24)
-            } else {
+            } else if (fragmentList[position] is MapFragment) {
                 tab.text = "공간"
+                tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_map_24)
+            } else{
+                tab.text = "공유"
                 tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_map_24)
             }
         }.attach()
     }
+    private fun saveDate() {
+        val intent = Intent(this, CreateActivity::class.java)
+        Log.d("date", dateStr)
+        val saveStr = splitDate(dateStr)
+        val saveYear = saveStr[0].trim().toInt()
+        val saveMonth = saveStr[1].trim().toInt()-1
+        val saveDay = saveStr[2].trim().toInt()
+        val saveDayOfWeek = getDayOfWeek(saveYear, saveMonth, saveDay)
+        Log.d("date", saveDayOfWeek)
+        val saveDateStr = "$fullDateStr ($saveDayOfWeek)"
+        Log.d("date", saveDateStr)
+        intent.putExtra("startDate", saveDateStr)
+        startActivity(intent)
+    }
 
+    private fun splitDate(date: String): Array<String> {
+        Log.e("splitDate", date)
+        val splitText = date.split("/")
+        val resultDate: Array<String> = Array(3) { "" }
+        resultDate[0] = splitText[0]  //year
+        resultDate[1] = splitText[1]  //month
+        resultDate[2] = splitText[2]  //day
+        return resultDate
+    }
+
+    // 날짜로 요일 구하는 함수
+    private fun getDayOfWeek(year: Int, month: Int, day: Int): String {
+        val cal: Calendar = Calendar.getInstance()
+        cal.set(year, month, day)
+
+        return when (cal.get(Calendar.DAY_OF_WEEK)) {
+            Calendar.SUNDAY -> "일"
+            Calendar.MONDAY -> "월"
+            Calendar.TUESDAY -> "화"
+            Calendar.WEDNESDAY -> "수"
+            Calendar.THURSDAY -> "목"
+            Calendar.FRIDAY -> "금"
+            Calendar.SATURDAY -> "토"
+            else -> ""
+        }
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.example.fastcampus.part3.design
+package com.example.fastcampus.part3.design.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -6,10 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Recycler
+import com.example.fastcampus.part3.design.Poi
 import com.example.fastcampus.part3.design.databinding.ItemLocationBinding
 
-class LocationAdapter(private val onClick :(Poi) -> Unit) : ListAdapter<Poi, LocationAdapter.ViewHolder>(diffUtil) {
+class LocationAdapter(private val onClick :(Poi) -> Unit) : ListAdapter<Poi, LocationAdapter.ViewHolder>(
+    diffUtil
+) {
 
     inner class ViewHolder(private val binding: ItemLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {
