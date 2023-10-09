@@ -12,12 +12,15 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.fastcampus.part3.design.databinding.FragmentTimeTableBinding
 import com.example.fastcampus.part3.design.model.Todo
+import com.example.fastcampus.part3.design.util.Key
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 
@@ -80,7 +83,7 @@ class TimeTableFragment : Fragment() {
 
             // 월이 바뀌지 않는 경우
             if (startOfWeekMonth == endOfWeekMonth) {
-                FirebaseDatabase.getInstance().getReference("calendar")
+                Firebase.database.reference.child(Key.DB_CALENDAR)
                     .child(user)
                     .child("$startOfWeekYear" + "년")
                     .child("$startOfWeekMonth" + "월")
@@ -156,13 +159,13 @@ class TimeTableFragment : Fragment() {
                     )
             } else {
                 // 월이 바뀌는 경우, 두 개의 데이터를 가져와서 합칩니다.
-                val ref1 = FirebaseDatabase.getInstance().getReference("calendar")
+                val ref1 = Firebase.database.reference.child(Key.DB_CALENDAR)
                     .child(user)
                     .child("$startOfWeekYear" + "년")
                     .child("$startOfWeekMonth" + "월")
                     .orderByKey() // 날짜를 기준으로 정렬합니다.
                     .startAt("$startOfWeekDay" + "일")
-                val ref2 = FirebaseDatabase.getInstance().getReference("calendar")
+                val ref2 = Firebase.database.reference.child(Key.DB_CALENDAR)
                     .child(user)
                     .child("$endOfWeekYear" + "년")
                     .child("$endOfWeekMonth" + "월")
@@ -333,9 +336,10 @@ class TimeTableFragment : Fragment() {
             for (todo in todoList) {
                 val startTime = todo.stTime
                 val endTime = todo.enTime
+                val endDate = todo.enDate
 
                 // startTime 또는 endTime이 null인지 확인
-                if (startTime == null || endTime == null) {
+                if (endDate == null || endTime == null) {
                     continue // startTime 또는 endTime이 null이면 다음 todo로 이동
                 }
 

@@ -134,14 +134,13 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             if (fragmentList[position] is CalendarFragment) {
                 tab.text = "시간"
-                tab.icon =
-                    AppCompatResources.getDrawable(this, R.drawable.baseline_calendar_month_24)
+                tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_calendar_month_24)
             } else if (fragmentList[position] is MapFragment) {
                 tab.text = "공간"
                 tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_map_24)
             } else{
                 tab.text = "공유"
-                tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_map_24)
+                tab.icon = AppCompatResources.getDrawable(this, R.drawable.timetable)
             }
         }.attach()
     }

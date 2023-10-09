@@ -128,8 +128,11 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         clickedYear = clicked[0].trim()
         clickedMonth = clicked[1].trim()
         clickedDay = clicked[2].trim()
-        Firebase.database.reference.child(DB_CALENDAR).child(user)
-            .child(clickedYear + "년").child(clickedMonth + "월").child(clickedDay + "일")
+        Firebase.database.reference.child(DB_CALENDAR)
+            .child(user)
+            .child(clickedYear + "년")
+            .child(clickedMonth + "월")
+            .child(clickedDay + "일")
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -158,6 +161,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         Log.d("TimetableFragment", "$todoList")
         val todo = todoList[position] // 선택한 위치의 Todo객체를 가져옴
         val todoKey = todoKeys[position]
+        val startDate = todoList[position].stDate
         //Fragment로 데이터 전송
         val bundle = Bundle()
         bundle.putParcelable("todo", todo)
@@ -166,6 +170,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         val intent = Intent(requireContext(), CreateActivity::class.java)
         intent.putExtra("todo", todo)
         intent.putExtra("todoKey", todoKey)
+        intent.putExtra("startDate",startDate)
         startActivity(intent)
     }
 
@@ -186,7 +191,8 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         val todoKey = todoList[position].todoId
         todoList.removeAt(position)
         // 삭제할 일정 경로 참조
-        val deleteReference = Firebase.database.reference.child(DB_CALENDAR)
+        val deleteReference =
+            Firebase.database.reference.child(DB_CALENDAR)
             .child(user)
             .child(clickedYear + "년")
             .child(clickedMonth + "월")
