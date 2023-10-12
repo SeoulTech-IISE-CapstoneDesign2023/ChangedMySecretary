@@ -35,7 +35,7 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
     private val walkingRouteProvider = WalkingRouteProvider(this)
     private val carRouteProvider = CarRouteProvider(this)
     private val routeProvider = RouteProvider(this)
-    private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(EEE), HH:mm", Locale.KOREA)
+    private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (EEE), HH:mm", Locale.KOREA)
 
     private var appointmentTime: String? = null
     private var newAppointmentTime: String? = null

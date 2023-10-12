@@ -34,9 +34,11 @@
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/titleEditText"
         android:layout_width="wrap_content"
+        android:padding="4dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="45dp"
+        android:gravity="center"
         android:background="@drawable/textview_background"
         android:hint="추억의 이름을 정해주세요" />
 
@@ -47,19 +49,19 @@
         android:layout_height="wrap_content"
         android:text="@string/start_to_arrive"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="78dp"
         app:chipIcon="@drawable/baseline_place_24" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="135dp"
+        android:layout_marginTop="143dp"
         android:background="#CDCDCD" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/memoEditText"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="148dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
