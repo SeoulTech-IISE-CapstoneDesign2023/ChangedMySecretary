@@ -3,6 +3,7 @@ package com.example.fastcampus.part3.design
 import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,10 +19,12 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.fastcampus.part3.design.databinding.FragmentMapBinding
+import com.example.fastcampus.part3.design.model.importance.Importance
 import com.example.fastcampus.part3.design.model.location.Location
 import com.example.fastcampus.part3.design.model.location.LocationAdapter
 import com.example.fastcampus.part3.design.model.location.LocationProvider
 import com.example.fastcampus.part3.design.model.location.SearchLocationService
+import com.example.fastcampus.part3.design.util.FirebaseUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -30,10 +33,13 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.InfoWindow
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Random
 
 class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback {
     private var binding: FragmentMapBinding? = null
@@ -43,6 +49,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback {
     private lateinit var locationAdapter: LocationAdapter
     private val handler = Handler(Looper.getMainLooper())
     private val locationProvider = LocationProvider(this)
+    private val random = Random()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,7 +86,36 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback {
 
     private fun initChip(binding: FragmentMapBinding) {
         binding.chip.setOnClickListener {
-            binding.loadingView.isVisible = true
+            FirebaseUtil.importanceDataBase.get()
+                .addOnSuccessListener {
+                    val data = it.value as Map<String,Any>
+                    val dataList = data.values.toList()
+                    val importanceList = dataList.map { item ->
+                        val itemData = item as Map<String, Any>
+                        Importance(
+                            endY = itemData["endY"] as Double,
+                            endX = itemData["endX"] as Double,
+                            place = itemData["place"] as String,
+                            title = itemData["title"] as String,
+                            todoId = itemData["todoId"] as String
+                        )
+                    }
+                    importanceList.forEach { data ->
+                        val red = random.nextInt(256) // 0부터 255 사이의 랜덤 값
+                        val green = random.nextInt(256)
+                        val blue = random.nextInt(256)
+                        Marker().apply {
+                            position = LatLng(data.endY, data.endX)
+                            captionText = data.title
+                            iconTintColor = Color.rgb(red, green, blue)//random한 색깔
+                            map = naverMap
+                        }
+                    }
+                    val lastData = importanceList.lastOrNull()
+                    val cameraUpdate = CameraUpdate.scrollTo(LatLng(lastData?.endY ?: 0.0, lastData?.endX ?: 0.0))
+                    cameraUpdate.animate(CameraAnimation.Fly, 500)
+                    naverMap.moveCamera(cameraUpdate)
+                }
         }
     }
 

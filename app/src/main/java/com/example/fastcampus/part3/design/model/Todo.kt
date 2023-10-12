@@ -14,7 +14,7 @@ data class Todo(
     val enTime: String? = null,         // 일정 종료 시간
     val place: String? = null,          // 일정 장소
     val memo: String? = null,           // 일정 관련 메모
-    val importance : Boolean? = null,           // 중요도
+    var importance : Boolean? = false,           // 중요도
     val startPlace: String? = null,     // 일정 출발지
     val arrivePlace: String? = null,    // 일정 도착지
     val trackTime: String? = null,      // 알림 추적 시간
@@ -23,7 +23,7 @@ data class Todo(
     val startLng: Double? = null,       // 출발 경도?
     val arrivalLat: Double? = null,     // 도착 위도
     val arrivalLng: Double? = null,     // 도착 경도
-    val usingAlarm: Boolean? = null,    // 알람 사용 여부
+    val usingAlarm: Boolean? = null,  // 알람 사용 여부
 )
     : Parcelable {
     @RequiresApi(Build.VERSION_CODES.Q)

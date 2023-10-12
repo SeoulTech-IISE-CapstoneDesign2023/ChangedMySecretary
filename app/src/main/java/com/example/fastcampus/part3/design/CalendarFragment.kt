@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.fastcampus.part3.design.Listener.OnImportanceClickListener
 import com.example.fastcampus.part3.design.databinding.FragmentCalendarBinding
 import com.example.fastcampus.part3.design.util.Key.Companion.DB_CALENDAR
 import com.example.fastcampus.part3.design.Listener.OnItemLongClickListener
@@ -21,6 +22,8 @@ import com.example.fastcampus.part3.design.calendar.MySelectorDecorator
 import com.example.fastcampus.part3.design.calendar.OneDayDecorator
 import com.example.fastcampus.part3.design.calendar.SundayDecorator
 import com.example.fastcampus.part3.design.model.Todo
+import com.example.fastcampus.part3.design.util.AlarmUtil
+import com.example.fastcampus.part3.design.util.FirebaseUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -33,13 +36,13 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickListener {
+class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickListener, OnImportanceClickListener {
 
     private var binding: FragmentCalendarBinding? = null
 
     var todoKeys: ArrayList<String> = arrayListOf()     // 일정 ID (key) 리스트
     val todoList = arrayListOf<Todo>()                  // 일정 리스트
-    private val adapter = TodoListAdapter(todoList,this,this)
+    private val adapter = TodoListAdapter(todoList,this,this,this)
     lateinit var user: String
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
@@ -182,6 +185,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
                 object : DialogInterface.OnClickListener {
                     override fun onClick(p0: DialogInterface?, p1: Int) {
                         deleteTodo(position)
+
                     }
                 })
             .setNegativeButton("No", null)
@@ -189,6 +193,10 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
     }
     private fun deleteTodo(position: Int) {
         val todoKey = todoList[position].todoId
+        //todo 삭제시 알람도 같이 삭제
+        val notificationId = todoList[position].notificationId ?: "0"
+        FirebaseUtil.alarmDataBase.child(notificationId).removeValue()
+        AlarmUtil.deleteAlarm(notificationId.toInt(),requireContext())
         todoList.removeAt(position)
         // 삭제할 일정 경로 참조
         val deleteReference =
@@ -217,6 +225,20 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
             }
         })
 
+    }
+
+    override fun onClick(position: Int, importance: Boolean) {
+        val todoKey = todoList[position].todoId
+        val reference =
+            Firebase.database.reference.child(DB_CALENDAR)
+                .child(user)
+                .child(clickedYear + "년")
+                .child(clickedMonth + "월")
+                .child(clickedDay + "일")
+                .child(todoKey)
+        val data = mutableMapOf<String,Any>()
+        data["importance"] = importance
+        reference.updateChildren(data)
     }
 
 }
