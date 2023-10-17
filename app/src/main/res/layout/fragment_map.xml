@@ -48,4 +48,8 @@
         android:id="@+id/searchBottomSheetyLayout"
         layout="@layout/search_bottom_sheet" />
 
+    <include
+        android:id="@+id/favoriteBottomSheetLayout"
+        layout="@layout/favorite_bottom_sheet"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

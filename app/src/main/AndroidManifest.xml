@@ -39,7 +39,7 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-        <activity android:name="com.example.fastcampus.part3.design.AlarmActivity" />
+        <activity android:name="com.example.fastcampus.part3.design.com.design.AlarmActivity" />
 
         <service android:name=".alarm.UpdateRouteService" />
         <activity

@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_background"
-    app:behavior_fitToContents="true"
+    app:behavior_expandedOffset="150dp"
+    app:behavior_fitToContents="false"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -65,8 +66,8 @@
         android:layout_height="33dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/textview_background"
-        android:padding="4dp"
         android:hint="추억이 끝나는 날짜를 정해주세요"
+        android:padding="4dp"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@id/endCalendarImageView"
         app:layout_constraintStart_toEndOf="@+id/endCalendarImageView"
@@ -126,11 +127,11 @@
 
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="5dp"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/endDateTextView">
 
@@ -141,13 +142,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/textview_background"
         android:backgroundTint="@color/gray"
         android:padding="12dp"
         android:text="현재 날짜 적용"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/calendarView" />
 
@@ -156,14 +156,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="12dp"
         android:background="@drawable/textview_background"
         android:backgroundTint="@color/white"
         android:padding="12dp"
         android:text="확인"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/currentTimeButton"
         app:layout_constraintTop_toBottomOf="@id/calendarView" />

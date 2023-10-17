@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.fastcampus.part3.design"
+    namespace = "com.design"
     compileSdk = 34
 
     defaultConfig {
