@@ -132,8 +132,15 @@ class TimeTableFragment : Fragment() {
                                                 val hasSchedule =
                                                     checkScheduleForTime(todoList, dayOfWeek, hour)
                                                 if (hasSchedule) {
+                                                    // title이 6자리를 넘어가면 "..."으로 표시
+                                                    val displaytitle = if (todo.title.length > 8) {
+                                                        "${todo.title.substring(0, 8)}..."
+                                                    } else {
+                                                        todo.title
+                                                    }
+
                                                     view.setBackgroundColor(color)
-                                                    view.text = todo.title
+                                                    view.text = displaytitle
                                                     view.setTextColor(Color.WHITE)
 
                                                     // 일정을 클릭하면 해당 일정으로 이동
@@ -211,8 +218,15 @@ class TimeTableFragment : Fragment() {
                                             val hasSchedule =
                                                 checkScheduleForTime(todoList, dayOfWeek, hour)
                                             if (hasSchedule) {
+                                                // title이 6자리를 넘어가면 "..."으로 표시
+                                                val displaytitle = if (todo.title.length > 8) {
+                                                    "${todo.title.substring(0, 8)}..."
+                                                } else {
+                                                    todo.title
+                                                }
+
                                                 view.setBackgroundColor(color)
-                                                view.text = todo.title
+                                                view.text = displaytitle
                                                 view.setTextColor(Color.WHITE)
 
                                                 // 일정을 클릭하면 해당 일정으로 이동
@@ -270,8 +284,15 @@ class TimeTableFragment : Fragment() {
                                             val hasSchedule =
                                                 checkScheduleForTime(todoList, dayOfWeek, hour)
                                             if (hasSchedule) {
+                                                // title이 8자리를 넘어가면 "..."으로 표시
+                                                val displaytitle = if (todo.title.length > 8) {
+                                                    "${todo.title.substring(0, 8)}..."
+                                                } else {
+                                                    todo.title
+                                                }
+
                                                 view.setBackgroundColor(color)
-                                                view.text = todo.title
+                                                view.text = displaytitle
                                                 view.setTextColor(Color.WHITE)
 
                                                 // 일정을 클릭하면 해당 일정으로 이동

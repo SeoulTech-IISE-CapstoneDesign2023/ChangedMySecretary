@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_map_24)
             } else{
                 tab.text = "공유"
-                tab.icon = AppCompatResources.getDrawable(this, R.drawable.timetable)
+                tab.icon = AppCompatResources.getDrawable(this, com.google.android.material.R.drawable.material_ic_calendar_black_24dp)
             }
         }.attach()
     }
