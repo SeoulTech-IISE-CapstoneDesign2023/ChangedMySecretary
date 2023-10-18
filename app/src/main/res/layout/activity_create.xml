@@ -34,12 +34,9 @@
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/titleEditText"
         android:layout_width="wrap_content"
-        android:padding="4dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="45dp"
-        android:gravity="center"
-        android:background="@drawable/textview_background"
+        android:layout_marginTop="35dp"
         android:hint="추억의 이름을 정해주세요" />
 
     <com.google.android.material.chip.Chip
@@ -49,7 +46,7 @@
         android:layout_height="wrap_content"
         android:text="@string/start_to_arrive"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="78dp"
+        android:layout_marginTop="80dp"
         app:chipIcon="@drawable/baseline_place_24" />
 
     <View

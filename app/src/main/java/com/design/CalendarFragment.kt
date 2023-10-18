@@ -75,9 +75,9 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
             user = FirebaseAuth.getInstance().currentUser?.uid.toString()
             // calendar custom
             calendarView.addDecorators(
-                com.design.calendar.SundayDecorator(),      // 일요일 빨간 글씨
-                com.design.calendar.OneDayDecorator(),      // 오늘 날짜 색 다르게
-                com.design.calendar.MySelectorDecorator(
+                SundayDecorator(),      // 일요일 빨간 글씨
+                OneDayDecorator(),      // 오늘 날짜 색 다르게
+                MySelectorDecorator(
                     requireActivity()
                 )   // 선택한 날짜
             )
@@ -106,6 +106,9 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
             todayView.setOnClickListener {
                 // 오늘 날짜로 CalendarView를 설정
                 calendarView.currentDate = CalendarDay.today()
+                calendarView.clearSelection()
+                calendarView.selectedDate = CalendarDay.today()
+                clickedDate(todayStr)
             }
         }
 
@@ -148,6 +151,12 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
                     }
                     todoList.sortBy { it.stTime }
                     adapter.notifyDataSetChanged()
+                    // 데이터를 받아온 후에 데이터가 비어 있는지 확인
+                    if (todoList.isEmpty()) {
+                        binding?.emptyTextView?.visibility = View.VISIBLE // 데이터가 비어 있으면 표시
+                    } else {
+                        binding?.emptyTextView?.visibility = View.GONE // 데이터가 있으면 숨김
+                    }
                 }
             })
     }
@@ -163,7 +172,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
     override fun onShortClick(position: Int) {
         Log.d("TimetableFragment", "$todoList")
         val todo = todoList[position] // 선택한 위치의 Todo객체를 가져옴
-        val todoKey = todoKeys[position]
+        val todoKey = todoList[position].todoId
         val startDate = todoList[position].stDate
         //Fragment로 데이터 전송
         val bundle = Bundle()

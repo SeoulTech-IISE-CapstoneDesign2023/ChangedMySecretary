@@ -9,8 +9,8 @@ import com.google.firebase.ktx.Firebase
 
 class TodoDataProvider(private val callback: Callback) {
 
-    fun getTodoData(startDate: String?, todoKey: String) {
-        val splitDateArr = splitDate(startDate!!)
+    fun getTodoData(startDate: String, todoKey: String) {
+        val splitDateArr = splitDate(startDate)
         val year = splitDateArr[0].trim()
         val month = splitDateArr[1].trim()
         val day = splitDateArr[2].trim()

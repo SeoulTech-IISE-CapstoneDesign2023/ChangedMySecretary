@@ -19,8 +19,7 @@ class TodoListAdapter(
 ) : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemTodoBinding.inflate(LayoutInflater.from(parent.context))
-        return ViewHolder(binding)
+        return ViewHolder(ItemTodoBinding.inflate(LayoutInflater.from(parent.context),parent,false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -49,7 +48,7 @@ class TodoListAdapter(
         val root = binding.root
         fun setTodoListUI(todo: Todo, position: Int) {
             binding.todoTextView.text = todo.title
-            binding.dateTextView.text = todo.stDate + todo.stTime
+            binding.dateTextView.text = "${todo.stDate} ${todo.stTime}"
             binding.importanceView.apply {
                 if (todo.importance == false) {
                     setImageResource(R.drawable.baseline_gray_star_24)

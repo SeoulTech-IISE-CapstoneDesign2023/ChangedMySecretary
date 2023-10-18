@@ -31,6 +31,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.design.adapter.RouteAdapter
+import com.design.calendar.MySelectorDecorator
+import com.design.calendar.OneDayDecorator
+import com.design.calendar.SundayDecorator
 import com.design.model.route.PublicTransitRoute
 import com.design.model.route.SubPath
 import com.design.databinding.ActivityCreateBinding
@@ -182,8 +185,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var editTextLength = 0
     private var isTimeChange = false
     private var importance = false
-    private var previousMemo = ""
-    private var changedMemo = ""
+
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -285,7 +287,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             this@CreateActivity.stTime = stTime
             this@CreateActivity.enDate = enDate!!
             this@CreateActivity.enTime = enTime!!
-            this@CreateActivity.memo = memo.toString()
+            this@CreateActivity.memo = memo!!
             this@CreateActivity.startPlace = startPlace.toString()
             this@CreateActivity.arrivalPlace = arrivePlace.toString()
             this@CreateActivity.notificationId = notificationId
@@ -307,7 +309,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             // Todo의 제목
             titleEditText.setText(title)
             //locatinoChip text 설정
-            binding.locationChip.text = if (startPlace.isEmpty() || arrivalPlace.isEmpty()) {
+            locationChip.text = if (startPlace.isEmpty() || arrivalPlace.isEmpty()) {
                 "추억의 장소를 지정해주세요."
             } else {
                 getString(R.string.start_to_arrive, startPlace, arrivalPlace)
@@ -325,10 +327,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 startEditText.setText(startPlace)
                 arrivalEditText.setText(arrivalPlace)
             }
-
-
             // 메모장
-//           binding.memoEditText.text = memo
+            binding.memoEditText.setText(memo)
         }
     }
 
@@ -429,7 +429,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         //list에서 일정 하나 선택했을 때 내용 수정
-        val startDate = intent.getStringExtra("startDate") // "yyyy/MM/dd" 형식으로 받음
+        val startDate = intent.getStringExtra("startDate")
         val todoKey = intent.getStringExtra("todoKey")
         // 기존의 Todo를 수정하는 경우, 일정 시작 날짜와 일정 키 값으로 provider 받아옴
         if (startDate != null && todoKey != null) {
@@ -479,6 +479,17 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
+        binding.titleEditText.setOnClickListener {
+            //완전 펴져있으면은 접어버림 아니면은 닫아버림
+            imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
+            mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            if (dateBottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                dateBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            } else {
+                dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
         binding.locationChip.setOnClickListener {
             dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
@@ -499,15 +510,15 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 )
                 Toast.makeText(this, "추억의 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
-            // 일정 시작시간이 종료시간보다 늦을 경우 일정 생성 불가 토스트
-            else if (!checkDate()) {
+            // 제목이 30자가 넘어갈 경우 일정 생성 불가 토스트
+            else if (binding.titleEditText.text.toString().length > 31) {
                 binding.createButton.background = AppCompatResources.getDrawable(
                     this@CreateActivity, R.drawable.baseline_check_gray_24
                 )
-                Toast.makeText(this, "시작시간은 종료시간보다 늦을 수 없습니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "추억의 제목은 30자까지만 입력해주세요", Toast.LENGTH_SHORT).show()
             }
             // 메모장 텍스트 100자 넘어가면 일정 생성 불가 토스트
-            else if (editTextLength > 100) {
+            else if (binding.memoEditText.text.toString().length > 100) {
                 binding.createButton.background = AppCompatResources.getDrawable(
                     this@CreateActivity, R.drawable.baseline_check_gray_24
                 )
@@ -559,6 +570,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
 
         binding.dateBottomSheetLayout.apply {
+            calendarView.addDecorators(
+                SundayDecorator(),      // 일요일 빨간 글씨
+                OneDayDecorator(),     // 오늘 날짜 색 다르게
+                MySelectorDecorator(this@CreateActivity)   // 선택한 날짜
+            )
             endDateTextView.setOnClickListener {
                 setDate(1)
             }
@@ -597,15 +613,16 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 startDateTextView.text = "$todayText ($todayOfWeek)"
                 // CalendarView에서 오늘 날짜로 설정
                 calendarView.currentDate = CalendarDay.today()
-
+                calendarView.clearSelection()
+                calendarView.selectedDate = CalendarDay.today()
             })
             // 확인 선택 시
             okButton.setOnClickListener {
                 if (!checkDate()) {
+                    // 일정 종료 시간이 시작 시간보다 빠를 경우 다시 설정
                     binding.dateBottomSheetLayout.endDateTextView.text = "추억의 끝을 다시 입력해 주세요"
                     binding.dateBottomSheetLayout.endTimeText.text = "00:00"
                     endTime = ""
-//                    Toast.makeText(this, "종료 시간이 시작 시간보다 빠를 수 없습니다", Toast.LENGTH_SHORT).show()
                 } else {
                     dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     binding.dateTextView.text = "${startDateTextView.text}, ${startTimeText.text}"
@@ -765,21 +782,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, message)
     }
 
-//    private fun initializeEditMode(todo: Todo) {
-//        // 기존의 Todo를 수정하는 경우, 해당 Todo의 정보를 사용하여 화면을 초기화
-//        isEditMode = true  // 기존 Todo를 수정하는 편집 모드임을 나타냄
-//        binding.dateTextView.text = "${todo.stDate}, ${todo.stTime}"
-//        // Todo의 제목
-//        binding.titleEditText.setText(todo.title)
-//        // 시작 날짜 및 시간
-//        binding.dateBottomSheetLayout.startDateTextView.text = todo.stDate
-//        binding.dateBottomSheetLayout.startTimeText.text = todo.stTime
-//        // 도착 날짜 및 시간
-//        binding.dateBottomSheetLayout.endDateTextView.text = todo.enDate
-//        binding.dateBottomSheetLayout.endTimeText.text = todo.enTime
-//
-//    }
-
     private fun initializeCreateMode(startDate: String?) {
         // 새로운 일정을 생성하는 경우, 화면을 초기화하는 작업 수행
         binding.titleEditText.setText(if (title != "") title else "")
@@ -835,7 +837,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun setDate(separator: Int) {
-//        datePicker.show(supportFragmentManager, "datePickerDialog")
         datePicker.addOnPositiveButtonClickListener {
             val calendar = Calendar.getInstance()
             val selectedDate = Date(datePicker.selection!!)
@@ -891,7 +892,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val stTime = binding.dateBottomSheetLayout.startTimeText.text.toString()
         val enDate = binding.dateBottomSheetLayout.endDateTextView.text.toString()
         val enTime = binding.dateBottomSheetLayout.endTimeText.text.toString()
-        val memo = binding.memoEditText.toString()
+        val memo = binding.memoEditText.text.toString()
         val todoId = todoId
         val check = splitDate(stDate)
         val clickedYear = check[0].trim()

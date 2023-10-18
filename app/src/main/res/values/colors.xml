@@ -6,4 +6,6 @@
     <color name="ready">#E10808</color>
     <color name="gray">#D9D9D9</color>
     <color name="select">#CBB8EE</color>
+    <color name="purple">#673AB7</color>
+
 </resources>

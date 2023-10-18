@@ -20,11 +20,11 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/todayView"
-        android:layout_width="36dp"
+        android:layout_width="45dp"
         android:layout_height="36dp"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="15dp"
-        android:background="@android:drawable/ic_menu_today"
+        android:layout_marginTop="13dp"
+        android:src="@drawable/today"
         app:layout_constraintStart_toStartOf="@+id/calendarView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,6 +39,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendarView" />
+
+    <TextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="추억이 아직 없습니다. 새로운 추억을 만들어봐요"
+        android:textSize="50pt"
+        android:textColor="@color/purple"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/calendarView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
