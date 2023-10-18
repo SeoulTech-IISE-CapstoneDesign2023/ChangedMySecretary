@@ -158,7 +158,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var endX = 0.0
     private var endY = 0.0
     private var type: String? = null
-    private var notificationId: String? = null
+    private var notificationId: String? = "0"
     private var oldNotificationId: String? = null
     private var alarmData = mutableMapOf<String, Any>()
     private lateinit var user: String
@@ -180,6 +180,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var startTimeToString = "" //약속시간을 저장하는 변수
     private var arrivalTimeToString = "" //약속시간을 저장하는 변수
     private var editTextLength = 0
+    private var isTimeChange = false
+    private var importance = false
     private var previousMemo = ""
     private var changedMemo = ""
 
@@ -253,7 +255,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         map.locationSource = locationSource
         binding.mapBottomSheetLayout.locationButton.map = map
 
-        if(startX != 0.0){
+        if (startX != 0.0) {
             startMarker.apply {
                 position = LatLng(startY, startX)
                 captionText = "출발지"
@@ -286,6 +288,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             this@CreateActivity.memo = memo.toString()
             this@CreateActivity.startPlace = startPlace.toString()
             this@CreateActivity.arrivalPlace = arrivePlace.toString()
+            this@CreateActivity.notificationId = notificationId
+            this@CreateActivity.importance = importance ?: false
             oldNotificationId = notificationId //이부분에서 notificationId를 가져와 기존의 알람정보를 얻어올수 있음
             startX = startLng!!
             startY = startLat!!
@@ -303,8 +307,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             // Todo의 제목
             titleEditText.setText(title)
             //locatinoChip text 설정
-            binding.locationChip.text =
+            binding.locationChip.text = if (startPlace.isEmpty() || arrivalPlace.isEmpty()) {
+                "추억의 장소를 지정해주세요."
+            } else {
                 getString(R.string.start_to_arrive, startPlace, arrivalPlace)
+            }
             with(dateBottomSheetLayout) {
                 // 시작 날짜 및 시간
                 startDateTextView.text = stDate
@@ -508,13 +515,26 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             } else {
                 if (isEditMode) {
                     Log.d("create", "initailize edit mode")
-                    //수정하러왔다가 그냥 다시 ok누를때
-                    if(notificationId == null){
+
+                    if (notificationId == "0") {//애초에 알람을 설정하지 않았을때
+
                         notificationId = oldNotificationId
                         Log.e("bb", notificationId.toString())
                         updateTodo(todoKey!!, todo!!)
-                    }else {
+                    } else {//수정하러왔다가 그냥 다시 ok누를때
+                        //만약 날짜만 바꿨다면?
+
+                        if (isTimeChange) {
+                            if (notificationId == oldNotificationId) {//출발 날짜가 변경되었는데 notificationid가 old와 동일하다면
+                                ////근데 여기서 문제 단순히 날짜만 바꿔버리게 되면은 알람 시간도 바뀌게 되기에 한번 업데이트를 해달라고 요청을 하자
+                                Toast.makeText(this, "길찾기를 한번 진행해주세요.", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+                        }
+
                         //기존의 alarm을 삭제
+
+                        Log.e("aa", oldNotificationId.toString())
                         FirebaseUtil.alarmDataBase.child(oldNotificationId!!).removeValue()
                         AlarmUtil.deleteAlarm(oldNotificationId!!.toInt(), this)
                         //기존의 todo를 수정
@@ -526,7 +546,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 } else {
                     Log.d("create", "initailize create mode")
                     // 새로운 Todo를 생성하는 경우
-                    if (notificationId != null) {//알람을 설정할때
+                    if (notificationId != "0") {//알람을 설정할때
                         usingAlarm = true
                         createAlarm()
                     }
@@ -560,6 +580,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 val dateText = "${year}년 ${formattedMonth}월 ${formattedDayOfMonth}일"
                 startDateTextView.text = "$dateText ($dayOfWeek)"
                 startTime = "$dateText $timeString"
+
             }
             // 현재 날짜 적용 선택 시
             currentTimeButton.setOnClickListener(View.OnClickListener {
@@ -576,6 +597,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 startDateTextView.text = "$todayText ($todayOfWeek)"
                 // CalendarView에서 오늘 날짜로 설정
                 calendarView.currentDate = CalendarDay.today()
+
             })
             // 확인 선택 시
             okButton.setOnClickListener {
@@ -587,6 +609,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 } else {
                     dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     binding.dateTextView.text = "${startDateTextView.text}, ${startTimeText.text}"
+                    isTimeChange = true
                 }
             }
         }
@@ -655,8 +678,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             walkButton.setOnClickListener {
                 if (checkPlace()) return@setOnClickListener
                 val startTime = binding.dateTextView.text.toString()
-                if(startTime =="추억의 시간을 지정해주세요"){
-                    Toast.makeText(this@CreateActivity,"시간을 먼저 정해주세요.",Toast.LENGTH_SHORT).show()
+                if (startTime == "추억의 시간을 지정해주세요") {
+                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 type = Type.WALK
                 Toast.makeText(this@CreateActivity, "이동수단 : 걷기", Toast.LENGTH_SHORT).show()
@@ -676,8 +699,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 type = Type.CAR
                 Toast.makeText(this@CreateActivity, "이동수단 : 자동차", Toast.LENGTH_SHORT).show()
                 val startTime = binding.dateTextView.text.toString()
-                if(startTime =="추억의 시간을 지정해주세요"){
-                    Toast.makeText(this@CreateActivity,"시간을 먼저 정해주세요.",Toast.LENGTH_SHORT).show()
+                if (startTime == "추억의 시간을 지정해주세요") {
+                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 val isoDateTime = TimeUtil.convertToISODateTime(startTime)
                 val body = CarRouteRequest(
@@ -703,8 +726,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 if (checkPlace()) return@setOnClickListener
                 Toast.makeText(this@CreateActivity, "이동수단 : 대중교통", Toast.LENGTH_SHORT).show()
                 val startTime = binding.dateTextView.text.toString()
-                if(startTime =="추억의 시간을 지정해주세요"){
-                    Toast.makeText(this@CreateActivity,"시간을 먼저 정해주세요.",Toast.LENGTH_SHORT).show()
+                if (startTime == "추억의 시간을 지정해주세요") {
+                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 routeProvider.getRoute(startX, startY, endX, endY)
             }
@@ -892,6 +915,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 arrivalLat = endY,
                 arrivalLng = endX,
                 usingAlarm = usingAlarm,
+                importance = false
             )
 
         val todoRef = Firebase.database.reference.child(DB_CALENDAR)
@@ -948,6 +972,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         todoUpdates["arrivalLat"] = endY
         todoUpdates["usingAlarm"] = usingAlarm
         todoUpdates["notificationId"] = notificationId!!
+        todoUpdates["importance"] = importance
+
 
         // 변경된 일정 시작 날짜
         val newStartDate = todoUpdates["stDate"].toString()
