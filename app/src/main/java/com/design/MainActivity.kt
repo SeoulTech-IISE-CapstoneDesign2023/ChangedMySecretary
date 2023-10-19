@@ -4,11 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.drawerlayout.widget.DrawerLayout
 import com.design.Friend.FriendListActivity
 import com.design.adapter.ViewPagerAdapter
 import com.design.databinding.ActivityMainBinding
+import com.design.databinding.HeaderBinding
 import com.design.util.FirebaseUtil
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
@@ -26,6 +28,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var headerBinding: HeaderBinding
     private lateinit var auth: FirebaseAuth
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
     private var fullDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
@@ -37,8 +40,35 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // NavigationView에서 설정한 header 레이아웃을 참조
+        val headerView = binding.navView.getHeaderView(0)
+
+        // HeaderBinding을 사용하여 헤더 부분 초기화
+        headerBinding = HeaderBinding.bind(headerView)
+
         initViewPager()
         setNotificationButton()
+
+        auth = Firebase.auth
+        val user = auth.currentUser
+
+        // 사용자 이름 및 기타 정보 설정
+        val userData = FirebaseDatabase.getInstance().getReference("user")
+        userData.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    if (user?.uid == snapshot.key) {
+                        val nicknameValue = snapshot.child("user_info").child("nickname").value
+                            .toString()
+                        headerBinding.userNameText.text = nicknameValue
+                    } else continue
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+        headerBinding.otherInfoText.text = "님 안녕하세요!"
 
         binding.AppCompatImageView.setOnClickListener {
             val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -67,8 +97,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        auth = Firebase.auth
-        val user = auth.currentUser
 
         Log.d("my_log","${user?.email}")
 
