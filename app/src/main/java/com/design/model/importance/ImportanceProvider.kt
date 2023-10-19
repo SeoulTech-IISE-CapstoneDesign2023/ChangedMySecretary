@@ -6,6 +6,7 @@ class ImportanceProvider(private val callback: Callback) {
     fun getImportanceData(){
         FirebaseUtil.importanceDataBase.get()
             .addOnSuccessListener {
+                if(it.value == null) return@addOnSuccessListener
                 val data = it.value as Map<String,Any>
                 val dataList = data.values.toList()
                 val importanceList = dataList.map { item ->

@@ -360,7 +360,7 @@ class TimeTableFragment : Fragment() {
                 val endDate = todo.enDate
 
                 // startTime 또는 endTime이 null인지 확인
-                if (endDate == null || endTime == null) {
+                if (endDate == "" || endTime == "") {
                     continue // startTime 또는 endTime이 null이면 다음 todo로 이동
                 }
 
