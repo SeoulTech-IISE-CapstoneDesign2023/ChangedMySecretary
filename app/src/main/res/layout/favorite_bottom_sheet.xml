@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_background"
+    app:behavior_expandedOffset="300dp"
     app:behavior_fitToContents="false"
     app:behavior_hideable="false"
-    app:behavior_expandedOffset="300dp"
     app:behavior_peekHeight="50dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -28,6 +28,21 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="25dp"
         android:text="추억의 장소"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="5dp"
+        android:textSize="16sp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:text="추억의 장소가 없어요.\n 추억의 일정의 별을 눌러서 추가하세요."
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

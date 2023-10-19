@@ -1,9 +1,9 @@
 package com.design.model.importance
 
 data class Importance(
-    val endY : Double,
-    val endX : Double,
-    val place : String,
-    val title : String,
-    val todoId : String
+    val endY : String? = null,
+    val endX : String? = null,
+    val place : String? = null,
+    val title : String? = null,
+    val todoId : String? = null
 )

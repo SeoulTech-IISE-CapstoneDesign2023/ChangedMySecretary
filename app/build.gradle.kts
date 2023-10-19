@@ -10,7 +10,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.fastcampus.part3.design"
+        applicationId = "com.design"
         minSdk = 30
         targetSdk = 33
         versionCode = 1
