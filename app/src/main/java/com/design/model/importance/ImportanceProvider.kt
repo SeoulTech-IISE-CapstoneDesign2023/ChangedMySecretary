@@ -11,8 +11,8 @@ class ImportanceProvider(private val callback: Callback) {
                 val importanceList = dataList.map { item ->
                     val itemData = item as Map<String, Any>
                     Importance(
-                        endY = itemData["endY"] as Double? ?: 0.0,
-                        endX = itemData["endX"] as Double? ?: 0.0,
+                        endY = (itemData["endY"] as Any).toString() ?: "0.0",
+                        endX = (itemData["endX"] as Any).toString() ?: "0.0",
                         place = itemData["place"] as String,
                         title = itemData["title"] as String,
                         todoId = itemData["todoId"] as String

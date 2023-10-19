@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.design.adapter.FavoriteListAdapter
@@ -26,6 +27,9 @@ import com.design.model.location.LocationAdapter
 import com.design.model.location.LocationProvider
 import com.design.util.FirebaseUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -37,17 +41,20 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import java.util.Random
 
-class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback, ImportanceProvider.Callback {
+class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
+    ImportanceProvider.Callback {
     private var binding: FragmentMapBinding? = null
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var locationAdapter: LocationAdapter
-    private lateinit var favoriteAdapter : FavoriteListAdapter
+    private lateinit var favoriteAdapter: FavoriteListAdapter
     private val handler = Handler(Looper.getMainLooper())
     private val locationProvider = LocationProvider(this)
     private val importanceProvider = ImportanceProvider(this)
     private val random = Random()
+    private val favoriteList = mutableListOf<Importance>()
+    private val markerList = mutableListOf<Marker>()
 
 
     override fun onCreateView(
@@ -68,7 +75,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback, I
             mapView.onCreate(savedInstanceState)
             mapView.getMapAsync(this)
 
-            val favoriteBottomBehavior = BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
+            val favoriteBottomBehavior =
+                BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
 
             initBottomSheet(binding)
             initAdapter(binding)
@@ -83,42 +91,50 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback, I
                 handler.postDelayed(runnable, 300)
             }
             initChip(binding)
+            updateBottomSheetRecyclerView()
         }
 
     }
 
     private fun initChip(binding: FragmentMapBinding) {
-        val favoriteBottomBehavior = BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
+        val favoriteBottomBehavior =
+            BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
         binding.chip.setOnClickListener {
             FirebaseUtil.importanceDataBase.get()
                 .addOnSuccessListener {
-                    val data = it.value as Map<String,Any>
+                    val data = it.value as Map<String, Any>
                     val dataList = data.values.toList()
                     val importanceList = dataList.map { item ->
                         val itemData = item as Map<String, Any>
                         Importance(
-                            endY = itemData["endY"] as Double? ?: 0.0,
-                            endX = itemData["endX"] as Double? ?: 0.0,
+                            endY = (itemData["endY"] as Any).toString() ?: "0.0",
+                            endX = (itemData["endX"] as Any).toString() ?: "0.0",
                             place = itemData["place"] as String,
                             title = itemData["title"] as String,
                             todoId = itemData["todoId"] as String
                         )
                     }
                     importanceList.forEach { data ->
-                        if(data.endY != 0.0){
+                        if (data.endY != "0") {
                             val red = random.nextInt(256) // 0부터 255 사이의 랜덤 값
                             val green = random.nextInt(256)
                             val blue = random.nextInt(256)
                             Marker().apply {
-                                position = LatLng(data.endY, data.endX)
-                                captionText = data.title
+                                position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
+                                captionText = data.title!!
                                 iconTintColor = Color.rgb(red, green, blue)//random한 색깔
                                 map = naverMap
+                                markerList.add(this)
                             }
                         }
                     }
-                    val lastData = importanceList.findLast { importance -> importance.endY != 0.0 }
-                    val cameraUpdate = CameraUpdate.scrollTo(LatLng(lastData?.endY ?: 0.0, lastData?.endX ?: 0.0))
+                    val lastData = importanceList.findLast { importance -> importance.endY != "0" }
+                    val cameraUpdate = CameraUpdate.scrollTo(
+                        LatLng(
+                            lastData?.endY?.toDouble() ?: return@addOnSuccessListener,
+                            lastData?.endX?.toDouble() ?: 0.0
+                        )
+                    )
                     cameraUpdate.animate(CameraAnimation.Fly, 500)
                     naverMap.moveCamera(cameraUpdate)
                     favoriteBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
@@ -129,7 +145,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback, I
 
     private fun initBottomSheet(binding: FragmentMapBinding) {
         val searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetyLayout.root)
-        val favoriteBottomBehavior = BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
+        val favoriteBottomBehavior =
+            BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         favoriteBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         binding.searchButton.setOnClickListener {
@@ -146,7 +163,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback, I
     }
 
     private fun initAdapter(binding: FragmentMapBinding) {
-        val favoriteBottomBehavior = BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
+        val favoriteBottomBehavior =
+            BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
         locationAdapter = LocationAdapter {
             val name = it.name
             val lat = it.frontLat.toDouble()
@@ -167,11 +185,73 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback, I
         }
 
         favoriteAdapter = FavoriteListAdapter { data ->
-            val cameraUpdate = CameraUpdate.scrollTo(LatLng(data.endY ?: 0.0, data?.endX ?: 0.0))
+            val cameraUpdate = CameraUpdate.scrollTo(
+                LatLng(
+                    data.endY?.toDouble() ?: 0.0,
+                    data?.endX?.toDouble() ?: 0.0
+                )
+            )
             cameraUpdate.animate(CameraAnimation.Fly, 500)
             naverMap.moveCamera(cameraUpdate)
             favoriteBottomBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+    }
+
+    private fun updateBottomSheetRecyclerView() {
+        FirebaseUtil.importanceDataBase.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val data = snapshot.value as Map<*, *>
+                val importanceItem = Importance(
+                    endY = (data["endY"] as Any).toString(),
+                    endX = (data["endX"] as Any).toString(),
+                    place = data["place"] as String?,
+                    title = data["title"] as String?,
+                    todoId = data["todoId"] as String?
+                )
+                favoriteList.add(importanceItem)
+                favoriteAdapter.apply {
+                    submitList(favoriteList)
+                    notifyDataSetChanged()
+                }
+                binding?.favoriteBottomSheetLayout?.emptyTextView?.isVisible =
+                    favoriteAdapter.itemCount == 0
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                val data = snapshot.value as Map<*, *>
+                val importanceItem = Importance(
+                    endY = (data["endY"] as Any).toString(),
+                    endX = (data["endX"] as Any).toString(),
+                    place = data["place"] as String?,
+                    title = data["title"] as String?,
+                    todoId = data["todoId"] as String?
+                )
+                favoriteList.remove(importanceItem)
+                favoriteAdapter.notifyDataSetChanged()
+                binding?.favoriteBottomSheetLayout?.emptyTextView?.isVisible =
+                    favoriteAdapter.itemCount == 0
+
+                markerList.forEach { marker ->
+                    if(marker.captionText == importanceItem.title){
+                        marker.map = null
+                        markerList.remove(marker)
+                    }
+                }
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 
     override fun onStart() {

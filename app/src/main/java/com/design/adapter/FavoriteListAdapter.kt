@@ -2,6 +2,7 @@ package com.design.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,9 @@ class FavoriteListAdapter(private val onClick : (Importance) -> Unit) : ListAdap
         fun bind(item: Importance) {
             binding.titleTextView.text = item.title
             binding.addressTextView.text = item.place
+            if(item.endY =="0"){
+                binding.arrowImageView.isVisible = false
+            }
             binding.arrowImageView.setOnClickListener {
                 onClick(item)
             }
