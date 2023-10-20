@@ -73,9 +73,9 @@ class LoginActivity  : AppCompatActivity(){
 //                                Firebase.database(DB_URL).reference.child(DB_USERS).child(userId)
 //                                    .child(DB_USER_INFO).updateChildren(user)
 //
-                                val intent = Intent(this, MainActivity::class.java)
-                                startActivity(intent)
-//                                finish()
+                            val intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
 //                            }
                         } else {
                             binding.inputPW.text?.clear()

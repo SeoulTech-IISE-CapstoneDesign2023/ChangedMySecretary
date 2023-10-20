@@ -4,12 +4,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.drawerlayout.widget.DrawerLayout
 import com.design.Friend.FriendListActivity
 import com.design.adapter.ViewPagerAdapter
 import com.design.databinding.ActivityMainBinding
-import com.design.util.FirebaseUtil
+import com.design.databinding.HeaderBinding
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -25,7 +28,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var backPressedCallback: OnBackPressedCallback
     private lateinit var binding: ActivityMainBinding
+    private lateinit var headerBinding: HeaderBinding
     private lateinit var auth: FirebaseAuth
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
     private var fullDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
@@ -37,8 +42,54 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // NavigationView에서 설정한 header 레이아웃을 참조
+        val headerView = binding.navView.getHeaderView(0)
+
+        // HeaderBinding을 사용하여 헤더 부분 초기화
+        headerBinding = HeaderBinding.bind(headerView)
+
         initViewPager()
         setNotificationButton()
+
+        // 뒤로가기 콜백 초기화
+        backPressedCallback = object : OnBackPressedCallback(true) {
+            var waitTime = 0L
+            override fun handleOnBackPressed() {
+                // 로그인이 완료된 경우 메인화면의 뒤로가기 -> 앱 종료
+                if (auth.currentUser != null && auth.currentUser?.isEmailVerified == true) {
+                    if (System.currentTimeMillis() - waitTime >= 1500) {
+                        waitTime = System.currentTimeMillis()
+                        Toast.makeText(baseContext, "뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        finishAffinity()
+                    }
+                }
+            }
+        }
+        // 뒤로가기 콜백 활성화
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
+        auth = Firebase.auth
+        val user = auth.currentUser
+
+        // 사용자 이름 및 기타 정보 설정
+        val userData = FirebaseDatabase.getInstance().getReference("user")
+        userData.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    if (user?.uid == snapshot.key) {
+                        val nicknameValue = snapshot.child("user_info").child("nickname").value
+                            .toString()
+                        headerBinding.userNameText.text = nicknameValue
+                    } else continue
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+        headerBinding.otherInfoText.text = "님 안녕하세요!"
 
         binding.AppCompatImageView.setOnClickListener {
             val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -58,8 +109,13 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menuitem2 -> {
-                    // 메뉴 항목 2을 클릭한 경우 처리할 코드
-                    // 예: 다른 화면으로 이동
+                    val intent =
+                        Intent(this, ManageActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menuitem3 -> {
+                    showLogoutConfirmationDialog()
                     true
                 }
                 // 다른 메뉴 항목에 대한 처리 추가
@@ -67,8 +123,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        auth = Firebase.auth
-        val user = auth.currentUser
 
         Log.d("my_log","${user?.email}")
 
@@ -121,6 +175,28 @@ class MainActivity : AppCompatActivity() {
             saveDate()
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        auth = Firebase.auth
+        val user = auth.currentUser
+        // 사용자 이름 및 기타 정보 설정
+        val userData = FirebaseDatabase.getInstance().getReference("user")
+        userData.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    if (user?.uid == snapshot.key) {
+                        val nicknameValue = snapshot.child("user_info").child("nickname").value
+                            .toString()
+                        headerBinding.userNameText.text = nicknameValue
+                    } else continue
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
     }
 
     private fun setNotificationButton() {
@@ -184,6 +260,26 @@ class MainActivity : AppCompatActivity() {
             Calendar.SATURDAY -> "토"
             else -> ""
         }
+    }
+
+    private fun showLogoutConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("로그아웃")
+            .setMessage("로그아웃 하시겠습니까?")
+            .setPositiveButton("예") { dialog, which ->
+                FirebaseAuth.getInstance().signOut()
+                finish()
+                val intent =
+                    Intent(this, IntroActivity::class.java)
+                startActivity(intent)
+                // 로그아웃 완료 메시지 또는 원하는 작업을 수행하세요.
+                Toast.makeText(this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("아니오") { dialog, which ->
+                // 아무 작업도 수행하지 않고 대화 상자를 닫습니다.
+                dialog.dismiss()
+            }
+            .show()
     }
 
 }
