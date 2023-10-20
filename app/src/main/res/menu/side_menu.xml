@@ -5,5 +5,10 @@
         android:title="친구" />
     <item
         android:id="@+id/menuitem2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="계정 관리" />
+    <item
+        android:id="@+id/menuitem3"
         android:title="로그아웃" />
 </menu>

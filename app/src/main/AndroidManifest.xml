@@ -21,6 +21,9 @@
         android:theme="@style/Theme.Design"
         tools:targetApi="31">
         <activity
+            android:name=".ManageActivity"
+            android:exported="false" />
+        <activity
             android:name=".IntroActivity"
             android:exported="false" />
         <activity
@@ -39,9 +42,10 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-        <activity android:name="com.design.AlarmActivity" />
+        <activity android:name=".AlarmActivity" />
 
         <service android:name=".alarm.UpdateRouteService" />
+
         <activity
             android:name=".Friend.ManageFriendActivity"
             android:exported="false" />

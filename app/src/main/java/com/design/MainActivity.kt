@@ -13,7 +13,6 @@ import com.design.Friend.FriendListActivity
 import com.design.adapter.ViewPagerAdapter
 import com.design.databinding.ActivityMainBinding
 import com.design.databinding.HeaderBinding
-import com.design.util.FirebaseUtil
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -110,6 +109,12 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menuitem2 -> {
+                    val intent =
+                        Intent(this, ManageActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menuitem3 -> {
                     showLogoutConfirmationDialog()
                     true
                 }
@@ -170,6 +175,28 @@ class MainActivity : AppCompatActivity() {
             saveDate()
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        auth = Firebase.auth
+        val user = auth.currentUser
+        // 사용자 이름 및 기타 정보 설정
+        val userData = FirebaseDatabase.getInstance().getReference("user")
+        userData.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    if (user?.uid == snapshot.key) {
+                        val nicknameValue = snapshot.child("user_info").child("nickname").value
+                            .toString()
+                        headerBinding.userNameText.text = nicknameValue
+                    } else continue
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
     }
 
     private fun setNotificationButton() {

@@ -96,7 +96,8 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textSmallGuide">
+        app:layout_constraintTop_toBottomOf="@+id/textSmallGuide"
+        tools:visibility="gone">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/TextInputLayout"
@@ -206,7 +207,8 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textSmallGuide">
+        app:layout_constraintTop_toBottomOf="@+id/textSmallGuide"
+        tools:visibility="visible">
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
