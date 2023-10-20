@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_background"
-    app:behavior_expandedOffset="150dp"
+    app:behavior_expandedOffset="120dp"
     app:behavior_fitToContents="false"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">

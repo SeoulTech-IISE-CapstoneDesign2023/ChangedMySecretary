@@ -24,6 +24,7 @@ import com.design.calendar.SundayDecorator
 import com.design.model.Todo
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -187,7 +188,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
     }
 
     override fun onLongClick(position: Int) {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("추억 삭제")
             .setMessage("추억을 삭제하시겠습니까?")
             .setPositiveButton("Yes",

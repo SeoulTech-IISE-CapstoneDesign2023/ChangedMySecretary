@@ -14,10 +14,13 @@ class FavoriteListAdapter(private val onClick : (Importance) -> Unit) : ListAdap
     inner class ViewHolder(private val binding: ItemFavoriteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Importance) {
             binding.titleTextView.text = item.title
-            binding.addressTextView.text = item.place
+
+            binding.addressTextView.text =
+                if(item.place == "") "추억의 장소는 없습니다." else item.place
             if(item.endY =="0"){
                 binding.arrowImageView.isVisible = false
             }
+
             binding.arrowImageView.setOnClickListener {
                 onClick(item)
             }

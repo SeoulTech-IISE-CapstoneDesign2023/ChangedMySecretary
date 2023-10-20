@@ -717,7 +717,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 Toast.makeText(this@CreateActivity, "이동수단 : 자동차", Toast.LENGTH_SHORT).show()
                 val startTime = binding.dateTextView.text.toString()
                 if (startTime == "추억의 시간을 지정해주세요") {
-                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateActivity, "출발시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
                 val isoDateTime = TimeUtil.convertToISODateTime(startTime)
                 val body = CarRouteRequest(

@@ -1,6 +1,7 @@
 package com.design.util
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.AlertDialog
@@ -17,6 +18,7 @@ import androidx.core.content.ContextCompat
 import com.design.util.Key.Companion.NOTIFICATION_ID
 import com.design.alarm.NotificationReceiver
 import com.design.alarm.UpdateRouteService
+import java.text.SimpleDateFormat
 import java.util.Calendar
 
 object AlarmUtil {
@@ -60,6 +62,7 @@ object AlarmUtil {
             .show()
     }
 
+    @SuppressLint("SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.S)
     fun createAlarm(dateTime: String, context: Context, message: String) {
         val year = dateTime.substring(0, 4).toInt()
@@ -69,6 +72,11 @@ object AlarmUtil {
         val minute = dateTime.substring(10, 12).toInt()
         Log.e("scheduleNotification", "$year $month $day $hour $minute")
 
+        //여기서 준비시간을 가져와서 그만큼의 시간을 빼주고 알람을 넣어주어야한다.
+        val readyTime = TimeUtil.getReadyTime(context) //00:00 형태이다.
+        val readyHour = readyTime.substring(0,2).toInt()
+        val readyMinute = readyTime.substring(3,5).toInt()
+
         //알람시간을 위한 calendar 객체 생성
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, year)
@@ -77,6 +85,11 @@ object AlarmUtil {
         calendar.set(Calendar.HOUR_OF_DAY, hour)
         calendar.set(Calendar.MINUTE, minute)
         calendar.set(Calendar.SECOND, 0)
+        calendar.add(Calendar.HOUR_OF_DAY,-readyHour)
+        calendar.add(Calendar.MINUTE,-readyMinute)
+
+        val dateFormat = SimpleDateFormat("yyyyMMddHHmm")
+        val alarmTime = dateFormat.format(calendar.time)
 
         //현재 시간과 알람 시간을 비교해서 알람 시간이 과거면은 알람 설정
         if (calendar.timeInMillis <= System.currentTimeMillis()) {
@@ -84,7 +97,7 @@ object AlarmUtil {
             return
         }
 
-        val notificationId = dateTime.substring(3).toInt()
+        val notificationId = alarmTime.substring(3).toInt()
         Log.e("fcm", "notificationId $notificationId")
         scheduleNotification(calendar, context, notificationId, message)
     }
