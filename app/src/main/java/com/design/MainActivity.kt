@@ -13,8 +13,11 @@ import com.design.Friend.FriendListActivity
 import com.design.adapter.ViewPagerAdapter
 import com.design.databinding.ActivityMainBinding
 import com.design.databinding.HeaderBinding
+import com.design.util.TimeUtil
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -118,6 +121,12 @@ class MainActivity : AppCompatActivity() {
                     showLogoutConfirmationDialog()
                     true
                 }
+                R.id.readyTimeMenuItem -> {
+                    // 준비시간 설정
+                    //timepicker를 띄워줌
+                    openTimePickerForReadyTime()
+                    true
+                }
                 // 다른 메뉴 항목에 대한 처리 추가
                 else -> false
             }
@@ -175,6 +184,25 @@ class MainActivity : AppCompatActivity() {
             saveDate()
         }
 
+    }
+
+    private fun openTimePickerForReadyTime() {
+        val preReadyTime = TimeUtil.getReadyTime(this)
+        val preHour = preReadyTime.substring(0, 2).toInt()
+        val preMinute = preReadyTime.substring(3, 5).toInt()
+        val picker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(preHour)
+                .setMinute(preMinute)
+                .setTitleText("준비시간을 설정해주세요.")
+                .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+                .build()
+        picker.addOnPositiveButtonClickListener {
+            val readyTime = String.format("%02d:%02d", picker.hour, picker.minute)
+            TimeUtil.setReadyTime(this@MainActivity, readyTime)
+        }
+        picker.show(supportFragmentManager, "준비시간")
     }
 
     override fun onResume() {

@@ -1,5 +1,6 @@
 package com.design.util
 
+import android.content.Context
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -32,5 +33,16 @@ object TimeUtil {
         } catch (e: Exception) {
             return "날짜 형식이 올바르지 않습니다."
         }
+    }
+
+    //준비시간을 저장하기 위한 util
+    fun getReadyTime(context: Context):String {
+        return context.getSharedPreferences("readyTime", Context.MODE_PRIVATE)
+            .getString("readyTime", "00:10").toString()
+    }
+
+    fun setReadyTime(context: Context, readyTime: String) {
+        context.getSharedPreferences("readyTime", Context.MODE_PRIVATE).edit()
+            .putString("readyTime", readyTime).apply()
     }
 }
