@@ -17,10 +17,10 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/todayView"
-        android:layout_width="45dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="13dp"
+        android:layout_width="40dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/today"
         app:layout_constraintStart_toStartOf="@+id/calendarView"
         app:layout_constraintTop_toTopOf="parent" />
