@@ -108,7 +108,7 @@
                     <TextView
                         android:id="@+id/time08"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="08:00" />
@@ -116,7 +116,7 @@
                     <TextView
                         android:id="@+id/monday0800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0800"
@@ -125,7 +125,7 @@
                     <TextView
                         android:id="@+id/tuesday0800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0800"
@@ -134,7 +134,7 @@
                     <TextView
                         android:id="@+id/wednesday0800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0800"
@@ -143,7 +143,7 @@
                     <TextView
                         android:id="@+id/thursday0800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0800"
@@ -152,7 +152,7 @@
                     <TextView
                         android:id="@+id/friday0800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0800"
@@ -161,7 +161,7 @@
                     <TextView
                         android:id="@+id/saturday0800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0800"
@@ -170,7 +170,7 @@
                     <TextView
                         android:id="@+id/sunday0800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0800"
@@ -179,7 +179,7 @@
                     <TextView
                         android:id="@+id/time09"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="09:00" />
@@ -187,7 +187,7 @@
                     <TextView
                         android:id="@+id/monday0900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0900"
@@ -196,7 +196,7 @@
                     <TextView
                         android:id="@+id/tuesday0900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0900"
@@ -205,7 +205,7 @@
                     <TextView
                         android:id="@+id/wednesday0900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0900"
@@ -214,7 +214,7 @@
                     <TextView
                         android:id="@+id/thursday0900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0900"
@@ -223,7 +223,7 @@
                     <TextView
                         android:id="@+id/friday0900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0900"
@@ -232,7 +232,7 @@
                     <TextView
                         android:id="@+id/saturday0900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0900"
@@ -241,7 +241,7 @@
                     <TextView
                         android:id="@+id/sunday0900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0900"
@@ -250,7 +250,7 @@
                     <TextView
                         android:id="@+id/time10"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="10:00" />
@@ -258,7 +258,7 @@
                     <TextView
                         android:id="@+id/monday1000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1000"
@@ -267,7 +267,7 @@
                     <TextView
                         android:id="@+id/tuesday1000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1000"
@@ -276,7 +276,7 @@
                     <TextView
                         android:id="@+id/wednesday1000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1000"
@@ -285,7 +285,7 @@
                     <TextView
                         android:id="@+id/thursday1000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1000"
@@ -294,7 +294,7 @@
                     <TextView
                         android:id="@+id/friday1000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1000"
@@ -303,7 +303,7 @@
                     <TextView
                         android:id="@+id/saturday1000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1000"
@@ -312,7 +312,7 @@
                     <TextView
                         android:id="@+id/sunday1000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1000"
@@ -321,7 +321,7 @@
                     <TextView
                         android:id="@+id/time11"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="11:00" />
@@ -329,7 +329,7 @@
                     <TextView
                         android:id="@+id/monday1100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1100"
@@ -338,7 +338,7 @@
                     <TextView
                         android:id="@+id/tuesday1100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1100"
@@ -347,7 +347,7 @@
                     <TextView
                         android:id="@+id/wednesday1100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1100"
@@ -356,7 +356,7 @@
                     <TextView
                         android:id="@+id/thursday1100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1100"
@@ -365,7 +365,7 @@
                     <TextView
                         android:id="@+id/friday1100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1100"
@@ -374,7 +374,7 @@
                     <TextView
                         android:id="@+id/saturday1100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1100"
@@ -383,7 +383,7 @@
                     <TextView
                         android:id="@+id/sunday1100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1100"
@@ -392,7 +392,7 @@
                     <TextView
                         android:id="@+id/time12"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="12:00" />
@@ -400,7 +400,7 @@
                     <TextView
                         android:id="@+id/monday1200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1200"
@@ -409,7 +409,7 @@
                     <TextView
                         android:id="@+id/tuesday1200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1200"
@@ -418,7 +418,7 @@
                     <TextView
                         android:id="@+id/wednesday1200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1200"
@@ -427,7 +427,7 @@
                     <TextView
                         android:id="@+id/thursday1200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1200"
@@ -436,7 +436,7 @@
                     <TextView
                         android:id="@+id/friday1200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1200"
@@ -445,7 +445,7 @@
                     <TextView
                         android:id="@+id/saturday1200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1200"
@@ -454,7 +454,7 @@
                     <TextView
                         android:id="@+id/sunday1200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1200"
@@ -463,7 +463,7 @@
                     <TextView
                         android:id="@+id/time13"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="13:00" />
@@ -471,7 +471,7 @@
                     <TextView
                         android:id="@+id/monday1300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1300"
@@ -480,7 +480,7 @@
                     <TextView
                         android:id="@+id/tuesday1300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1300"
@@ -489,7 +489,7 @@
                     <TextView
                         android:id="@+id/wednesday1300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1300"
@@ -498,7 +498,7 @@
                     <TextView
                         android:id="@+id/thursday1300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1300"
@@ -507,7 +507,7 @@
                     <TextView
                         android:id="@+id/friday1300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1300"
@@ -516,7 +516,7 @@
                     <TextView
                         android:id="@+id/saturday1300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1300"
@@ -525,7 +525,7 @@
                     <TextView
                         android:id="@+id/sunday1300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1300"
@@ -533,7 +533,7 @@
                     <TextView
                         android:id="@+id/time14"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="14:00" />
@@ -541,7 +541,7 @@
                     <TextView
                         android:id="@+id/monday1400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1400"
@@ -550,7 +550,7 @@
                     <TextView
                         android:id="@+id/tuesday1400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1400"
@@ -559,7 +559,7 @@
                     <TextView
                         android:id="@+id/wednesday1400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1400"
@@ -568,7 +568,7 @@
                     <TextView
                         android:id="@+id/thursday1400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1400"
@@ -577,7 +577,7 @@
                     <TextView
                         android:id="@+id/friday1400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1400"
@@ -586,7 +586,7 @@
                     <TextView
                         android:id="@+id/saturday1400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1400"
@@ -595,7 +595,7 @@
                     <TextView
                         android:id="@+id/sunday1400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1400"
@@ -603,7 +603,7 @@
                     <TextView
                         android:id="@+id/time15"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="15:00" />
@@ -611,7 +611,7 @@
                     <TextView
                         android:id="@+id/monday1500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1500"
@@ -620,7 +620,7 @@
                     <TextView
                         android:id="@+id/tuesday1500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1500"
@@ -629,7 +629,7 @@
                     <TextView
                         android:id="@+id/wednesday1500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1500"
@@ -638,7 +638,7 @@
                     <TextView
                         android:id="@+id/thursday1500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1500"
@@ -647,7 +647,7 @@
                     <TextView
                         android:id="@+id/friday1500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1500"
@@ -656,7 +656,7 @@
                     <TextView
                         android:id="@+id/saturday1500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1500"
@@ -665,7 +665,7 @@
                     <TextView
                         android:id="@+id/sunday1500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1500"
@@ -673,7 +673,7 @@
                     <TextView
                         android:id="@+id/time16"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="16:00" />
@@ -681,7 +681,7 @@
                     <TextView
                         android:id="@+id/monday1600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1600"
@@ -690,7 +690,7 @@
                     <TextView
                         android:id="@+id/tuesday1600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1600"
@@ -699,7 +699,7 @@
                     <TextView
                         android:id="@+id/wednesday1600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1600"
@@ -708,7 +708,7 @@
                     <TextView
                         android:id="@+id/thursday1600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1600"
@@ -717,7 +717,7 @@
                     <TextView
                         android:id="@+id/friday1600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1600"
@@ -726,7 +726,7 @@
                     <TextView
                         android:id="@+id/saturday1600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1600"
@@ -735,7 +735,7 @@
                     <TextView
                         android:id="@+id/sunday1600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1600"
@@ -743,7 +743,7 @@
                     <TextView
                         android:id="@+id/time17"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="17:00" />
@@ -751,7 +751,7 @@
                     <TextView
                         android:id="@+id/monday1700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1700"
@@ -760,7 +760,7 @@
                     <TextView
                         android:id="@+id/tuesday1700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1700"
@@ -769,7 +769,7 @@
                     <TextView
                         android:id="@+id/wednesday1700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1700"
@@ -778,7 +778,7 @@
                     <TextView
                         android:id="@+id/thursday1700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1700"
@@ -787,7 +787,7 @@
                     <TextView
                         android:id="@+id/friday1700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1700"
@@ -796,7 +796,7 @@
                     <TextView
                         android:id="@+id/saturday1700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1700"
@@ -805,7 +805,7 @@
                     <TextView
                         android:id="@+id/sunday1700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1700"
@@ -813,7 +813,7 @@
                     <TextView
                         android:id="@+id/time18"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="18:00" />
@@ -821,7 +821,7 @@
                     <TextView
                         android:id="@+id/monday1800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1800"
@@ -830,7 +830,7 @@
                     <TextView
                         android:id="@+id/tuesday1800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1800"
@@ -839,7 +839,7 @@
                     <TextView
                         android:id="@+id/wednesday1800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1800"
@@ -848,7 +848,7 @@
                     <TextView
                         android:id="@+id/thursday1800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1800"
@@ -857,7 +857,7 @@
                     <TextView
                         android:id="@+id/friday1800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1800"
@@ -866,7 +866,7 @@
                     <TextView
                         android:id="@+id/saturday1800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1800"
@@ -875,7 +875,7 @@
                     <TextView
                         android:id="@+id/sunday1800"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1800"
@@ -883,7 +883,7 @@
                     <TextView
                         android:id="@+id/time19"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="19:00" />
@@ -891,7 +891,7 @@
                     <TextView
                         android:id="@+id/monday1900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday1900"
@@ -900,7 +900,7 @@
                     <TextView
                         android:id="@+id/tuesday1900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday1900"
@@ -909,7 +909,7 @@
                     <TextView
                         android:id="@+id/wednesday1900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday1900"
@@ -918,7 +918,7 @@
                     <TextView
                         android:id="@+id/thursday1900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday1900"
@@ -927,7 +927,7 @@
                     <TextView
                         android:id="@+id/friday1900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday1900"
@@ -936,7 +936,7 @@
                     <TextView
                         android:id="@+id/saturday1900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday1900"
@@ -945,7 +945,7 @@
                     <TextView
                         android:id="@+id/sunday1900"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday1900"
@@ -953,7 +953,7 @@
                     <TextView
                         android:id="@+id/time20"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="20:00" />
@@ -961,7 +961,7 @@
                     <TextView
                         android:id="@+id/monday2000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday2000"
@@ -970,7 +970,7 @@
                     <TextView
                         android:id="@+id/tuesday2000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday2000"
@@ -979,7 +979,7 @@
                     <TextView
                         android:id="@+id/wednesday2000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday2000"
@@ -988,7 +988,7 @@
                     <TextView
                         android:id="@+id/thursday2000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday2000"
@@ -997,7 +997,7 @@
                     <TextView
                         android:id="@+id/friday2000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday2000"
@@ -1006,7 +1006,7 @@
                     <TextView
                         android:id="@+id/saturday2000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday2000"
@@ -1015,7 +1015,7 @@
                     <TextView
                         android:id="@+id/sunday2000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday2000"
@@ -1023,7 +1023,7 @@
                     <TextView
                         android:id="@+id/time21"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="21:00" />
@@ -1031,7 +1031,7 @@
                     <TextView
                         android:id="@+id/monday2100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday2100"
@@ -1040,7 +1040,7 @@
                     <TextView
                         android:id="@+id/tuesday2100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday2100"
@@ -1049,7 +1049,7 @@
                     <TextView
                         android:id="@+id/wednesday2100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday2100"
@@ -1058,7 +1058,7 @@
                     <TextView
                         android:id="@+id/thursday2100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday2100"
@@ -1067,7 +1067,7 @@
                     <TextView
                         android:id="@+id/friday2100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday2100"
@@ -1076,7 +1076,7 @@
                     <TextView
                         android:id="@+id/saturday2100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday2100"
@@ -1085,7 +1085,7 @@
                     <TextView
                         android:id="@+id/sunday2100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday2100"
@@ -1094,14 +1094,14 @@
                     <TextView
                         android:id="@+id/time22"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="22:00" />
                     <TextView
                         android:id="@+id/monday2200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday2200"
@@ -1109,7 +1109,7 @@
                     <TextView
                         android:id="@+id/tuesday2200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday2200"
@@ -1117,7 +1117,7 @@
                     <TextView
                         android:id="@+id/wednesday2200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday2200"
@@ -1125,7 +1125,7 @@
                     <TextView
                         android:id="@+id/thursday2200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday2200"
@@ -1133,7 +1133,7 @@
                     <TextView
                         android:id="@+id/friday2200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday2200"
@@ -1141,7 +1141,7 @@
                     <TextView
                         android:id="@+id/saturday2200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday2200"
@@ -1149,7 +1149,7 @@
                     <TextView
                         android:id="@+id/sunday2200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday2200"
@@ -1158,14 +1158,14 @@
                     <TextView
                         android:id="@+id/time23"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="23:00" />
                     <TextView
                         android:id="@+id/monday2300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday2300"
@@ -1173,7 +1173,7 @@
                     <TextView
                         android:id="@+id/tuesday2300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday2300"
@@ -1181,7 +1181,7 @@
                     <TextView
                         android:id="@+id/wednesday2300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday2300"
@@ -1189,7 +1189,7 @@
                     <TextView
                         android:id="@+id/thursday2300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday2300"
@@ -1197,7 +1197,7 @@
                     <TextView
                         android:id="@+id/friday2300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday2300"
@@ -1205,7 +1205,7 @@
                     <TextView
                         android:id="@+id/saturday2300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday2300"
@@ -1213,7 +1213,7 @@
                     <TextView
                         android:id="@+id/sunday2300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday2300"
@@ -1222,14 +1222,14 @@
                     <TextView
                         android:id="@+id/time00"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="00:00" />
                     <TextView
                         android:id="@+id/tuesday0000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0000"
@@ -1237,7 +1237,7 @@
                     <TextView
                         android:id="@+id/wednesday0000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0000"
@@ -1245,7 +1245,7 @@
                     <TextView
                         android:id="@+id/thursday0000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0000"
@@ -1253,7 +1253,7 @@
                     <TextView
                         android:id="@+id/friday0000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0000"
@@ -1261,7 +1261,7 @@
                     <TextView
                         android:id="@+id/saturday0000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0000"
@@ -1269,7 +1269,7 @@
                     <TextView
                         android:id="@+id/sunday0000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0000"
@@ -1277,7 +1277,7 @@
                     <TextView
                         android:id="@+id/monday0000"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0000"
@@ -1286,14 +1286,14 @@
                     <TextView
                         android:id="@+id/time01"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="01:00" />
                     <TextView
                         android:id="@+id/tuesday0100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0100"
@@ -1301,7 +1301,7 @@
                     <TextView
                         android:id="@+id/wednesday0100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0100"
@@ -1309,7 +1309,7 @@
                     <TextView
                         android:id="@+id/thursday0100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0100"
@@ -1317,7 +1317,7 @@
                     <TextView
                         android:id="@+id/friday0100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0100"
@@ -1325,7 +1325,7 @@
                     <TextView
                         android:id="@+id/saturday0100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0100"
@@ -1333,7 +1333,7 @@
                     <TextView
                         android:id="@+id/sunday0100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0100"
@@ -1341,7 +1341,7 @@
                     <TextView
                         android:id="@+id/monday0100"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0100"
@@ -1350,14 +1350,14 @@
                     <TextView
                         android:id="@+id/time02"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="02:00" />
                     <TextView
                         android:id="@+id/tuesday0200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0200"
@@ -1365,7 +1365,7 @@
                     <TextView
                         android:id="@+id/wednesday0200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0200"
@@ -1373,7 +1373,7 @@
                     <TextView
                         android:id="@+id/thursday0200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0200"
@@ -1381,7 +1381,7 @@
                     <TextView
                         android:id="@+id/friday0200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0200"
@@ -1389,7 +1389,7 @@
                     <TextView
                         android:id="@+id/saturday0200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0200"
@@ -1397,7 +1397,7 @@
                     <TextView
                         android:id="@+id/sunday0200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0200"
@@ -1405,7 +1405,7 @@
                     <TextView
                         android:id="@+id/monday0200"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0200"
@@ -1414,14 +1414,14 @@
                     <TextView
                         android:id="@+id/time03"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="03:00" />
                     <TextView
                         android:id="@+id/tuesday0300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0300"
@@ -1429,7 +1429,7 @@
                     <TextView
                         android:id="@+id/wednesday0300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0300"
@@ -1437,7 +1437,7 @@
                     <TextView
                         android:id="@+id/thursday0300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0300"
@@ -1445,7 +1445,7 @@
                     <TextView
                         android:id="@+id/friday0300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0300"
@@ -1453,7 +1453,7 @@
                     <TextView
                         android:id="@+id/saturday0300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0300"
@@ -1461,7 +1461,7 @@
                     <TextView
                         android:id="@+id/sunday0300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0300"
@@ -1469,7 +1469,7 @@
                     <TextView
                         android:id="@+id/monday0300"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0300"
@@ -1478,14 +1478,14 @@
                     <TextView
                         android:id="@+id/time04"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="04:00" />
                     <TextView
                         android:id="@+id/tuesday0400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0400"
@@ -1493,7 +1493,7 @@
                     <TextView
                         android:id="@+id/wednesday0400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0400"
@@ -1501,7 +1501,7 @@
                     <TextView
                         android:id="@+id/thursday0400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0400"
@@ -1509,7 +1509,7 @@
                     <TextView
                         android:id="@+id/friday0400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0400"
@@ -1517,7 +1517,7 @@
                     <TextView
                         android:id="@+id/saturday0400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0400"
@@ -1525,7 +1525,7 @@
                     <TextView
                         android:id="@+id/sunday0400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0400"
@@ -1533,7 +1533,7 @@
                     <TextView
                         android:id="@+id/monday0400"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0400"
@@ -1542,14 +1542,14 @@
                     <TextView
                         android:id="@+id/time05"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="05:00" />
                     <TextView
                         android:id="@+id/tuesday0500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0500"
@@ -1557,7 +1557,7 @@
                     <TextView
                         android:id="@+id/wednesday0500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0500"
@@ -1565,7 +1565,7 @@
                     <TextView
                         android:id="@+id/thursday0500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0500"
@@ -1573,7 +1573,7 @@
                     <TextView
                         android:id="@+id/friday0500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0500"
@@ -1581,7 +1581,7 @@
                     <TextView
                         android:id="@+id/saturday0500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0500"
@@ -1589,7 +1589,7 @@
                     <TextView
                         android:id="@+id/sunday0500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0500"
@@ -1597,7 +1597,7 @@
                     <TextView
                         android:id="@+id/monday0500"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0500"
@@ -1606,14 +1606,14 @@
                     <TextView
                         android:id="@+id/time06"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="06:00" />
                     <TextView
                         android:id="@+id/tuesday0600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0600"
@@ -1621,7 +1621,7 @@
                     <TextView
                         android:id="@+id/wednesday0600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0600"
@@ -1629,7 +1629,7 @@
                     <TextView
                         android:id="@+id/thursday0600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0600"
@@ -1637,7 +1637,7 @@
                     <TextView
                         android:id="@+id/friday0600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0600"
@@ -1645,7 +1645,7 @@
                     <TextView
                         android:id="@+id/saturday0600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0600"
@@ -1653,7 +1653,7 @@
                     <TextView
                         android:id="@+id/sunday0600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0600"
@@ -1661,7 +1661,7 @@
                     <TextView
                         android:id="@+id/monday0600"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0600"
@@ -1670,14 +1670,14 @@
                     <TextView
                         android:id="@+id/time07"
                         android:layout_width="45dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:text="07:00" />
                     <TextView
                         android:id="@+id/tuesday0700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="tuesday0700"
@@ -1685,7 +1685,7 @@
                     <TextView
                         android:id="@+id/wednesday0700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="wednesday0700"
@@ -1693,7 +1693,7 @@
                     <TextView
                         android:id="@+id/thursday0700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="thursday0700"
@@ -1701,7 +1701,7 @@
                     <TextView
                         android:id="@+id/friday0700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="friday0700"
@@ -1709,7 +1709,7 @@
                     <TextView
                         android:id="@+id/saturday0700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="saturday0700"
@@ -1717,7 +1717,7 @@
                     <TextView
                         android:id="@+id/sunday0700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="sunday0700"
@@ -1725,7 +1725,7 @@
                     <TextView
                         android:id="@+id/monday0700"
                         android:layout_width="70dp"
-                        android:layout_height="35dp"
+                        android:layout_height="45dp"
                         android:background="@drawable/cell"
                         android:gravity="center"
                         android:tag="monday0700"
