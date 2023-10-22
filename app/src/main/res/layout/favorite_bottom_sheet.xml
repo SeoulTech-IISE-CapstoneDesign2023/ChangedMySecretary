@@ -38,22 +38,20 @@
         android:gravity="center"
         android:lineSpacingExtra="5dp"
         android:textSize="16sp"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:text="추억의 장소가 없어요.\n 추억의 일정의 별을 눌러서 추가하세요."
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/favoriteRecyclerView"
+        app:layout_constraintEnd_toEndOf="@id/favoriteRecyclerView"
+        app:layout_constraintStart_toStartOf="@id/favoriteRecyclerView"
+        app:layout_constraintTop_toTopOf="@id/favoriteRecyclerView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favoriteRecyclerView"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="350dp"
         android:layout_marginTop="50dp"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

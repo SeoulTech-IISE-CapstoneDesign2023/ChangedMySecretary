@@ -151,14 +151,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
         favoriteBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         binding.searchButton.setOnClickListener {
             //완전 펴져있으면은 접어버림 아니면은 닫아버림
-            if (searchBottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                favoriteBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            } else {
-                searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                favoriteBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            }
+            favoriteBottomBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
+        binding.favoriteBottomSheetLayout.root.setOnClickListener {  }
+        binding.searchBottomSheetyLayout.root.setOnClickListener {  }
 
     }
 
@@ -235,12 +232,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 binding?.favoriteBottomSheetLayout?.emptyTextView?.isVisible =
                     favoriteAdapter.itemCount == 0
 
+                var removeMarker = Marker()
                 markerList.forEach { marker ->
-                    if(marker.captionText == importanceItem.title){
+                    if (marker.captionText == importanceItem.title) {
                         marker.map = null
-                        markerList.remove(marker)
+                        removeMarker = marker
                     }
                 }
+                markerList.remove(removeMarker)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {

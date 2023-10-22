@@ -297,7 +297,14 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             startY = startLat!!
             endX = arrivalLng!!
             endY = arrivalLat!!
-            this@CreateActivity.usingAlarm = usingAlarm!!
+
+            if (data.usingAlarm == true) {
+                this@CreateActivity.usingAlarm = true
+                binding.mapBottomSheetLayout.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_24)
+            } else {
+                this@CreateActivity.usingAlarm = false
+                binding.mapBottomSheetLayout.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_off_24)
+            }
         }
         isEditMode = true  // 기존 Todo를 수정하는 편집 모드임을 나타냄
 
@@ -479,17 +486,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
-        binding.titleEditText.setOnClickListener {
-            //완전 펴져있으면은 접어버림 아니면은 닫아버림
-            imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
-            mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            if (dateBottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                dateBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            } else {
-                dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            }
-        }
         binding.locationChip.setOnClickListener {
             dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
@@ -543,23 +539,40 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                             }
                         }
 
-                        //기존의 alarm을 삭제
-
-                        Log.e("aa", oldNotificationId.toString())
-                        FirebaseUtil.alarmDataBase.child(oldNotificationId!!).removeValue()
-                        AlarmUtil.deleteAlarm(oldNotificationId!!.toInt(), this)
-                        //기존의 todo를 수정
-                        updateTodo(todoKey!!, todo!!)
-                        //새로운 알람 생성
-                        createAlarm()
+                        if(usingAlarm){
+                            //여기서 길찾기를 경로를 업데이트안하고 okbutton만 누를경우가 있음 이때 alarmdata가 없다면 알람을 생성하지 않는다.
+                            if (alarmData["appointmentTime"] == null) {
+                                //기존의 todo를 수정
+                                notificationId = "0"
+                                updateTodo(todoKey!!, todo!!)
+                            } else {
+                                //기존의 alarm을 삭제
+                                FirebaseUtil.alarmDataBase.child(oldNotificationId!!).removeValue()
+                                AlarmUtil.deleteAlarm(oldNotificationId!!.toInt(), this)
+                                //기존의 todo를 수정
+                                updateTodo(todoKey!!, todo!!)
+                                //새로운 알람 생성
+                                createAlarm()
+                            }
+                        } else {
+                            //기존의 alarm을 삭제하고 새로운 알람은 만들지 않음
+                            FirebaseUtil.alarmDataBase.child(oldNotificationId!!).removeValue()
+                            AlarmUtil.deleteAlarm(oldNotificationId!!.toInt(), this)
+                            //기존의 todo를 수정
+                            notificationId = "0"
+                            updateTodo(todoKey!!, todo!!)
+                        }
                     }
                     finish()
                 } else {
                     Log.d("create", "initailize create mode")
                     // 새로운 Todo를 생성하는 경우
                     if (notificationId != "0") {//알람을 설정할때
-                        usingAlarm = true
-                        createAlarm()
+                        if (usingAlarm) {
+                            createAlarm()
+                        } else {
+                            notificationId = "0"
+                        }
                     }
                     createTodo()
                     finish()
@@ -570,6 +583,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
 
         binding.dateBottomSheetLayout.apply {
+            root.setOnClickListener {  }
             calendarView.addDecorators(
                 SundayDecorator(),      // 일요일 빨간 글씨
                 OneDayDecorator(),     // 오늘 날짜 색 다르게
@@ -682,6 +696,18 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         binding.mapBottomSheetLayout.arrivalEditText.isFocusable = false
 
         binding.mapBottomSheetLayout.apply {
+            root.setOnClickListener {  } //빈곳 터치방지
+            alarmImageView.setOnClickListener {
+                if (!usingAlarm) {
+                    it.setBackgroundResource(R.drawable.baseline_notifications_24)
+                    usingAlarm = true
+                    Toast.makeText(this@CreateActivity, "알람설정 on", Toast.LENGTH_SHORT).show()
+                } else {
+                    it.setBackgroundResource(R.drawable.baseline_notifications_off_24)
+                    usingAlarm = false
+                    Toast.makeText(this@CreateActivity, "알람설정 off", Toast.LENGTH_SHORT).show()
+                }
+            }
             startEditText.setOnClickListener {
                 isStart = true
                 mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -975,6 +1001,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         todoUpdates["usingAlarm"] = usingAlarm
         todoUpdates["notificationId"] = notificationId!!
         todoUpdates["importance"] = importance
+        todoUpdates["usingAlarm"] = usingAlarm
 
 
         // 변경된 일정 시작 날짜
