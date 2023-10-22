@@ -10,6 +10,7 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.design.databinding.ActivityManageBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -115,7 +116,7 @@ class ManageActivity : AppCompatActivity() {
         auth = Firebase.auth
         val user = auth.currentUser
 
-        val builder = AlertDialog.Builder(this)
+        val builder = MaterialAlertDialogBuilder(this)
 
         builder.setTitle("비밀번호 변경")
             .setMessage("비밀번호 변경 이메일 전송과 함께 로그아웃됩니다. 실행하시겠습니까?")

@@ -14,6 +14,7 @@ import com.design.adapter.ViewPagerAdapter
 import com.design.databinding.ActivityMainBinding
 import com.design.databinding.HeaderBinding
 import com.design.util.TimeUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -291,7 +292,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLogoutConfirmationDialog() {
-        val builder = AlertDialog.Builder(this)
+        val builder = MaterialAlertDialogBuilder(this)
         builder.setTitle("로그아웃")
             .setMessage("로그아웃 하시겠습니까?")
             .setPositiveButton("예") { dialog, which ->
