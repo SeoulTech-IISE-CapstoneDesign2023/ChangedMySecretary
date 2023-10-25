@@ -16,9 +16,11 @@ import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -104,6 +106,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     private lateinit var locationAdapter: LocationAdapter
 
+    private lateinit var backPressedCallback: OnBackPressedCallback
+
     private val startTimePicker = MaterialTimePicker.Builder()
         .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
         .setTimeFormat(TimeFormat.CLOCK_12H)
@@ -153,6 +157,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private val busRealTimeProvider = BusRealTimeProvider()
     private val todoDataProvider = TodoDataProvider(this)
     private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (EEE), HH:mm", Locale.KOREA)
+    private val calendar = Calendar.getInstance()
     private var isStart = true
     private var startPlace = ""
     private var arrivalPlace = ""
@@ -186,7 +191,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var isTimeChange = false
     private var importance = false
     private var readyTime = ""
-    private val calendar = Calendar.getInstance()
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -437,6 +441,35 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
+        // 뒤로가기 콜백 초기화
+        backPressedCallback = object : OnBackPressedCallback(true) {
+            var waitTime = 0L
+            override fun handleOnBackPressed() {
+                // 뒤로가기누르면 bottomsheet 내리기
+                if (mapBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                if (dateBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                if (searchBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    mapBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+
+                if (System.currentTimeMillis() - waitTime >= 1500) {
+                    waitTime = System.currentTimeMillis()
+                    Toast.makeText(baseContext, "뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    finishAffinity()
+                }
+
+            }
+        }
+        // 뒤로가기 콜백 활성화
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
         //list에서 일정 하나 선택했을 때 내용 수정
         val startDate = intent.getStringExtra("startDate")
         val todoKey = intent.getStringExtra("todoKey")
