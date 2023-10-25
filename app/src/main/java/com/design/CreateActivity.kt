@@ -1177,6 +1177,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     @RequiresApi(Build.VERSION_CODES.S)
     override fun loadWalkingRoot(data: Dto) {
         binding.mapBottomSheetLayout.recyclerView.isVisible = false
+        binding.mapBottomSheetLayout.totalTimeTextView.isVisible = false
         val result =
             data.features?.filter { it.properties.index == 0 }?.map { it.properties }?.first()
                 ?: return
@@ -1199,6 +1200,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     @RequiresApi(Build.VERSION_CODES.S)
     override fun loadCarRoot(data: com.design.model.car.Dto) {
         binding.mapBottomSheetLayout.recyclerView.isVisible = false
+        binding.mapBottomSheetLayout.totalTimeTextView.isVisible = false
         val result = data.features?.map { it.properties }?.firstOrNull() ?: return
         val totalTime = TimeUtil.formatTotalTime(result.totalTime)
         val departure = TimeUtil.parseDateTime(result.departureTime)
@@ -1223,6 +1225,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         Thread {
             try {
                 val minTimePath = data?.result?.path?.minByOrNull { it.info.totalTime }
+                val totalTime = minTimePath?.info?.totalTime
                 var minSubPathList = mutableListOf<SubPath>()
                 minTimePath?.subPath?.forEach { subPath ->
                     if (subPath.sectionTime == 0 && subPath.trafficType == 3) {
@@ -1267,6 +1270,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 info[info.size - 1].startName = info[info.size - 2].endName
                 runOnUiThread {
                     val routeAdapter = RouteAdapter(info)
+                    binding.mapBottomSheetLayout.totalTimeTextView.text = "총 소요시간 : $totalTime 분"
+                    binding.mapBottomSheetLayout.totalTimeTextView.isVisible = true
                     binding.mapBottomSheetLayout.resultTextView.visibility = View.INVISIBLE
                     binding.mapBottomSheetLayout.recyclerView.apply {
                         isVisible = true
