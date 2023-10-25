@@ -1,6 +1,7 @@
 package com.design.util
 
-import android.content.Context
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -36,13 +37,17 @@ object TimeUtil {
     }
 
     //준비시간을 저장하기 위한 util
-    fun getReadyTime(context: Context):String {
-        return context.getSharedPreferences("readyTime", Context.MODE_PRIVATE)
-            .getString("readyTime", "00:10").toString()
-    }
+    fun openTimePickerForReadyTime(readyTime: String): MaterialTimePicker {
+        val preReadyTime = if(readyTime == "") "00:10" else readyTime
+        val preHour = preReadyTime.substring(0, 2).toInt()
+        val preMinute = preReadyTime.substring(3, 5).toInt()
 
-    fun setReadyTime(context: Context, readyTime: String) {
-        context.getSharedPreferences("readyTime", Context.MODE_PRIVATE).edit()
-            .putString("readyTime", readyTime).apply()
+        return MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setHour(preHour)
+            .setMinute(preMinute)
+            .setTitleText("준비시간을 설정해주세요.")
+            .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+            .build()
     }
 }

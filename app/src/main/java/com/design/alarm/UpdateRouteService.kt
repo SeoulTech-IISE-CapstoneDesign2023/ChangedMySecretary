@@ -51,6 +51,7 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
     private var type: String? = null
     private var dateTime = ""
     private var message = ""
+    private var readyTime = ""
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -74,6 +75,7 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
         endY = data.arrivalLat ?: 0.0
         appointmentTime = data.appointmentTime ?: ""
         dateTime = data.dateTime ?: ""
+        readyTime = data.readyTime ?: ""
         when (type) {
             Type.CAR -> {
                 val isoDateTime = TimeUtil.convertToISODateTime(dateTime!!)
@@ -127,8 +129,12 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
     override fun loadCarRoot(data: com.design.model.car.Dto) {
         val result = data.features?.map { it.properties }?.firstOrNull() ?: return
         val date = dateFormat.parse(dateTime)
+        val readyHour = readyTime.substring(0, 2).toInt()
+        val readyMinute = readyTime.substring(3, 5).toInt()
         val calendar = Calendar.getInstance()
         calendar.time = date
+        calendar.add(Calendar.HOUR_OF_DAY, -readyHour)
+        calendar.add(Calendar.MINUTE, -readyMinute)
         calendar.add(Calendar.SECOND, -result.totalTime)
         setAlarm(calendar)
         createAlarm()
@@ -139,6 +145,10 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
         val minTimePath = data?.result?.path?.minByOrNull { it.info.totalTime }
         val date = dateFormat.parse(dateTime)
         val calendar = Calendar.getInstance()
+        val readyHour = readyTime.substring(0, 2).toInt()
+        val readyMinute = readyTime.substring(3, 5).toInt()
+        calendar.add(Calendar.HOUR_OF_DAY, -readyHour)
+        calendar.add(Calendar.MINUTE, -readyMinute)
         calendar.time = date
         calendar.add(Calendar.SECOND, -(minTimePath?.info?.totalTime!! * 60))
         setAlarm(calendar)
@@ -180,5 +190,6 @@ class UpdateRouteService : Service(), AlarmDataProvider.Callback, WalkingRoutePr
         alarmData["appointmentTime"] = newAppointmentTime!!
         alarmData["dateTime"] = dateTime
         alarmData["message"] = message
+        alarmData["readyTime"] = readyTime
     }
 }

@@ -24,6 +24,7 @@ data class Todo(
     val arrivalLat: Double? = null,     // 도착 위도
     val arrivalLng: Double? = null,     // 도착 경도
     val usingAlarm: Boolean? = null,  // 알람 사용 여부
+    var readyTime : String? = null
 )
     : Parcelable {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -44,7 +45,8 @@ data class Todo(
         startLng = parcel.readDouble(),
         arrivalLat = parcel.readDouble(),
         arrivalLng = parcel.readDouble(),
-        usingAlarm = parcel.readBoolean()
+        usingAlarm = parcel.readBoolean(),
+        readyTime = parcel.readString()
     )
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -67,6 +69,7 @@ data class Todo(
         arrivalLat?.let { parcel.writeDouble(it) }
         arrivalLng?.let { parcel.writeDouble(it) }
         usingAlarm?.let { parcel.writeBoolean(it) }
+        parcel.writeString(readyTime)
     }
 
     override fun describeContents(): Int {
