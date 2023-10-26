@@ -1209,8 +1209,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun loadWalkingRoot(data: Dto) {
-        binding.mapBottomSheetLayout.recyclerView.isVisible = false
-        binding.mapBottomSheetLayout.totalTimeTextView.isVisible = false
         val result =
             data.features?.filter { it.properties.index == 0 }?.map { it.properties }?.first()
                 ?: return
@@ -1223,10 +1221,15 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        binding.mapBottomSheetLayout.resultTextView.apply {
-            isVisible = true
-            text =
-                "총 소요시간 : $totalTime\n총 거리 : ${DecimalFormat("###,###").format(result.totalDistance)}m"
+        binding.mapBottomSheetLayout.apply {
+            recyclerView.isVisible = false
+            totalTimeTextView.isVisible = false
+            animationView.isVisible = true
+            resultTextView.apply {
+                isVisible = true
+                text =
+                    "총 소요시간 : $totalTime\n총 거리 : ${DecimalFormat("###,###").format(result.totalDistance)}m"
+            }
         }
     }
 

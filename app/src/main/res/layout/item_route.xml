@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="15dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="15dp">
 
     <TextView
         android:id="@+id/trafficTypeTextView"
@@ -17,18 +17,18 @@
         android:id="@+id/sectionTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:text="이동시간"
         app:layout_constraintBaseline_toBaselineOf="@+id/detailTypeTextView"
+        app:layout_constraintEnd_toStartOf="@id/waitingTimeTextView"
         app:layout_constraintStart_toEndOf="@+id/detailTypeTextView" />
 
     <TextView
         android:id="@+id/waitingTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:text="대기시간"
+        android:text="대기"
         android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/sectionTimeTextView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,9 +36,10 @@
         android:id="@+id/detailTypeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+
         android:visibility="invisible"
         app:layout_constraintBaseline_toBaselineOf="@id/trafficTypeTextView"
+        app:layout_constraintEnd_toStartOf="@id/sectionTimeTextView"
         app:layout_constraintStart_toEndOf="@+id/trafficTypeTextView" />
 
     <ImageView
