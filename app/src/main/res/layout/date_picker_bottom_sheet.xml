@@ -32,7 +32,7 @@
         android:id="@+id/startCalendarImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/baseline_calendar_month_24"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
         app:layout_constraintTop_toBottomOf="@id/titleTextView" />
@@ -64,6 +64,7 @@
         android:layout_width="265dp"
         android:layout_height="33dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/textview_background"
         android:hint="추억이 끝나는 날짜를 정해주세요"
         android:padding="4dp"
@@ -91,10 +92,10 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:clickable="false"
+            android:hint="00:00"
             android:inputType="time"
             android:maxLines="1"
             android:padding="3dp"
-            android:text="시작시간"
             android:textSize="20sp" />
     </LinearLayout>
 
@@ -126,10 +127,10 @@
 
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintDimensionRatio="1:1"
+        android:layout_marginTop="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/endDateTextView">
@@ -147,24 +148,24 @@
         android:padding="12dp"
         android:text="현재 날짜 적용"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/calendarView"
+        app:layout_constraintStart_toStartOf="@id/calendarView" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/okButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginBottom="24dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/textview_background"
         android:backgroundTint="@color/white"
         android:padding="12dp"
         android:text="확인"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/currentTimeButton"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/calendarView"
+        app:layout_constraintStart_toEndOf="@id/currentTimeButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

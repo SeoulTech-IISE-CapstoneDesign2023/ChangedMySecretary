@@ -69,4 +69,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-bom:32.2.3")
     implementation ("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation ("com.google.firebase:firebase-database-ktx:20.2.2")
+
+    //swipe layout
+    implementation ("com.github.Tunous:SwipeActionView:1.4.0")
 }
