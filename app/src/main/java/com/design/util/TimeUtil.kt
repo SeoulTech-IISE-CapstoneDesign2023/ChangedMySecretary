@@ -19,7 +19,7 @@ object TimeUtil {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
         val zonedDateTime = ZonedDateTime.parse(dateTime, formatter)
             .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-        return zonedDateTime.format(DateTimeFormatter.ofPattern("MM월 dd일 HH시 mm분"))
+        return zonedDateTime.format(DateTimeFormatter.ofPattern("MM/dd HH : mm"))
     }
 
     fun convertToISODateTime(date: String): String {

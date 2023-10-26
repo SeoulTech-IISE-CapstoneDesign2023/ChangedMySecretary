@@ -104,6 +104,19 @@
         app:layout_constraintStart_toEndOf="@id/carButton"
         app:layout_constraintTop_toBottomOf="@id/arrivalEditText" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="이동수단을 클릭해주세요."
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/okButton"
+        app:layout_constraintEnd_toEndOf="@id/walkButton"
+        app:layout_constraintStart_toStartOf="@id/carButton"
+        app:layout_constraintTop_toBottomOf="@id/publicTransportationButton" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/walkButton"
         android:layout_width="36dp"
@@ -132,15 +145,15 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationView"
-        app:lottie_rawRes="@raw/walking_animation"
         android:layout_width="125dp"
-        android:visibility="gone"
         android:layout_height="125dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/alarmImageView"
         app:layout_constraintStart_toStartOf="@id/carButton"
         app:layout_constraintTop_toBottomOf="@id/carButton"
         app:lottie_autoPlay="true"
-        app:lottie_loop="true" />
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/walking_animation" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/totalTimeTextView"

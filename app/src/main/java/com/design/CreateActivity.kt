@@ -1,6 +1,7 @@
 package com.design
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
@@ -32,6 +33,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
+import com.airbnb.lottie.utils.LottieValueAnimator
 import com.design.adapter.RouteAdapter
 import com.design.calendar.MySelectorDecorator
 import com.design.calendar.OneDayDecorator
@@ -459,6 +463,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
                 if (System.currentTimeMillis() - waitTime >= 1500) {
                     waitTime = System.currentTimeMillis()
+                    Toast.makeText(
+                        this@CreateActivity,
+                        "뒤로가기 버튼을 한번 더 누르면 뒤로갑니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     finish()
                 }
@@ -1220,21 +1229,25 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             e.printStackTrace()
         }
         binding.mapBottomSheetLayout.apply {
+            emptyTextView.isVisible = false
             recyclerView.isVisible = false
             totalTimeTextView.isVisible = false
-            animationView.isVisible = true
             resultTextView.apply {
                 isVisible = true
                 text =
                     "총 소요시간 : $totalTime\n총 거리 : ${DecimalFormat("###,###").format(result.totalDistance)}m"
+            }
+            animationView.apply {
+                setAnimation(R.raw.walking_animation)
+                isVisible = true
+                playAnimation()
+                repeatCount = LottieDrawable.INFINITE
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun loadCarRoot(data: com.design.model.car.Dto) {
-        binding.mapBottomSheetLayout.recyclerView.isVisible = false
-        binding.mapBottomSheetLayout.totalTimeTextView.isVisible = false
         val result = data.features?.map { it.properties }?.firstOrNull() ?: return
         val totalTime = TimeUtil.formatTotalTime(result.totalTime)
         val departure = TimeUtil.parseDateTime(result.departureTime)
@@ -1246,11 +1259,23 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         calendar.time = date
         calendar.add(Calendar.SECOND, -result.totalTime)
         setAlarm(calendar, NO_ALARM)
-        binding.mapBottomSheetLayout.resultTextView.apply {
-            isVisible = true
-            text =
-                "총 소요시간 : $totalTime\n총 톨게이트비 : $totalFare\n총 택시비 : $taxiFare\n출발시간 : $departure\n도착 예정시간 : $arrival"
+        binding.mapBottomSheetLayout.apply {
+            emptyTextView.isVisible = false
+            recyclerView.isVisible = false
+            totalTimeTextView.isVisible = false
+            resultTextView.apply {
+                isVisible = true
+                text =
+                    "총 소요시간 : $totalTime\n출발시간 : $departure\n도착 예정시간 : $arrival"
+            }
+            animationView.apply {
+                setAnimation(R.raw.car_animation)
+                isVisible = true
+                playAnimation()
+                repeatCount = LottieDrawable.INFINITE
+            }
         }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -1304,16 +1329,30 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 info[info.size - 1].startName = info[info.size - 2].endName
                 runOnUiThread {
                     val routeAdapter = RouteAdapter(info)
-                    binding.mapBottomSheetLayout.totalTimeTextView.text = "총 소요시간 : $totalTime 분"
-                    binding.mapBottomSheetLayout.totalTimeTextView.isVisible = true
-                    binding.mapBottomSheetLayout.resultTextView.visibility = View.INVISIBLE
-                    binding.mapBottomSheetLayout.recyclerView.apply {
-                        isVisible = true
-                        adapter = routeAdapter
-                        val dividerItemDecoration =
-                            DividerItemDecoration(this@CreateActivity, LinearLayoutManager.VERTICAL)
-                        addItemDecoration(dividerItemDecoration)
+                    binding.mapBottomSheetLayout.apply {
+                        emptyTextView.isVisible = false
+                        totalTimeTextView.text = "총 소요시간 : $totalTime 분"
+                        totalTimeTextView.isVisible = true
+                        resultTextView.visibility = View.INVISIBLE
+                        recyclerView.apply {
+                            isVisible = true
+                            adapter = routeAdapter
+                            val dividerItemDecoration =
+                                DividerItemDecoration(
+                                    this@CreateActivity,
+                                    LinearLayoutManager.VERTICAL
+                                )
+                            addItemDecoration(dividerItemDecoration)
+                        }
+                        animationView.apply {
+                            isVisible = true
+                            setAnimation(R.raw.bus_animation)
+                            playAnimation()
+                            repeatCount = LottieDrawable.INFINITE
+                        }
+
                     }
+
                 }
 
 
