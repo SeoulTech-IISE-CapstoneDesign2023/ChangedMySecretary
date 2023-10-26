@@ -1,6 +1,7 @@
 package com.design
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
@@ -16,9 +17,11 @@ import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +33,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
+import com.airbnb.lottie.utils.LottieValueAnimator
 import com.design.adapter.RouteAdapter
 import com.design.calendar.MySelectorDecorator
 import com.design.calendar.OneDayDecorator
@@ -104,6 +110,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     private lateinit var locationAdapter: LocationAdapter
 
+    private lateinit var backPressedCallback: OnBackPressedCallback
+
     private val startTimePicker = MaterialTimePicker.Builder()
         .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
         .setTimeFormat(TimeFormat.CLOCK_12H)
@@ -153,6 +161,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private val busRealTimeProvider = BusRealTimeProvider()
     private val todoDataProvider = TodoDataProvider(this)
     private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (EEE), HH:mm", Locale.KOREA)
+    private val calendar = Calendar.getInstance()
     private var isStart = true
     private var startPlace = ""
     private var arrivalPlace = ""
@@ -185,7 +194,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var editTextLength = 0
     private var isTimeChange = false
     private var importance = false
-
+    private var readyTime = ""
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -292,6 +301,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             this@CreateActivity.arrivalPlace = arrivePlace.toString()
             this@CreateActivity.notificationId = notificationId
             this@CreateActivity.importance = importance ?: false
+            this@CreateActivity.readyTime = readyTime ?: ""
             oldNotificationId = notificationId //이부분에서 notificationId를 가져와 기존의 알람정보를 얻어올수 있음
             startX = startLng!!
             startY = startLat!!
@@ -435,6 +445,38 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
+        // 뒤로가기 콜백 초기화
+        backPressedCallback = object : OnBackPressedCallback(true) {
+            var waitTime = 0L
+            override fun handleOnBackPressed() {
+                // 뒤로가기누르면 bottomsheet 내리기
+                if (mapBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                if (dateBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                if (searchBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    mapBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+
+                if (System.currentTimeMillis() - waitTime >= 1500) {
+                    waitTime = System.currentTimeMillis()
+                    Toast.makeText(
+                        this@CreateActivity,
+                        "뒤로가기 버튼을 한번 더 누르면 뒤로갑니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    finish()
+                }
+
+            }
+        }
+        // 뒤로가기 콜백 활성화
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
         //list에서 일정 하나 선택했을 때 내용 수정
         val startDate = intent.getStringExtra("startDate")
         val todoKey = intent.getStringExtra("todoKey")
@@ -539,7 +581,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                             }
                         }
 
-                        if(usingAlarm){
+                        if (usingAlarm) {
                             //여기서 길찾기를 경로를 업데이트안하고 okbutton만 누를경우가 있음 이때 alarmdata가 없다면 알람을 생성하지 않는다.
                             if (alarmData["appointmentTime"] == null) {
                                 //기존의 todo를 수정
@@ -552,6 +594,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                                 //기존의 todo를 수정
                                 updateTodo(todoKey!!, todo!!)
                                 //새로운 알람 생성
+                                setAlarm(calendar, ALARM)
                                 createAlarm()
                             }
                         } else {
@@ -569,6 +612,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     // 새로운 Todo를 생성하는 경우
                     if (notificationId != "0") {//알람을 설정할때
                         if (usingAlarm) {
+                            setAlarm(calendar, ALARM)
                             createAlarm()
                         } else {
                             notificationId = "0"
@@ -583,7 +627,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
 
         binding.dateBottomSheetLayout.apply {
-            root.setOnClickListener {  }
+            root.setOnClickListener { }
             calendarView.addDecorators(
                 SundayDecorator(),      // 일요일 빨간 글씨
                 OneDayDecorator(),     // 오늘 날짜 색 다르게
@@ -696,12 +740,17 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         binding.mapBottomSheetLayout.arrivalEditText.isFocusable = false
 
         binding.mapBottomSheetLayout.apply {
-            root.setOnClickListener {  } //빈곳 터치방지
+            root.setOnClickListener { } //빈곳 터치방지
             alarmImageView.setOnClickListener {
                 if (!usingAlarm) {
                     it.setBackgroundResource(R.drawable.baseline_notifications_24)
                     usingAlarm = true
                     Toast.makeText(this@CreateActivity, "알람설정 on", Toast.LENGTH_SHORT).show()
+                    val picker = TimeUtil.openTimePickerForReadyTime(readyTime)
+                    picker.addOnPositiveButtonClickListener {
+                        readyTime = String.format("%02d:%02d", picker.hour, picker.minute)
+                    }
+                    picker.show(supportFragmentManager, "준비시간")
                 } else {
                     it.setBackgroundResource(R.drawable.baseline_notifications_off_24)
                     usingAlarm = false
@@ -743,7 +792,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 Toast.makeText(this@CreateActivity, "이동수단 : 자동차", Toast.LENGTH_SHORT).show()
                 val startTime = binding.dateTextView.text.toString()
                 if (startTime == "추억의 시간을 지정해주세요") {
-                    Toast.makeText(this@CreateActivity, "출발시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateActivity, "출발시간을 먼저 정해주세요.", Toast.LENGTH_SHORT)
+                        .show()
                     return@setOnClickListener
                 }
                 val isoDateTime = TimeUtil.convertToISODateTime(startTime)
@@ -805,7 +855,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
         val memo = binding.titleEditText.text.toString()
         val message = "${memo}할 시간이에요~"
-        val appointmentTime = alarmData["appointmentTime"].toString()
+        val appointmentTime = alarmData["appointmentTime"].toString() //여기서 readyTime을 빼주자
         AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, message)
     }
 
@@ -943,7 +993,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 arrivalLat = endY,
                 arrivalLng = endX,
                 usingAlarm = usingAlarm,
-                importance = false
+                importance = false,
+                readyTime = readyTime
             )
 
         val todoRef = Firebase.database.reference.child(DB_CALENDAR)
@@ -1002,6 +1053,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         todoUpdates["notificationId"] = notificationId!!
         todoUpdates["importance"] = importance
         todoUpdates["usingAlarm"] = usingAlarm
+        todoUpdates["readyTime"] = readyTime
 
 
         // 변경된 일정 시작 날짜
@@ -1164,30 +1216,38 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun loadWalkingRoot(data: Dto) {
-        binding.mapBottomSheetLayout.recyclerView.isVisible = false
         val result =
             data.features?.filter { it.properties.index == 0 }?.map { it.properties }?.first()
                 ?: return
         val totalTime = TimeUtil.formatTotalTime(result.totalTime)// 5655초로나오게됨
         try {
             val date = dateFormat.parse(binding.dateTextView.text.toString())
-            val calendar = Calendar.getInstance()
             calendar.time = date
             calendar.add(Calendar.SECOND, -result.totalTime)
-            setAlarm(calendar)
+            setAlarm(calendar, NO_ALARM)
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        binding.mapBottomSheetLayout.resultTextView.apply {
-            isVisible = true
-            text =
-                "총 소요시간 : $totalTime\n총 거리 : ${DecimalFormat("###,###").format(result.totalDistance)}m"
+        binding.mapBottomSheetLayout.apply {
+            emptyTextView.isVisible = false
+            recyclerView.isVisible = false
+            totalTimeTextView.isVisible = false
+            resultTextView.apply {
+                isVisible = true
+                text =
+                    "총 소요시간 : $totalTime\n총 거리 : ${DecimalFormat("###,###").format(result.totalDistance)}m"
+            }
+            animationView.apply {
+                setAnimation(R.raw.walking_animation)
+                isVisible = true
+                playAnimation()
+                repeatCount = LottieDrawable.INFINITE
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun loadCarRoot(data: com.design.model.car.Dto) {
-        binding.mapBottomSheetLayout.recyclerView.isVisible = false
         val result = data.features?.map { it.properties }?.firstOrNull() ?: return
         val totalTime = TimeUtil.formatTotalTime(result.totalTime)
         val departure = TimeUtil.parseDateTime(result.departureTime)
@@ -1196,15 +1256,26 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             if (result.totalFare > 0) DecimalFormat("###,###").format(result.totalFare) else "통행요금 없음"
         val taxiFare = DecimalFormat("###,###").format(result.taxiFare) + "원"
         val date = dateFormat.parse(binding.dateTextView.text.toString())
-        val calendar = Calendar.getInstance()
         calendar.time = date
         calendar.add(Calendar.SECOND, -result.totalTime)
-        setAlarm(calendar)
-        binding.mapBottomSheetLayout.resultTextView.apply {
-            isVisible = true
-            text =
-                "총 소요시간 : $totalTime\n총 톨게이트비 : $totalFare\n총 택시비 : $taxiFare\n출발시간 : $departure\n도착 예정시간 : $arrival"
+        setAlarm(calendar, NO_ALARM)
+        binding.mapBottomSheetLayout.apply {
+            emptyTextView.isVisible = false
+            recyclerView.isVisible = false
+            totalTimeTextView.isVisible = false
+            resultTextView.apply {
+                isVisible = true
+                text =
+                    "총 소요시간 : $totalTime\n출발시간 : $departure\n도착 예정시간 : $arrival"
+            }
+            animationView.apply {
+                setAnimation(R.raw.car_animation)
+                isVisible = true
+                playAnimation()
+                repeatCount = LottieDrawable.INFINITE
+            }
         }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -1213,6 +1284,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         Thread {
             try {
                 val minTimePath = data?.result?.path?.minByOrNull { it.info.totalTime }
+                val totalTime = minTimePath?.info?.totalTime
                 var minSubPathList = mutableListOf<SubPath>()
                 minTimePath?.subPath?.forEach { subPath ->
                     if (subPath.sectionTime == 0 && subPath.trafficType == 3) {
@@ -1248,24 +1320,39 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
 
                 val date = dateFormat.parse(binding.dateTextView.text.toString())
-                val calendar = Calendar.getInstance()
                 calendar.time = date
                 calendar.add(Calendar.SECOND, -(minTimePath?.info?.totalTime!! * 60))
-                setAlarm(calendar)
+                setAlarm(calendar, NO_ALARM)
                 info[0].startName = "출발지"
                 info[info.size - 1].endName = "도착지"
                 info[0].endName = info[1].startName
                 info[info.size - 1].startName = info[info.size - 2].endName
                 runOnUiThread {
                     val routeAdapter = RouteAdapter(info)
-                    binding.mapBottomSheetLayout.resultTextView.visibility = View.INVISIBLE
-                    binding.mapBottomSheetLayout.recyclerView.apply {
-                        isVisible = true
-                        adapter = routeAdapter
-                        val dividerItemDecoration =
-                            DividerItemDecoration(this@CreateActivity, LinearLayoutManager.VERTICAL)
-                        addItemDecoration(dividerItemDecoration)
+                    binding.mapBottomSheetLayout.apply {
+                        emptyTextView.isVisible = false
+                        totalTimeTextView.text = "총 소요시간 : $totalTime 분"
+                        totalTimeTextView.isVisible = true
+                        resultTextView.visibility = View.INVISIBLE
+                        recyclerView.apply {
+                            isVisible = true
+                            adapter = routeAdapter
+                            val dividerItemDecoration =
+                                DividerItemDecoration(
+                                    this@CreateActivity,
+                                    LinearLayoutManager.VERTICAL
+                                )
+                            addItemDecoration(dividerItemDecoration)
+                        }
+                        animationView.apply {
+                            isVisible = true
+                            setAnimation(R.raw.bus_animation)
+                            playAnimation()
+                            repeatCount = LottieDrawable.INFINITE
+                        }
+
                     }
+
                 }
 
 
@@ -1279,7 +1366,14 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun setAlarm(calendar: Calendar) {
+    private fun setAlarm(calendar: Calendar, flag: Int) {
+        //readyTime에 대해 시간 빼주기
+        if (readyTime != "" && flag == ALARM) {
+            val readyHour = readyTime.substring(0, 2).toInt()
+            val readyMinute = readyTime.substring(3, 5).toInt()
+            calendar.add(Calendar.HOUR_OF_DAY, -readyHour)
+            calendar.add(Calendar.MINUTE, -readyMinute)
+        }
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH) + 1 // 월은 0부터 시작하므로 1을 더함
         val day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -1302,6 +1396,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         alarmData["appointmentTime"] = appointmentTime
         alarmData["dateTime"] = binding.dateTextView.text.toString()
         alarmData["message"] = "${binding.memoEditText.text}할 시간이에요~"
+        alarmData["readyTime"] = readyTime
     }
 
 
@@ -1388,6 +1483,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 callback(info)
             }
         }
+    }
+
+    companion object {
+        const val ALARM = 0
+        const val NO_ALARM = 1
     }
 
 }

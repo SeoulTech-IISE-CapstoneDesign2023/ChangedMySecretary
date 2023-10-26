@@ -66,7 +66,7 @@ class RouteAdapter(
                         detailTypeTextView.isVisible = true
                         waitingTimeTextView.isVisible = true
                         if (info.waitTime != null) {
-                            waitingTimeTextView.text = "대기시간 ${info.waitTime}분"
+                            waitingTimeTextView.text = "대기 ${info.waitTime}분"
                         } else if (info.waitTime == 0) {
                             waitingTimeTextView.text = "곧도착"
                         } else {

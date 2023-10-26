@@ -13,5 +13,6 @@ data class AlarmItem(
     val startPlace : String? = null,
     val arrivalPlace : String? = null,
     val dateTime : String? = null,
-    val message : String? = null
+    val message : String? = null,
+    val readyTime : String? = null
 )

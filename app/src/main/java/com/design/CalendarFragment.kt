@@ -207,6 +207,8 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         val notificationId = todoList[position].notificationId ?: "0"
         FirebaseUtil.alarmDataBase.child(notificationId).removeValue()
         AlarmUtil.deleteAlarm(notificationId.toInt(),requireContext())
+        //즐찾도 같이 삭제
+        FirebaseUtil.importanceDataBase.child(todoKey).removeValue()
         todoList.removeAt(position)
         // 삭제할 일정 경로 참조
         val deleteReference =
