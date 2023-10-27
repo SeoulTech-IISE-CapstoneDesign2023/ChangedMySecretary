@@ -45,8 +45,6 @@ class AlarmActivity : AppCompatActivity() {
             //todo 일정또한 삭제해야함
         }
         binding.recyclerView.adapter = alarmAdapter
-        val dividerItemDecoration = DividerItemDecoration(this, LinearLayoutManager.VERTICAL)
-        binding.recyclerView.addItemDecoration(dividerItemDecoration)
         updateRecyclerView()
     }
 

@@ -1395,7 +1395,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         alarmData["notificationId"] = notificationId!!
         alarmData["appointmentTime"] = appointmentTime
         alarmData["dateTime"] = binding.dateTextView.text.toString()
-        alarmData["message"] = "${binding.memoEditText.text}할 시간이에요~"
+        alarmData["message"] = binding.titleEditText.text.toString()
         alarmData["readyTime"] = readyTime
     }
 
