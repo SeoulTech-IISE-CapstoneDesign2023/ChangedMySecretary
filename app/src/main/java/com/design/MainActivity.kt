@@ -94,6 +94,10 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        binding.logoutBtn.setOnClickListener {
+            showLogoutConfirmationDialog()
+        }
+
         binding.AppCompatImageView.setOnClickListener {
             val drawerLayout: DrawerLayout = binding.drawerLayout
             val navView = binding.navView
@@ -115,10 +119,6 @@ class MainActivity : AppCompatActivity() {
                     val intent =
                         Intent(this, ManageActivity::class.java)
                     startActivity(intent)
-                    true
-                }
-                R.id.menuitem3 -> {
-                    showLogoutConfirmationDialog()
                     true
                 }
                 // 다른 메뉴 항목에 대한 처리 추가

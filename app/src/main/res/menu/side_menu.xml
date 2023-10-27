@@ -11,7 +11,4 @@
     <item
         android:id="@+id/readyTimeMenuItem"
         android:title="준비시간 설정" />
-    <item
-        android:id="@+id/menuitem3"
-        android:title="로그아웃" />
 </menu>
