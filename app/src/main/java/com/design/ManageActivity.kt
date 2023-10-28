@@ -50,27 +50,24 @@ class ManageActivity : AppCompatActivity() {
                 }
                 1 -> {
                     // 두 번째 항목에 대한 동작 수행
-                    binding.editNickname.visibility = View.VISIBLE
+                    val intent =
+                        Intent(this, ChangeNicknameActivity::class.java)
+                    startActivity(intent)
                 }
                 else -> {
                 }
             }
         }
+    }
+    override fun onResume() {
+        super.onResume()
 
-        binding.editNicknameBtn.setOnClickListener{
-            saveNicknameIfNotExists(user?.uid.toString(), binding.newNickname.text.toString()) {
-                    isSuccess ->
-                if (isSuccess) {
-                    Toast.makeText(baseContext, "닉네임이 성공적으로 변경되었습니다", Toast
-                        .LENGTH_SHORT).show()
-                    binding.nameText.text = binding.newNickname.text.toString()
-                    binding.editNickname.visibility = View.GONE
-                } else {
-                    Toast.makeText(baseContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT).show()
-                }
-            }
+        auth = Firebase.auth
+        val user = auth.currentUser
+
+        getUserNickname(user?.uid.toString()) { nickname ->
+            binding.nameText.text = nickname
         }
-
 
     }
 
@@ -136,35 +133,5 @@ class ManageActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .show()
-    }
-
-    fun saveNicknameIfNotExists(myUid: String, nickname: String, onDataChangeCallback: (Boolean) -> Unit) {
-        val userData = FirebaseDatabase.getInstance().getReference("user")
-
-        userData.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                var isNicknameAvailable = true // 닉네임 사용 가능 여부를 나타내는 플래그
-
-                for (snapshot in dataSnapshot.children) {
-                    val nicknameValue = snapshot.child("user_info").child("nickname").value.toString()
-                    if (nickname == nicknameValue) {
-                        isNicknameAvailable = false
-                        break
-                    }
-                }
-                if (isNicknameAvailable) {
-                    // 닉네임 사용 가능
-                    userData.child(myUid)
-                        .child("user_info").child("nickname").setValue(nickname)
-                    onDataChangeCallback(true) // 성공 콜백 호출
-                } else {
-                    // 닉네임 중복
-                    onDataChangeCallback(false) // 실패 콜백 호출
-                }
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                onDataChangeCallback(false) // 데이터베이스 오류 발생 시 실패 콜백 호출
-            }
-        })
     }
 }

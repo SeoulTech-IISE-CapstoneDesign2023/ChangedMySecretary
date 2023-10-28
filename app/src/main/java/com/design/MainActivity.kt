@@ -86,14 +86,17 @@ class MainActivity : AppCompatActivity() {
                     if (user?.uid == snapshot.key) {
                         val nicknameValue = snapshot.child("user_info").child("nickname").value
                             .toString()
-                        headerBinding.userNameText.text = nicknameValue
+                        headerBinding.userNameText.text = "$nicknameValue 님"
                     } else continue
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
             }
         })
-        headerBinding.otherInfoText.text = "님 안녕하세요!"
+
+        binding.logoutBtn.setOnClickListener {
+            showLogoutConfirmationDialog()
+        }
 
         binding.AppCompatImageView.setOnClickListener {
             val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -116,10 +119,6 @@ class MainActivity : AppCompatActivity() {
                     val intent =
                         Intent(this, ManageActivity::class.java)
                     startActivity(intent)
-                    true
-                }
-                R.id.menuitem3 -> {
-                    showLogoutConfirmationDialog()
                     true
                 }
                 // 다른 메뉴 항목에 대한 처리 추가
@@ -194,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                     if (user?.uid == snapshot.key) {
                         val nicknameValue = snapshot.child("user_info").child("nickname").value
                             .toString()
-                        headerBinding.userNameText.text = nicknameValue
+                        headerBinding.userNameText.text = "$nicknameValue 님"
                     } else continue
                 }
             }

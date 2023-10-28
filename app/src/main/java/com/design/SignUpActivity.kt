@@ -278,41 +278,46 @@ class SignUpActivity : AppCompatActivity() {
 //                Firebase.database(Key.DB_URL).reference.child(Key.DB_USERS).child(myUid)
 //                    .child(Key.DB_USER_INFO).updateChildren(user)
 //            }
+            if (validateInput(nickname)) {
+                val userData = FirebaseDatabase.getInstance().getReference("user")
 
-            val userData = FirebaseDatabase.getInstance().getReference("user")
+                userData.addListenerForSingleValueEvent(object : ValueEventListener {
 
-            userData.addListenerForSingleValueEvent(object : ValueEventListener {
 
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    var count = 0
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        var count = 0
 
-                    for (snapshot in dataSnapshot.children) {
-                        val nicknameValue = snapshot.child("user_info").child("nickname").value
-                            .toString()
-                        if (nickname == nicknameValue) {
-                            count = 1
-                            break
-                        } else continue
+                        for (snapshot in dataSnapshot.children) {
+                            val nicknameValue = snapshot.child("user_info").child("nickname").value
+                                .toString()
+                            if (nickname == nicknameValue) {
+                                count = 1
+                                break
+                            } else continue
+                        }
+
+                        if (count == 0) {
+                            userData.child(myUid.toString())
+                                .child("user_info").child("nickname").setValue(nickname)
+
+                            val intent =
+                                Intent(this@SignUpActivity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            Toast.makeText(baseContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
 
-                    if (count == 0) {
-                        userData.child(myUid.toString())
-                            .child("user_info").child("nickname").setValue(nickname)
-
-                        val intent =
-                            Intent(this@SignUpActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        Toast.makeText(baseContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT)
-                            .show()
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // 에러 처리
                     }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // 에러 처리
-                }
-            })
+                })
+            } else {
+                Toast.makeText(baseContext, "적절한 닉네임이 아닙니다", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
 
@@ -384,6 +389,14 @@ class SignUpActivity : AppCompatActivity() {
     fun onEmailVerificationCompleted() {
         // 사용자의 이메일 확인 상태를 업데이트
         updateEmailVerificationStatus()
+    }
+
+    fun validateInput(input: String): Boolean {
+        // 정규표현식 패턴을 정의
+        val pattern = "^[0-9a-zA-Z_-]{4,11}$" // 숫자, 영문, -, _ 중 4~11 글자
+        // 정규표현식을 사용하여 입력값을 검증
+        val regex = Regex(pattern)
+        return regex.matches(input)
     }
 
 }
