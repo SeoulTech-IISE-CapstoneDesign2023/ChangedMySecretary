@@ -5,12 +5,15 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.design.adapter.AlarmListAdapter
 import com.design.databinding.ActivityAlarmBinding
 import com.design.model.Type
 import com.design.model.alarm.AlarmItem
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -29,7 +32,16 @@ class AlarmActivity : AppCompatActivity() {
         alarmAdapter = AlarmListAdapter {
             val notificationId = it.notificationId ?: ""
             //알람 데이터 삭제
-            AlarmUtil.deleteAlarm(notificationId.toInt(), this)
+            MaterialAlertDialogBuilder(this)
+                .setTitle("알람 삭제")
+                .setMessage("알람을 삭제하시겠습니까?")
+                .setPositiveButton("예"){_,_ ->
+                    AlarmUtil.deleteAlarm(notificationId.toInt(), this)
+                }
+                .setNegativeButton("아니요"){dialog,_ ->
+                    dialog.dismiss()
+                }
+                .show()
             //todo 일정또한 삭제해야함
         }
         binding.recyclerView.adapter = alarmAdapter
