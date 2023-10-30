@@ -11,7 +11,7 @@ import com.design.databinding.ActivityIntroBinding
 class IntroActivity : AppCompatActivity() {
 
     private lateinit var backPressedCallback: OnBackPressedCallback
-    val binding by lazy { ActivityIntroBinding.inflate(layoutInflater) }
+    private val binding by lazy { ActivityIntroBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,11 +36,11 @@ class IntroActivity : AppCompatActivity() {
 
         // 슬라이드 이미지 및 설명 텍스트 배열 정의
         val slideImages = intArrayOf(
-            R.drawable.timetable,
-            R.drawable.baseline_calendar_month_24,
-            R.drawable.white_circle,
-            R.drawable.baseline_alarm_on_24,
-            R.drawable.baseline_alarm_off_24
+            R.drawable.img_1,
+            R.drawable.img_4,
+            R.drawable.img_3,
+            R.drawable.img_2,
+            R.drawable.img_5
         )
 
         val slideTexts = arrayOf(
@@ -56,14 +56,8 @@ class IntroActivity : AppCompatActivity() {
         val adapter = SlidePagerAdapter(slideImages, slideTexts)
         viewPager.adapter = adapter
 
-        binding.LoginPageBtn.setOnClickListener {
-            val intent =
-                Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.SignUpBtn.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
+        binding.StartAppBtn.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
     }

@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
     private var fullDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
 
-    private val fragmentList = listOf(CalendarFragment(), MapFragment(), TimeTableFragment())
+    private val fragmentList = listOf(AlarmFragment(), CalendarFragment(), MapFragment())
     private val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -218,8 +218,8 @@ class MainActivity : AppCompatActivity() {
                 tab.text = "공간"
                 tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_map_24)
             } else{
-                tab.text = "공유"
-                tab.icon = AppCompatResources.getDrawable(this, com.google.android.material.R.drawable.material_ic_calendar_black_24dp)
+                tab.text = "알림"
+                tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_access_alarm_24)
             }
         }.attach()
     }

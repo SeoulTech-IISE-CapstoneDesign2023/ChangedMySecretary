@@ -90,6 +90,11 @@ class LoginActivity  : AppCompatActivity(){
             }
         }
 
+        // 가입하기 버튼
+        binding.SignUpBtn.setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
+        }
 
 
         binding.findPWBtn.setOnClickListener {

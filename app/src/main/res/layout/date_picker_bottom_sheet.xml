@@ -25,14 +25,84 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Day of Memories..."
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view" />
+    <LinearLayout
+        android:id="@+id/shareFriendView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/endCalendarImageView">
+
+        <ImageView
+            android:id="@+id/imageFriend"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/baseline_emoji_people_24" />
+
+        <TextView
+            android:id="@+id/shareFriendText"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="3dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="추억을 공유할 친구" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/settingAlarmView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shareFriendView">
+
+        <ImageView
+            android:id="@+id/imageAlarm"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/baseline_notifications_24" />
+
+        <TextView
+            android:id="@+id/shareWithFriendText"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="3dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="알람 설정" />
+
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/startCalendarImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/baseline_calendar_month_24"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
         app:layout_constraintTop_toBottomOf="@id/titleTextView" />
@@ -41,7 +111,7 @@
         android:id="@+id/endCalendarImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="22dp"
         android:background="@drawable/baseline_calendar_month_24"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
         app:layout_constraintTop_toBottomOf="@id/startCalendarImageView" />
@@ -53,7 +123,7 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/textview_background"
         android:padding="4dp"
-        android:text="추억의 시작"
+        android:hint="추억의 시작 날짜를 정해주세요"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@id/startCalendarImageView"
         app:layout_constraintStart_toEndOf="@id/startCalendarImageView"
@@ -66,7 +136,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/textview_background"
-        android:hint="추억이 끝나는 날짜를 정해주세요"
+        android:hint="추억의 종료 날짜를 정해주세요"
         android:padding="4dp"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@id/endCalendarImageView"
@@ -81,6 +151,7 @@
         android:background="@drawable/time_edit_text_background"
         android:orientation="horizontal"
         android:padding="4dp"
+        android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/startDateTextView"
         app:layout_constraintEnd_toEndOf="@+id/calendarView"
         app:layout_constraintStart_toEndOf="@+id/startDateTextView"
@@ -107,8 +178,8 @@
         android:background="@drawable/time_edit_text_background"
         android:orientation="horizontal"
         android:padding="4dp"
+        android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/endDateTextView"
-        app:layout_constraintEnd_toEndOf="@+id/calendarView"
         app:layout_constraintStart_toEndOf="@+id/endDateTextView"
         app:layout_constraintTop_toTopOf="@+id/endDateTextView">
 
@@ -125,17 +196,29 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/memoTextVeiw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:text="일기장"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingAlarmView" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/memoEditText"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:background="@null"
+        android:gravity="left"
+        android:layout_marginTop="5dp"
+        android:hint="추억을 자세히 기록해봐요"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/endDateTextView">
+        app:layout_constraintTop_toBottomOf="@+id/memoTextVeiw" />
 
-    </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/currentTimeButton"
@@ -146,10 +229,10 @@
         android:background="@drawable/textview_background"
         android:backgroundTint="@color/gray"
         android:padding="12dp"
-        android:text="현재 날짜 적용"
+        android:text="오늘 날짜 적용"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@id/calendarView"
-        app:layout_constraintStart_toStartOf="@id/calendarView" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/okButton"
@@ -163,9 +246,9 @@
         android:padding="12dp"
         android:text="확인"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/calendarView"
-        app:layout_constraintStart_toEndOf="@id/currentTimeButton" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/currentTimeButton"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
