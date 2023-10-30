@@ -79,4 +79,8 @@
         android:id="@+id/searchBottomSheetLayout"
         layout="@layout/search_bottom_sheet" />
 
+    <include
+        android:id="@+id/friendBottomSheetLayout"
+        layout="@layout/friend_select_bottom_sheet" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

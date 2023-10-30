@@ -203,40 +203,25 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
     }
     private fun deleteTodo(position: Int) {
         val todoKey = todoList[position].todoId
-        //todo 삭제시 알람도 같이 삭제
+        // 일정 삭제시 알람도 같이 삭제
         val notificationId = todoList[position].notificationId ?: "0"
         FirebaseUtil.alarmDataBase.child(notificationId).removeValue()
         AlarmUtil.deleteAlarm(notificationId.toInt(),requireContext())
-        //즐찾도 같이 삭제
-        FirebaseUtil.importanceDataBase.child(todoKey).removeValue()
         todoList.removeAt(position)
-        // 삭제할 일정 경로 참조
-        val deleteReference =
-            Firebase.database.reference.child(DB_CALENDAR)
+        // 일정 삭제
+        val deleteReference = Firebase.database.reference.child(DB_CALENDAR)
+        deleteReference
             .child(user)
             .child(clickedYear + "년")
             .child(clickedMonth + "월")
             .child(clickedDay + "일")
             .child(todoKey)
-        // 일정 삭제
-        deleteReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {}
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (data in dataSnapshot.children) {
-                    data.ref.removeValue()
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Toast.makeText(requireContext(), "일정이 삭제되었습니다.", Toast.LENGTH_SHORT)
-                                    .show()
-                            } else {
-                                Toast.makeText(requireContext(), "일정 삭제에 실패했습니다.", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        }
+            .removeValue().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "추억을 삭제했습니다.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
-        })
-
     }
 
     override fun onClick(position: Int, importance: Boolean) {

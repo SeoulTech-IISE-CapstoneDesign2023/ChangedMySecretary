@@ -20,6 +20,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,11 +62,8 @@ import com.design.model.route.subway.SubwayTimeTableProvider
 import com.design.model.walk.Dto
 import com.design.model.walk.RouteData
 import com.design.model.walk.WalkingRouteProvider
-import com.design.util.AlarmUtil
-import com.design.util.FirebaseUtil
+import com.design.util.*
 import com.design.util.Key.Companion.DB_CALENDAR
-import com.design.util.LocationRetrofitManager
-import com.design.util.TimeUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -103,6 +101,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private lateinit var dateBottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var mapBottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var searchBottomBehavior: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var friendBottomBehavior : BottomSheetBehavior<ConstraintLayout>
+
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
@@ -128,7 +128,12 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         .setTitleText("시간을 정하세요.")
         .build()
 
-    private val datePicker = MaterialDatePicker.Builder.datePicker()
+    private val startDatePicker = MaterialDatePicker.Builder.datePicker()
+        .setTitleText("시작 날짜를 정하세요")
+        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+        .build()
+
+    private val endDatePicker = MaterialDatePicker.Builder.datePicker()
         .setTitleText("종료 날짜를 정하세요")
         .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
         .build()
@@ -195,6 +200,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var isTimeChange = false
     private var importance = false
     private var readyTime = ""
+    private var myFriends = mutableListOf<User>()
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -345,7 +351,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 arrivalEditText.setText(arrivalPlace)
             }
             // 메모장
-            binding.memoEditText.setText(memo)
+            binding.dateBottomSheetLayout.memoEditText.setText(memo)
         }
     }
 
@@ -494,18 +500,21 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         dateBottomBehavior = BottomSheetBehavior.from(binding.dateBottomSheetLayout.root)
         mapBottomBehavior = BottomSheetBehavior.from(binding.mapBottomSheetLayout.root)
         searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetLayout.root)
+        friendBottomBehavior = BottomSheetBehavior.from(binding.friendBottomSheetLayout.root)
 
         binding.dateTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
         dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         binding.layout.setOnTouchListener { _, _ ->
-            imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
+            imm.hideSoftInputFromWindow(binding.dateBottomSheetLayout.memoEditText.windowToken, 0)
             dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             false
         }
 
@@ -519,7 +528,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
         binding.dateTextView.setOnClickListener {
             //완전 펴져있으면은 접어버림 아니면은 닫아버림
-            imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
+            imm.hideSoftInputFromWindow(binding.dateBottomSheetLayout.memoEditText.windowToken, 0)
             mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             if (dateBottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
@@ -530,6 +539,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
         binding.locationChip.setOnClickListener {
             dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
             if (mapBottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
                 mapBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -556,10 +566,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 Toast.makeText(this, "추억의 제목은 30자까지만 입력해주세요", Toast.LENGTH_SHORT).show()
             }
             // 메모장 텍스트 100자 넘어가면 일정 생성 불가 토스트
-            else if (binding.memoEditText.text.toString().length > 100) {
-                binding.createButton.background = AppCompatResources.getDrawable(
-                    this@CreateActivity, R.drawable.baseline_check_gray_24
-                )
+            else if (binding.dateBottomSheetLayout.memoEditText.text.toString().length > 100) {
+                binding.dateBottomSheetLayout.okButton.isEnabled = false
                 Toast.makeText(this, "메모 글자수가 100을 넘었습니다.", Toast.LENGTH_SHORT).show()
             } else {
                 if (isEditMode) {
@@ -627,12 +635,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
 
         binding.dateBottomSheetLayout.apply {
-            root.setOnClickListener { }
-            calendarView.addDecorators(
-                SundayDecorator(),      // 일요일 빨간 글씨
-                OneDayDecorator(),     // 오늘 날짜 색 다르게
-                MySelectorDecorator(this@CreateActivity)   // 선택한 날짜
-            )
+            root.setOnClickListener {  }    // 빈 곳 터치방지
+            startDateTextView.setOnClickListener{
+                setDate(0)
+            }
             endDateTextView.setOnClickListener {
                 setDate(1)
             }
@@ -642,19 +648,41 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             endTimeText.setOnClickListener {
                 setTime(1)
             }
-            // 날짜 선택시 날짜 view 변경
-            calendarView.setOnDateChangedListener { widget, date, selected ->
-                val year = date.year
-                val month = date.month + 1
-                val dayOfMonth = date.day
-                val dayOfWeek = getDayOfWeek(year, month, dayOfMonth)
-                // 월과 일을 각각 두 자리로 포맷팅
-                val formattedMonth = String.format("%02d", month)
-                val formattedDayOfMonth = String.format("%02d", dayOfMonth)
-                val dateText = "${year}년 ${formattedMonth}월 ${formattedDayOfMonth}일"
-                startDateTextView.text = "$dateText ($dayOfWeek)"
-                startTime = "$dateText $timeString"
+            shareFriendView.setOnClickListener{
+                dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                friendBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
 
+            memoEditText.apply {
+                addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                    }
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                    }
+
+                    override fun afterTextChanged(text: Editable) {
+                        if (text.isNotEmpty()) {
+                            binding.createButton.background = AppCompatResources.getDrawable(
+                                this@CreateActivity,
+                                R.drawable.baseline_check_24
+                            )
+                        } else binding.createButton.background = AppCompatResources.getDrawable(
+                            this@CreateActivity,
+                            R.drawable.baseline_check_gray_24
+                        )
+                    }
+                })
+                // 메모장 글자수가 100자가 넘어가면 error 표시
+                memoEditText.addTextChangedListener {
+                    it?.let { text ->
+                        memoEditText.error = if (text.length > 100) {
+                            "글자수를 초과하였습니다."
+                        } else null
+                    }
+                }
             }
             // 현재 날짜 적용 선택 시
             currentTimeButton.setOnClickListener(View.OnClickListener {
@@ -669,10 +697,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 val formattedDayOfMonth = String.format("%02d", todayDay)
                 val todayText = "${todayYear}년 ${formattedMonth}월 ${formattedDayOfMonth}일"
                 startDateTextView.text = "$todayText ($todayOfWeek)"
-                // CalendarView에서 오늘 날짜로 설정
-                calendarView.currentDate = CalendarDay.today()
-                calendarView.clearSelection()
-                calendarView.selectedDate = CalendarDay.today()
+                endDateTextView.text = "$todayText ($todayOfWeek)"
             })
             // 확인 선택 시
             okButton.setOnClickListener {
@@ -688,52 +713,57 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
             }
         }
-        binding.memoEditText.apply {
-            setOnClickListener {
-                dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            binding.friendBottomSheetLayout.apply {
+                Firebase.database.reference.child(Key.DB_USERS).addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        // 친구들 저장할 리스트 생성
+                        this@CreateActivity.myFriends = mutableListOf<User>()
+
+                        val friendsSnapshot =
+                            dataSnapshot.child(user)
+                                .child("friend_info")
+                                .child("friends")
+
+                        for (friendSnapshot in friendsSnapshot.children) {
+                            val friendUid = friendSnapshot.key  // 유저의 친구들 식별자 가져오기
+
+                            // 해당 친구의 정보를 가져오기
+                            val friend = dataSnapshot.child(friendUid.toString())
+
+                            val nickname = friend.child("user_info")
+                                .child("nickname").value.toString()
+
+                            val friendData = User(friendUid, nickname)
+                            myFriends.add(friendData)
+
+                            // 친구들 정보가 다 담아졌을 때 리사이클러 뷰 연결
+                            if (myFriends.size == friendsSnapshot.childrenCount.toInt()) {
+                                updateSearchRecyclerView(myFriends)
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                })
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+                    androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        // 검색 버튼을 눌렀을 때 호출됩니다.
+                        performSearch(query)
+                        return false
+                    }
+
+                    override fun onQueryTextChange(newText: String): Boolean {
+                        if (newText.isEmpty()) {
+                            // 검색창 빈칸될 경우 처리 (x) 버튼 구현?
+                            var emptyList = mutableListOf<User>()
+                            updateSearchRecyclerView(emptyList)
+                        }
+                        return true
+                    }
+                })
             }
-            addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-                }
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-                }
-
-                override fun afterTextChanged(text: Editable) {
-                    if (text.isNotEmpty()) {
-                        binding.createButton.background = AppCompatResources.getDrawable(
-                            this@CreateActivity,
-                            R.drawable.baseline_check_24
-                        )
-                    } else binding.createButton.background = AppCompatResources.getDrawable(
-                        this@CreateActivity,
-                        R.drawable.baseline_check_gray_24
-                    )
-                }
-
-            })
-            // 메모장 글자수가 100자가 넘어가면 error 표시
-            binding.memoEditText.addTextChangedListener {
-                it?.let { text ->
-                    binding.memoEditText.error = if (text.length > 100) {
-                        "글자수를 초과하였습니다."
-                    } else null
-                }
-            }
-            setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) {
-                    dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                } else {
-                    imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
-                }
-            }
-        }
         binding.mapBottomSheetLayout.startEditText.isClickable = false
         binding.mapBottomSheetLayout.startEditText.isFocusable = false
         binding.mapBottomSheetLayout.arrivalEditText.isClickable = false
@@ -862,9 +892,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private fun initializeCreateMode(startDate: String?) {
         // 새로운 일정을 생성하는 경우, 화면을 초기화하는 작업 수행
         binding.titleEditText.setText(if (title != "") title else "")
-        binding.dateBottomSheetLayout.startDateTextView.text = startDate
+        binding.dateBottomSheetLayout.startDateTextView.text = ""
         binding.dateBottomSheetLayout.startTimeText.text =
-            if (startTime != "") startTime else "00:00"
+            if (startTime != "") startTime else ""
         binding.dateBottomSheetLayout.endDateTextView.text = if (endDate != "") endDate else ""
         binding.dateBottomSheetLayout.endTimeText.text = if (endTime != "") endTime else ""
     }
@@ -914,31 +944,50 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun setDate(separator: Int) {
-        datePicker.addOnPositiveButtonClickListener {
-            val calendar = Calendar.getInstance()
-            val selectedDate = Date(datePicker.selection!!)
-            calendar.time = selectedDate
-            val dayOfWeek = when (calendar.get(Calendar.DAY_OF_WEEK)) {
-                Calendar.SUNDAY -> "일"
-                Calendar.MONDAY -> "월"
-                Calendar.TUESDAY -> "화"
-                Calendar.WEDNESDAY -> "수"
-                Calendar.THURSDAY -> "목"
-                Calendar.FRIDAY -> "금"
-                Calendar.SATURDAY -> "토"
-                else -> ""
+        if (separator == 0){startDatePicker
+            startDatePicker.addOnPositiveButtonClickListener {
+                val calendar = Calendar.getInstance()
+                val selectedDate = Date(startDatePicker.selection!!)
+                calendar.time = selectedDate
+                val dayOfWeek = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                    Calendar.SUNDAY -> "일"
+                    Calendar.MONDAY -> "월"
+                    Calendar.TUESDAY -> "화"
+                    Calendar.WEDNESDAY -> "수"
+                    Calendar.THURSDAY -> "목"
+                    Calendar.FRIDAY -> "금"
+                    Calendar.SATURDAY -> "토"
+                    else -> ""
+                }
+                val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+                val dateString = dateFormat.format(selectedDate)
+                binding.dateBottomSheetLayout.startDateTextView.text = "$dateString ($dayOfWeek)"
+                startTime = "$dateString $timeString"
             }
-            val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
-            val dateString = dateFormat.format(selectedDate)
-
-            if (separator == 1) {
+            startDatePicker.show(supportFragmentManager, "datePickerDialog")
+        }
+        else{
+            endDatePicker.addOnPositiveButtonClickListener {
+                val calendar = Calendar.getInstance()
+                val selectedDate = Date(endDatePicker.selection!!)
+                calendar.time = selectedDate
+                val dayOfWeek = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                    Calendar.SUNDAY -> "일"
+                    Calendar.MONDAY -> "월"
+                    Calendar.TUESDAY -> "화"
+                    Calendar.WEDNESDAY -> "수"
+                    Calendar.THURSDAY -> "목"
+                    Calendar.FRIDAY -> "금"
+                    Calendar.SATURDAY -> "토"
+                    else -> ""
+                }
+                val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+                val dateString = dateFormat.format(selectedDate)
                 binding.dateBottomSheetLayout.endDateTextView.text = "$dateString ($dayOfWeek)"
                 endTime = "$dateString $timeString"
-            } else {
-
             }
+            endDatePicker.show(supportFragmentManager, "datePickerDialog")
         }
-        datePicker.show(supportFragmentManager, "datePickerDialog")
     }
 
     private fun setTime(separator: Int) {
@@ -969,7 +1018,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val stTime = binding.dateBottomSheetLayout.startTimeText.text.toString()
         val enDate = binding.dateBottomSheetLayout.endDateTextView.text.toString()
         val enTime = binding.dateBottomSheetLayout.endTimeText.text.toString()
-        val memo = binding.memoEditText.text.toString()
+        val memo = binding.dateBottomSheetLayout.memoEditText.text.toString()
         val todoId = todoId
         val check = splitDate(stDate)
         val clickedYear = check[0].trim()
@@ -1029,7 +1078,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val stTime = binding.dateBottomSheetLayout.startTimeText.text.toString()
         val enDate = binding.dateBottomSheetLayout.endDateTextView.text.toString()
         val enTime = binding.dateBottomSheetLayout.endTimeText.text.toString()
-        val memo = binding.memoEditText.text.toString()
+        val memo = binding.dateBottomSheetLayout.memoEditText.text.toString()
         val startPlace = startPlace
         val arrivePlace = arrivalPlace
         val todoId = todo?.todoId
@@ -1484,7 +1533,21 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
         }
     }
+    private fun updateSearchRecyclerView(dataList: List<User>) {
+        // 어댑터에 새로운 데이터 설정하여 업데이트
+        val searchAdapter = InviteFriendAdapter(dataList as MutableList<User>)
+        binding.friendBottomSheetLayout.friendRecyclerView.adapter = searchAdapter
+        binding.friendBottomSheetLayout.friendRecyclerView.layoutManager = LinearLayoutManager(binding.root.context)
 
+        searchAdapter.notifyDataSetChanged()
+    }
+    private fun performSearch(query: String) {
+        // 검색어를 사용
+        val filteredList = myFriends.filter { item ->
+            item.nickname!!.contains(query, ignoreCase = true) // 대소문자를 구분하지 않고 검색어를 포함하는지 확인합니다.
+        }
+        updateSearchRecyclerView(filteredList)
+    }
     companion object {
         const val ALARM = 0
         const val NO_ALARM = 1
