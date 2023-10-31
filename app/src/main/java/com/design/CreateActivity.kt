@@ -101,7 +101,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private lateinit var dateBottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var mapBottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var searchBottomBehavior: BottomSheetBehavior<ConstraintLayout>
-    private lateinit var friendBottomBehavior : BottomSheetBehavior<ConstraintLayout>
+    private lateinit var friendBottomBehavior: BottomSheetBehavior<ConstraintLayout>
 
 
     private lateinit var mapView: MapView
@@ -201,6 +201,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var importance = false
     private var readyTime = ""
     private var myFriends = mutableListOf<User>()
+    private var todoKey = ""
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -308,7 +309,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             this@CreateActivity.notificationId = notificationId
             this@CreateActivity.importance = importance ?: false
             this@CreateActivity.readyTime = readyTime ?: ""
-            oldNotificationId = notificationId //이부분에서 notificationId를 가져와 기존의 알람정보를 얻어올수 있음
+            //이부분에서 readyTime도 빼줘야한다.
+            oldNotificationId = notificationId
+            Log.e("old1", oldNotificationId.toString())
+            //이부분에서 notificationId를 가져와 기존의 알람정보를 얻어올수 있음
             startX = startLng!!
             startY = startLat!!
             endX = arrivalLng!!
@@ -597,12 +601,13 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                                 updateTodo(todoKey!!, todo!!)
                             } else {
                                 //기존의 alarm을 삭제
+                                Log.e("old", oldNotificationId!!)
                                 FirebaseUtil.alarmDataBase.child(oldNotificationId!!).removeValue()
                                 AlarmUtil.deleteAlarm(oldNotificationId!!.toInt(), this)
                                 //기존의 todo를 수정
                                 updateTodo(todoKey!!, todo!!)
                                 //새로운 알람 생성
-                                setAlarm(calendar, ALARM)
+                                setAlarm(calendar, ALARM, todoKey!!)
                                 createAlarm()
                             }
                         } else {
@@ -618,15 +623,15 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 } else {
                     Log.d("create", "initailize create mode")
                     // 새로운 Todo를 생성하는 경우
+                    createTodo()
                     if (notificationId != "0") {//알람을 설정할때
                         if (usingAlarm) {
-                            setAlarm(calendar, ALARM)
+                            setAlarm(calendar, ALARM, this@CreateActivity.todoKey)
                             createAlarm()
                         } else {
                             notificationId = "0"
                         }
                     }
-                    createTodo()
                     finish()
                 }
             }
@@ -635,8 +640,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
 
         binding.dateBottomSheetLayout.apply {
-            root.setOnClickListener {  }    // 빈 곳 터치방지
-            startDateTextView.setOnClickListener{
+            root.setOnClickListener { }    // 빈 곳 터치방지
+            startDateTextView.setOnClickListener {
                 setDate(0)
             }
             endDateTextView.setOnClickListener {
@@ -648,7 +653,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             endTimeText.setOnClickListener {
                 setTime(1)
             }
-            shareFriendView.setOnClickListener{
+            shareFriendView.setOnClickListener {
                 dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 friendBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
@@ -713,8 +718,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
             }
         }
-            binding.friendBottomSheetLayout.apply {
-                Firebase.database.reference.child(Key.DB_USERS).addValueEventListener(object : ValueEventListener {
+        binding.friendBottomSheetLayout.apply {
+            Firebase.database.reference.child(Key.DB_USERS)
+                .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         // 친구들 저장할 리스트 생성
                         this@CreateActivity.myFriends = mutableListOf<User>()
@@ -746,24 +752,24 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     override fun onCancelled(error: DatabaseError) {
                     }
                 })
-                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
-                    androidx.appcompat.widget.SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String): Boolean {
-                        // 검색 버튼을 눌렀을 때 호출됩니다.
-                        performSearch(query)
-                        return false
-                    }
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+                androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    // 검색 버튼을 눌렀을 때 호출됩니다.
+                    performSearch(query)
+                    return false
+                }
 
-                    override fun onQueryTextChange(newText: String): Boolean {
-                        if (newText.isEmpty()) {
-                            // 검색창 빈칸될 경우 처리 (x) 버튼 구현?
-                            var emptyList = mutableListOf<User>()
-                            updateSearchRecyclerView(emptyList)
-                        }
-                        return true
+                override fun onQueryTextChange(newText: String): Boolean {
+                    if (newText.isEmpty()) {
+                        // 검색창 빈칸될 경우 처리 (x) 버튼 구현?
+                        var emptyList = mutableListOf<User>()
+                        updateSearchRecyclerView(emptyList)
                     }
-                })
-            }
+                    return true
+                }
+            })
+        }
         binding.mapBottomSheetLayout.startEditText.isClickable = false
         binding.mapBottomSheetLayout.startEditText.isFocusable = false
         binding.mapBottomSheetLayout.arrivalEditText.isClickable = false
@@ -944,7 +950,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun setDate(separator: Int) {
-        if (separator == 0){startDatePicker
+        if (separator == 0) {
+            startDatePicker
             startDatePicker.addOnPositiveButtonClickListener {
                 val calendar = Calendar.getInstance()
                 val selectedDate = Date(startDatePicker.selection!!)
@@ -965,8 +972,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 startTime = "$dateString $timeString"
             }
             startDatePicker.show(supportFragmentManager, "datePickerDialog")
-        }
-        else{
+        } else {
             endDatePicker.addOnPositiveButtonClickListener {
                 val calendar = Calendar.getInstance()
                 val selectedDate = Date(endDatePicker.selection!!)
@@ -1025,6 +1031,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val clickedMonth = check[1].trim()
         val clickedDay = check[2].trim()
 
+        //여기서 notificationId에서 readyTime을 빼줘야함
+        notificationIdPlusReadyTime()
         val todo =
             Todo(
                 todoId = todoId,
@@ -1053,7 +1061,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             .child(clickedDay)
             .push()
 
-        val todoKey = todoRef.key   // 자동 생성된 키 값을 가져옴
+        todoKey = todoRef.key!!   // 자동 생성된 키 값을 가져옴
         todoKeys.add(todoKey!!)     // 가져온 키 값을 todoKeys 목록에 추가
         todo.todoId = todoKey       // 생성된 키 값을 객체에 할당
 
@@ -1082,6 +1090,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val startPlace = startPlace
         val arrivePlace = arrivalPlace
         val todoId = todo?.todoId
+
+        //여기서 notificationId에서 readyTime을 빼줘야함
+        notificationIdPlusReadyTime()
 
 
         val todoUpdates: MutableMap<String, Any> = HashMap()
@@ -1190,6 +1201,27 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     }
             }
         }
+    }
+
+    private fun notificationIdPlusReadyTime() {
+        val fullNotificationId = "202$notificationId"
+        val dateNotificationId = SimpleDateFormat("yyyyMMddHHmm").parse(fullNotificationId)
+        val date = Calendar.getInstance()
+        date.time = dateNotificationId
+
+        val readyHour = readyTime.substring(0, 2).toInt()
+        val readyMinute = readyTime.substring(3, 5).toInt()
+
+        date.add(Calendar.HOUR_OF_DAY, -readyHour)
+        date.add(Calendar.MINUTE, -readyMinute)
+        val year = date.get(Calendar.YEAR)
+        val month = date.get(Calendar.MONTH) + 1 // 월은 0부터 시작하므로 1을 더함
+        val day = date.get(Calendar.DAY_OF_MONTH)
+        val hour = date.get(Calendar.HOUR_OF_DAY)
+        val minute = date.get(Calendar.MINUTE)
+        notificationId =
+            String.format("%04d%02d%02d%02d%02d", year, month, day, hour, minute)
+                .substring(3) //202309160940
     }
 
     private fun splitDate(date: String): Array<String> {
@@ -1415,7 +1447,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun setAlarm(calendar: Calendar, flag: Int) {
+    private fun setAlarm(calendar: Calendar, flag: Int, todoKey: String = "") {
         //readyTime에 대해 시간 빼주기
         if (readyTime != "" && flag == ALARM) {
             val readyHour = readyTime.substring(0, 2).toInt()
@@ -1446,6 +1478,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         alarmData["dateTime"] = binding.dateTextView.text.toString()
         alarmData["message"] = binding.titleEditText.text.toString()
         alarmData["readyTime"] = readyTime
+        alarmData["todoId"] = todoKey
     }
 
 
@@ -1533,14 +1566,17 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
         }
     }
+
     private fun updateSearchRecyclerView(dataList: List<User>) {
         // 어댑터에 새로운 데이터 설정하여 업데이트
         val searchAdapter = InviteFriendAdapter(dataList as MutableList<User>)
         binding.friendBottomSheetLayout.friendRecyclerView.adapter = searchAdapter
-        binding.friendBottomSheetLayout.friendRecyclerView.layoutManager = LinearLayoutManager(binding.root.context)
+        binding.friendBottomSheetLayout.friendRecyclerView.layoutManager =
+            LinearLayoutManager(binding.root.context)
 
         searchAdapter.notifyDataSetChanged()
     }
+
     private fun performSearch(query: String) {
         // 검색어를 사용
         val filteredList = myFriends.filter { item ->
@@ -1548,6 +1584,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
         updateSearchRecyclerView(filteredList)
     }
+
     companion object {
         const val ALARM = 0
         const val NO_ALARM = 1
