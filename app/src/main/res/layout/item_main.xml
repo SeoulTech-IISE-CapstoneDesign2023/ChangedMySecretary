@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:layout_margin="32dp">
+    android:layout_margin="16dp"
+    android:padding="8dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/todoTitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -45,8 +45,8 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/clockAnimationView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         app:layout_constraintEnd_toEndOf="@id/dateTextView"
         app:layout_constraintStart_toEndOf="@id/typeAnimationView"
         app:layout_constraintTop_toTopOf="@id/typeAnimationView"
@@ -54,7 +54,7 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/clock_animation" />
 
-    <TextView
+    <com.design.TimerTextView
         android:id="@+id/timeRemainingTextView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -63,14 +63,14 @@
         app:layout_constraintEnd_toEndOf="@id/dateTextView"
         app:layout_constraintStart_toEndOf="@id/typeAnimationView"
         app:layout_constraintTop_toBottomOf="@id/clockAnimationView"
-        tools:text="3일 02시 01분\n남음" />
+        tools:text="출발시간\n3일 02시 01분\n남음" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/shareButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="@id/typeAnimationView"
         app:layout_constraintTop_toBottomOf="@id/typeAnimationView"
         app:srcCompat="@drawable/friends" />
@@ -89,7 +89,7 @@
         android:id="@+id/deleteButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="@id/timeRemainingTextView"
         app:layout_constraintTop_toBottomOf="@id/timeRemainingTextView"

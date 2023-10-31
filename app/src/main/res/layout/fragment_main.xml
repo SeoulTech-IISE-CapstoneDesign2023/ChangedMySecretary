@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/chip"
+        android:id="@+id/alarmTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -28,31 +28,21 @@
         android:drawableStart="@drawable/baseline_notifications_24"
         android:drawablePadding="4dp"
         android:padding="8dp"
-        android:text="알림"
+        android:text="일정"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
         app:layout_constraintTop_toBottomOf="@id/titleTextView" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/todayTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="오늘의 일정을 확인하세요"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@id/chip"
-        app:layout_constraintStart_toEndOf="@id/chip"
-        app:layout_constraintTop_toTopOf="@id/chip" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/emptyTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="설정된 알람이 없습니다"
-        android:textSize="32dp"
-        app:layout_constraintBottom_toBottomOf="@id/alarmRecyclerView"
-        app:layout_constraintEnd_toEndOf="@id/alarmRecyclerView"
-        app:layout_constraintStart_toStartOf="@id/alarmRecyclerView"
-        app:layout_constraintTop_toTopOf="@id/alarmRecyclerView" />
+        app:layout_constraintBottom_toBottomOf="@id/alarmTextView"
+        app:layout_constraintStart_toEndOf="@id/alarmTextView"
+        app:layout_constraintTop_toTopOf="@id/alarmTextView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/alarmRecyclerView"
@@ -68,7 +58,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/titleTextView"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
-        app:layout_constraintTop_toBottomOf="@id/chip" />
+        app:layout_constraintTop_toBottomOf="@id/alarmTextView" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="설정된 알람이 없습니다"
+        android:textSize="32dp"
+        app:layout_constraintBottom_toBottomOf="@id/alarmRecyclerView"
+        app:layout_constraintEnd_toEndOf="@id/alarmRecyclerView"
+        app:layout_constraintStart_toStartOf="@id/alarmRecyclerView"
+        app:layout_constraintTop_toTopOf="@id/alarmRecyclerView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
