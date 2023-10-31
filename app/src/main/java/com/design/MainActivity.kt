@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
     private var fullDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
 
-    private val fragmentList = listOf(AlarmFragment(), CalendarFragment(), MapFragment())
+    private val fragmentList = listOf(MainFragment(), CalendarFragment(), MapFragment())
     private val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity() {
                     } else continue
                 }
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
             }
         })
@@ -115,6 +116,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+
                 R.id.menuitem2 -> {
                     val intent =
                         Intent(this, ManageActivity::class.java)
@@ -127,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        Log.d("my_log","${user?.email}")
+        Log.d("my_log", "${user?.email}")
 
         var count = 0
         if (user != null) {
@@ -156,6 +158,7 @@ class MainActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
                     }
+
                     override fun onCancelled(databaseError: DatabaseError) {
                     }
                 })
@@ -197,6 +200,7 @@ class MainActivity : AppCompatActivity() {
                     } else continue
                 }
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
             }
         })
@@ -211,24 +215,26 @@ class MainActivity : AppCompatActivity() {
     private fun initViewPager() {
         binding.viewPager.adapter = viewPagerAdapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            if (fragmentList[position] is CalendarFragment) {
+            if (fragmentList[position] is MainFragment) {
+                tab.text = "메인"
+                tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_home_24)
+            } else if (fragmentList[position] is CalendarFragment) {
                 tab.text = "시간"
-                tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_calendar_month_24)
+                tab.icon =
+                    AppCompatResources.getDrawable(this, R.drawable.baseline_calendar_month_24)
             } else if (fragmentList[position] is MapFragment) {
                 tab.text = "공간"
                 tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_map_24)
-            } else{
-                tab.text = "알림"
-                tab.icon = AppCompatResources.getDrawable(this, R.drawable.baseline_access_alarm_24)
             }
         }.attach()
     }
+
     private fun saveDate() {
         val intent = Intent(this, CreateActivity::class.java)
         Log.d("date", dateStr)
         val saveStr = splitDate(dateStr)
         val saveYear = saveStr[0].trim().toInt()
-        val saveMonth = saveStr[1].trim().toInt()-1
+        val saveMonth = saveStr[1].trim().toInt() - 1
         val saveDay = saveStr[2].trim().toInt()
         val saveDayOfWeek = getDayOfWeek(saveYear, saveMonth, saveDay)
         Log.d("date", saveDayOfWeek)
