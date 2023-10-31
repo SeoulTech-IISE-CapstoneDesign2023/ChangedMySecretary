@@ -11,10 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.design.adapter.MainListAdapter
 import com.design.databinding.FragmentMainBinding
+import com.design.databinding.SearchDialogBinding
 import com.design.model.Todo
 import com.design.model.alarm.AlarmItem
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
+import com.design.view.SearchDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -25,6 +27,8 @@ class MainFragment : Fragment() {
     private var binding: FragmentMainBinding? = null
     private lateinit var mainListAdapter: MainListAdapter
     private val alarmList = mutableListOf<AlarmItem>()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +56,10 @@ class MainFragment : Fragment() {
         mainListAdapter = MainListAdapter(
             onSharedClick = {
                 //todo 친구에게 AlarmItem을 전송해줘야함 친구를 선택하는 창이 뜨고 그 창에서 친구에게 공유
+                val searchDialogBinding = SearchDialogBinding.inflate(layoutInflater)
+                val dialog = SearchDialog(searchDialogBinding)
+                dialog.isCancelable = false
+                dialog.show(requireFragmentManager(),"친구 태그")
             },
             onDeleteClick = {
                 val notificationId = it.notificationId ?: ""
