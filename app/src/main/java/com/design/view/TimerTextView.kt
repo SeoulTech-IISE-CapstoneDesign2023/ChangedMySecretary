@@ -1,4 +1,4 @@
-package com.design
+package com.design.view
 
 import android.content.Context
 import android.os.Handler

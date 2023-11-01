@@ -54,7 +54,7 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/clock_animation" />
 
-    <com.design.TimerTextView
+    <com.design.view.TimerTextView
         android:id="@+id/timeRemainingTextView"
         android:layout_width="0dp"
         android:layout_height="0dp"
