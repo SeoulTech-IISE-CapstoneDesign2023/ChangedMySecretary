@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="400dp"
-    android:background="#FFC7EA">
+    android:background="#F9F9F9"
+    android:minHeight="400dp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -59,15 +59,29 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        app:layout_constraintStart_toStartOf="@id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="@id/textInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/chipGroup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:background="#97FFF4"
+        android:background="@drawable/white_8"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/okButton"
+        app:layout_constraintEnd_toEndOf="@id/textInputLayout"
+        app:layout_constraintStart_toStartOf="@id/textInputLayout"
+        app:layout_constraintTop_toBottomOf="@id/chipGroup" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/emptyTextView"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="검색된 친구가 없습니다."
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerView"
+        app:layout_constraintEnd_toEndOf="@id/recyclerView"
+        app:layout_constraintStart_toStartOf="@id/recyclerView"
+        app:layout_constraintTop_toTopOf="@id/recyclerView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,6 @@
 package com.design
 
 import android.Manifest
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
@@ -17,7 +16,6 @@ import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
@@ -34,13 +32,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
-import com.airbnb.lottie.utils.LottieValueAnimator
+import com.design.adapter.InviteFriendAdapter
 import com.design.adapter.RouteAdapter
-import com.design.calendar.MySelectorDecorator
-import com.design.calendar.OneDayDecorator
-import com.design.calendar.SundayDecorator
 import com.design.model.route.PublicTransitRoute
 import com.design.model.route.SubPath
 import com.design.databinding.ActivityCreateBinding
@@ -84,7 +78,6 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
-import com.prolificinteractive.materialcalendarview.CalendarDay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

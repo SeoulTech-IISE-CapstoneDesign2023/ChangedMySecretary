@@ -1,22 +1,13 @@
-package com.design
+package com.design.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.design.User
 import com.design.databinding.MyfriendsSelectBinding
-import com.design.util.Key.Companion.DB_USERS
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
-class InviteFriendAdapter(val User: MutableList<User>) : RecyclerView.Adapter<InviteFriendAdapter
-.ViewHolder>() {
+class InviteFriendAdapter(val User: MutableList<User>) : RecyclerView.Adapter<InviteFriendAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context

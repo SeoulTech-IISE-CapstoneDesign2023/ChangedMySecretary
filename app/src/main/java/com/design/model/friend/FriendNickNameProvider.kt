@@ -1,5 +1,6 @@
 package com.design.model.friend
 
+import android.util.Log
 import com.design.User
 import com.design.util.FirebaseUtil
 import com.design.util.Key.Companion.DB_USERS
@@ -8,9 +9,9 @@ import com.google.firebase.ktx.Firebase
 
 class FriendNickNameProvider(private val callback: Callback) {
 
-    private val nickNameList = mutableListOf<String>()//친구들의 닉네임 저장
+    private val nickNameList = mutableListOf<Friend>()//친구들의 닉네임 저장
 
-    fun getFriendNickName() {
+    fun getFriendNickName(query: String) {
         FirebaseUtil.userDataBase.child("friend_info").child("friends").get()
             .addOnSuccessListener {
                 val data = it.value as Map<*, *>
@@ -21,15 +22,22 @@ class FriendNickNameProvider(private val callback: Callback) {
                             .child("user_info").get()
                             .addOnSuccessListener {
                                 val user = it.getValue(User::class.java)
-                                nickNameList.add(user?.nickname.toString())
+                                val nickName = user?.nickname.toString()
+                                nickNameList.add(Friend(nickName = nickName))
+                                val filteredList = nickNameList.filter { item ->
+                                    item.nickName.contains(query, ignoreCase = true)
+                                }
+                                callback.loadFriendNickNameList(
+                                    filteredList.toSet().toMutableList()
+                                )
                             }
                     }
                 }
-                callback.loadFriendNickNameList(nickNameList)
+
             }
     }
 
     interface Callback {
-        fun loadFriendNickNameList(list: MutableList<String>)
+        fun loadFriendNickNameList(list: MutableList<Friend>)
     }
 }
