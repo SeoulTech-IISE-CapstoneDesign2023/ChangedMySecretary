@@ -82,6 +82,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.DecimalFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.CountDownLatch
@@ -92,7 +93,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private lateinit var binding: ActivityCreateBinding
 
     private lateinit var dateBottomBehavior: BottomSheetBehavior<ConstraintLayout>
-    private lateinit var mapBottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var searchBottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var friendBottomBehavior: BottomSheetBehavior<ConstraintLayout>
 
@@ -204,7 +204,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         setContentView(binding.root)
         user = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         locationSource = FusedLocationSource(this, MapFragment.LOCATION_PERMISSION_REQUEST_CODE)
-        mapView = binding.mapBottomSheetLayout.mapView
+        mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
         initLocationAdapter(binding)
@@ -264,7 +264,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     override fun onMapReady(map: NaverMap) {
         naverMap = map
         map.locationSource = locationSource
-        binding.mapBottomSheetLayout.locationButton.map = map
+        binding.locationButton.map = map
 
         if (startX != 0.0) {
             startMarker.apply {
@@ -311,13 +311,13 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             endX = arrivalLng!!
             endY = arrivalLat!!
 
-            if (data.usingAlarm == true) {
-                this@CreateActivity.usingAlarm = true
-                binding.mapBottomSheetLayout.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_24)
-            } else {
-                this@CreateActivity.usingAlarm = false
-                binding.mapBottomSheetLayout.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_off_24)
-            }
+//            if (data.usingAlarm == true) {
+//                this@CreateActivity.usingAlarm = true
+//                binding.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_24)
+//            } else {
+//                this@CreateActivity.usingAlarm = false
+//                binding.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_off_24)
+//            }
         }
         isEditMode = true  // 기존 Todo를 수정하는 편집 모드임을 나타냄
 
@@ -329,11 +329,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             // Todo의 제목
             titleEditText.setText(title)
             //locatinoChip text 설정
-            locationChip.text = if (startPlace.isEmpty() || arrivalPlace.isEmpty()) {
-                "추억의 장소를 지정해주세요."
-            } else {
-                getString(R.string.start_to_arrive, startPlace, arrivalPlace)
-            }
             with(dateBottomSheetLayout) {
                 // 시작 날짜 및 시간
                 startDateTextView.text = stDate
@@ -342,11 +337,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 endDateTextView.text = enDate
                 endTimeText.text = enTime
             }
-            with(mapBottomSheetLayout) {
-                // 출발지와 도착지 이름 설정
-                startEditText.setText(startPlace)
-                arrivalEditText.setText(arrivalPlace)
-            }
+            // 출발지와 도착지 이름 설정
+            startEditText.setText(startPlace)
+            arrivalEditText.setText(arrivalPlace)
             // 메모장
             binding.dateBottomSheetLayout.memoEditText.setText(memo)
         }
@@ -409,7 +402,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             naverMap.moveCamera(cameraUpdate)
             naverMap.minZoom = 5.0
             naverMap.maxZoom = 18.0
-            binding.mapBottomSheetLayout.apply {
+            binding.apply {
                 if (isStart) {
                     startEditText.setText(name)
                     startMarker.apply {
@@ -435,7 +428,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
             }
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            mapBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(
                 binding.searchBottomSheetLayout.searchEditText.windowToken,
@@ -453,15 +445,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             var waitTime = 0L
             override fun handleOnBackPressed() {
                 // 뒤로가기누르면 bottomsheet 내리기
-                if (mapBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                }
                 if (dateBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
                 if (searchBottomBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    mapBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
 
                 if (System.currentTimeMillis() - waitTime >= 1500) {
@@ -495,28 +483,21 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         //키보드 통제
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         dateBottomBehavior = BottomSheetBehavior.from(binding.dateBottomSheetLayout.root)
-        mapBottomBehavior = BottomSheetBehavior.from(binding.mapBottomSheetLayout.root)
         searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetLayout.root)
         friendBottomBehavior = BottomSheetBehavior.from(binding.friendBottomSheetLayout.root)
 
         binding.dateTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
         dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         binding.layout.setOnTouchListener { _, _ ->
             imm.hideSoftInputFromWindow(binding.dateBottomSheetLayout.memoEditText.windowToken, 0)
             dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             false
-        }
-
-        if (startPlace.isEmpty() || arrivalPlace.isEmpty()) {
-            binding.locationChip.text = "추억의 장소를 지정해주세요."
         }
 
         binding.cancelImageView.setOnClickListener {
@@ -526,22 +507,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         binding.dateTextView.setOnClickListener {
             //완전 펴져있으면은 접어버림 아니면은 닫아버림
             imm.hideSoftInputFromWindow(binding.dateBottomSheetLayout.memoEditText.windowToken, 0)
-            mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             if (dateBottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
                 dateBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
                 dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            }
-        }
-        binding.locationChip.setOnClickListener {
-            dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            imm.hideSoftInputFromWindow(binding.memoEditText.windowToken, 0)
-            if (mapBottomBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            } else {
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
 
@@ -763,44 +733,29 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
             })
         }
-        binding.mapBottomSheetLayout.startEditText.isClickable = false
-        binding.mapBottomSheetLayout.startEditText.isFocusable = false
-        binding.mapBottomSheetLayout.arrivalEditText.isClickable = false
-        binding.mapBottomSheetLayout.arrivalEditText.isFocusable = false
 
-        binding.mapBottomSheetLayout.apply {
-            root.setOnClickListener { } //빈곳 터치방지
-            alarmImageView.setOnClickListener {
-                if (!usingAlarm) {
-                    it.setBackgroundResource(R.drawable.baseline_notifications_24)
-                    usingAlarm = true
-                    Toast.makeText(this@CreateActivity, "알람설정 on", Toast.LENGTH_SHORT).show()
-                    val picker = TimeUtil.openTimePickerForReadyTime(readyTime)
-                    picker.addOnPositiveButtonClickListener {
-                        readyTime = String.format("%02d:%02d", picker.hour, picker.minute)
-                    }
-                    picker.show(supportFragmentManager, "준비시간")
-                } else {
-                    it.setBackgroundResource(R.drawable.baseline_notifications_off_24)
-                    usingAlarm = false
-                    Toast.makeText(this@CreateActivity, "알람설정 off", Toast.LENGTH_SHORT).show()
-                }
-            }
+        binding.apply {
             startEditText.setOnClickListener {
                 isStart = true
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
             arrivalEditText.setOnClickListener {
                 isStart = false
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
             walkButton.setOnClickListener {
+
+                walkButton.setImageResource(R.drawable.icons_walk_click)
+                carButton.setImageResource(R.drawable.icons_car)
+                publicTransportationButton.setImageResource(R.drawable.icons_bus)
                 if (checkPlace()) return@setOnClickListener
                 val startTime = binding.dateTextView.text.toString()
                 if (startTime == "추억의 시간을 지정해주세요") {
-                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT)
+                        .show()
+                    walkButton.setImageResource(R.drawable.icons_walk)
+                    carButton.setImageResource(R.drawable.icons_car)
+                    publicTransportationButton.setImageResource(R.drawable.icons_bus)
                 }
                 type = Type.WALK
                 Toast.makeText(this@CreateActivity, "이동수단 : 걷기", Toast.LENGTH_SHORT).show()
@@ -814,13 +769,20 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     searchOption = 4
                 )
                 walkProvider.getWalkingRoot(body)
+
             }
             carButton.setOnClickListener {
+                walkButton.setImageResource(R.drawable.icons_walk)
+                carButton.setImageResource(R.drawable.icons_car_click)
+                publicTransportationButton.setImageResource(R.drawable.icons_bus)
                 if (checkPlace()) return@setOnClickListener
                 type = Type.CAR
                 Toast.makeText(this@CreateActivity, "이동수단 : 자동차", Toast.LENGTH_SHORT).show()
                 val startTime = binding.dateTextView.text.toString()
                 if (startTime == "추억의 시간을 지정해주세요") {
+                    walkButton.setImageResource(R.drawable.icons_walk)
+                    carButton.setImageResource(R.drawable.icons_car)
+                    publicTransportationButton.setImageResource(R.drawable.icons_bus)
                     Toast.makeText(this@CreateActivity, "출발시간을 먼저 정해주세요.", Toast.LENGTH_SHORT)
                         .show()
                     return@setOnClickListener
@@ -845,24 +807,23 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 carProvider.getCarRoot(body)
             }
             publicTransportationButton.setOnClickListener {
+
+                walkButton.setImageResource(R.drawable.icons_walk)
+                carButton.setImageResource(R.drawable.icons_car)
+                publicTransportationButton.setImageResource(R.drawable.icons_bus_click)
                 type = Type.PUBLIC
                 if (checkPlace()) return@setOnClickListener
                 Toast.makeText(this@CreateActivity, "이동수단 : 대중교통", Toast.LENGTH_SHORT).show()
                 val startTime = binding.dateTextView.text.toString()
                 if (startTime == "추억의 시간을 지정해주세요") {
-                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT).show()
+                    walkButton.setImageResource(R.drawable.icons_walk)
+                    carButton.setImageResource(R.drawable.icons_car)
+                    publicTransportationButton.setImageResource(R.drawable.icons_bus)
+                    Toast.makeText(this@CreateActivity, "시간을 먼저 정해주세요.", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 routeProvider.getRoute(startX, startY, endX, endY)
-            }
-            okButton.setOnClickListener {
-                if (startPlace.isNotEmpty() && arrivalPlace.isNotEmpty()) {
-                    binding.locationChip.text =
-                        getString(R.string.start_to_arrive, startPlace, arrivalPlace)
-                }
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            }
-            cancelButton.setOnClickListener {
-                mapBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
             }
         }
 
@@ -1302,7 +1263,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        binding.mapBottomSheetLayout.apply {
+        binding.apply {
             emptyTextView.isVisible = false
             recyclerView.isVisible = false
             totalTimeTextView.isVisible = false
@@ -1333,7 +1294,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         calendar.time = date
         calendar.add(Calendar.SECOND, -result.totalTime)
         setAlarm(calendar, NO_ALARM)
-        binding.mapBottomSheetLayout.apply {
+        binding.apply {
             emptyTextView.isVisible = false
             recyclerView.isVisible = false
             totalTimeTextView.isVisible = false
@@ -1403,7 +1364,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 info[info.size - 1].startName = info[info.size - 2].endName
                 runOnUiThread {
                     val routeAdapter = RouteAdapter(info)
-                    binding.mapBottomSheetLayout.apply {
+                    binding.apply {
                         emptyTextView.isVisible = false
                         totalTimeTextView.text = "총 소요시간 : $totalTime 분"
                         totalTimeTextView.isVisible = true

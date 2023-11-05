@@ -21,6 +21,9 @@
         android:theme="@style/Theme.Design"
         tools:targetApi="31">
         <activity
+            android:name=".SampleCreateUI"
+            android:exported="false" />
+        <activity
             android:name=".ChangeNicknameActivity"
             android:exported="false" />
         <activity
