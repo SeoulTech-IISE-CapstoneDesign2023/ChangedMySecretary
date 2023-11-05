@@ -95,10 +95,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.logoutBtn.setOnClickListener {
-            showLogoutConfirmationDialog()
-        }
-
         binding.AppCompatImageView.setOnClickListener {
             val drawerLayout: DrawerLayout = binding.drawerLayout
             val navView = binding.navView
@@ -270,25 +266,4 @@ class MainActivity : AppCompatActivity() {
             else -> ""
         }
     }
-
-    private fun showLogoutConfirmationDialog() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle("로그아웃")
-            .setMessage("로그아웃 하시겠습니까?")
-            .setPositiveButton("예") { dialog, which ->
-                FirebaseAuth.getInstance().signOut()
-                finish()
-                val intent =
-                    Intent(this, IntroActivity::class.java)
-                startActivity(intent)
-                // 로그아웃 완료 메시지 또는 원하는 작업을 수행하세요.
-                Toast.makeText(this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("아니오") { dialog, which ->
-                // 아무 작업도 수행하지 않고 대화 상자를 닫습니다.
-                dialog.dismiss()
-            }
-            .show()
-    }
-
 }
