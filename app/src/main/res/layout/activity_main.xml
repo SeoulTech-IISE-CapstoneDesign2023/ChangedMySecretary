@@ -102,17 +102,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/logoutBtn"
-                    android:layout_width="40dp"
-                    android:layout_height="37dp"
-                    android:layout_gravity="end"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="13dp"
-                    app:srcCompat="@drawable/logout" /> <!-- 이미지뷰를 오른쪽에 배치 -->
-            </FrameLayout>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </com.google.android.material.navigation.NavigationView>
 

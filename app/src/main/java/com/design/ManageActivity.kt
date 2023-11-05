@@ -36,7 +36,7 @@ class ManageActivity : AppCompatActivity() {
         }
         binding.emailText.text= user?.email
 
-        val itemList = arrayOf("비밀번호 변경하기", "닉네임 변경하기")
+        val itemList = arrayOf("닉네임 변경하기", "비밀번호 변경하기", "로그아웃")
         val adapter = ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, itemList)
 
         val listView = findViewById<ListView>(R.id.manageListView)
@@ -45,14 +45,15 @@ class ManageActivity : AppCompatActivity() {
         listView.setOnItemClickListener { parent, view, position, id ->
             when (position) {
                 0 -> {
-                    // 첫 번째 항목에 대한 동작 수행
-                    showResetPasswordConfirmationDialog()
-                }
-                1 -> {
-                    // 두 번째 항목에 대한 동작 수행
                     val intent =
                         Intent(this, ChangeNicknameActivity::class.java)
                     startActivity(intent)
+                }
+                1 -> {
+                    showResetPasswordConfirmationDialog()
+                }
+                2 -> {
+                    showLogoutConfirmationDialog()
                 }
                 else -> {
                 }
@@ -71,6 +72,25 @@ class ManageActivity : AppCompatActivity() {
 
     }
 
+    private fun showLogoutConfirmationDialog() {
+        val builder = MaterialAlertDialogBuilder(this)
+        builder.setTitle("로그아웃")
+            .setMessage("로그아웃 하시겠습니까?")
+            .setPositiveButton("예") { dialog, which ->
+                FirebaseAuth.getInstance().signOut()
+                finish()
+                val intent =
+                    Intent(this, IntroActivity::class.java)
+                startActivity(intent)
+                // 로그아웃 완료 메시지 또는 원하는 작업을 수행하세요.
+                Toast.makeText(this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("아니오") { dialog, which ->
+                // 아무 작업도 수행하지 않고 대화 상자를 닫습니다.
+                dialog.dismiss()
+            }
+            .show()
+    }
     fun getUserNickname(userId: String, onDataChangeCallback: (String?) -> Unit) {
         val userData = FirebaseDatabase.getInstance().getReference("user")
         userData.addListenerForSingleValueEvent(object : ValueEventListener {
