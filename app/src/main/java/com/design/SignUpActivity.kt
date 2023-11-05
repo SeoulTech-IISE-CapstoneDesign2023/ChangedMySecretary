@@ -138,38 +138,51 @@ class SignUpActivity : AppCompatActivity() {
                         val password = editPW.text.toString()
 
                         auth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(this) {
-                                val user = auth.currentUser
-                                var count = 0
+                            .addOnCompleteListener(this) { task ->
+                                    if (task.isSuccessful) {
+                                        val user = auth.currentUser
+                                        var count = 0
+                                        val userData = FirebaseDatabase.getInstance().getReference("user")
+                                        userData.addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                for (snapshot in dataSnapshot.children) {
+                                                    if (snapshot.key == user?.uid) {
+                                                        count = 1
+                                                        break
+                                                    } else continue
+                                                }
+                                                if (count == 0) {
+                                                    textStep.text = "2단계"
+                                                    bigGuide.text = "이메일 인증을 진행해주세요!"
+                                                    smallGuide.text = "나중에 비밀번호를 찾을 때 필요합니다"
+                                                    progressBar2.progress = 1
 
-                                val userData = FirebaseDatabase.getInstance().getReference("user")
-                                userData.addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                    inputLayout1Step.visibility = View.GONE
+                                                    inputLayout2Step.visibility = View.VISIBLE
+                                                    auth.createUserWithEmailAndPassword(email, password)
+                                                } else {
+                                                    Toast.makeText(
+                                                        baseContext,
+                                                        "이미 가입된 사용자입니다.",
+                                                        Toast.LENGTH_SHORT
+                                                    )
+                                                        .show()
+                                                    return
+                                                }
+                                            }
+                                            override fun onCancelled(error: DatabaseError) {
+                                            }
+                                        })
+                                    } else {
+                                        textStep.text = "2단계"
+                                        bigGuide.text = "이메일 인증을 진행해주세요!"
+                                        smallGuide.text = "나중에 비밀번호를 찾을 때 필요합니다"
+                                        progressBar2.progress = 1
 
-                                        for (snapshot in dataSnapshot.children) {
-                                            if (snapshot.key == user?.uid) {
-                                                count = 1
-                                                break
-                                            } else continue
-                                        }
-
-                                        if (count == 0) {
-                                            textStep.text = "2단계"
-                                            bigGuide.text = "이메일 인증을 진행해주세요!"
-                                            smallGuide.text = "나중에 비밀번호를 찾을 때 필요합니다"
-                                            progressBar2.progress = 1
-
-                                            inputLayout1Step.visibility = View.GONE
-                                            inputLayout2Step.visibility = View.VISIBLE
-                                            auth.createUserWithEmailAndPassword(email, password)
-                                        } else {
-                                            Toast.makeText(baseContext, "이미 가입된 사용자입니다.", Toast.LENGTH_SHORT)
-                                                .show()
-                                        }
+                                        inputLayout1Step.visibility = View.GONE
+                                        inputLayout2Step.visibility = View.VISIBLE
+                                        auth.createUserWithEmailAndPassword(email, password)
                                     }
-                                    override fun onCancelled(error: DatabaseError) {
-                                    }
-                                })
                             }
 
                     } else if (checkStatusPW == 1) {

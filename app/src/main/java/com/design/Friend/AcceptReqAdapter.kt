@@ -37,7 +37,6 @@ class AcceptReqAdapter(val User: MutableList<User>) : RecyclerView.Adapter<Accep
             binding.friendName.text = user.nickname
             binding.buttonAccept.visibility = View.VISIBLE
             binding.buttonRefuse.visibility = View.VISIBLE
-            binding.imageCal.visibility = View.GONE
 
 
             val database = Firebase.database

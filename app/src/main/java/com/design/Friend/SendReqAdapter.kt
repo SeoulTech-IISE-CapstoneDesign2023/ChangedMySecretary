@@ -36,7 +36,6 @@ class SendReqAdapter(val User: MutableList<User>) : RecyclerView.Adapter<SendReq
             // friendView 레이아웃 조작
             binding.friendName.text = user.nickname
             binding.buttonCancel.visibility = View.VISIBLE
-            binding.imageCal.visibility = View.GONE
 
             val database = Firebase.database
             val auth = FirebaseAuth.getInstance()

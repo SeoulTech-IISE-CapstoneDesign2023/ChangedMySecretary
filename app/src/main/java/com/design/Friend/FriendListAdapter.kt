@@ -48,17 +48,6 @@ class FriendListAdapter(
         fun bind(friend: User) {
             binding.friendName.text = friend.nickname
 
-
-            binding.imageCal.setOnClickListener {
-
-                // 이곳에 친구 캘린더 보여주기 기능 필요
-                // 단 동작은 불가 그냥 보여주기 (편집 권한 있으면 안됨)
-                // 새로운 엑티비티로 정보 넘겨주면서 보여줘야 하나...
-
-                Toast.makeText(context, "${friend.nickname} 친구 캘린더를 보여드려야하는데....", Toast
-                    .LENGTH_SHORT).show()
-            }
-
         }
     }
 }
