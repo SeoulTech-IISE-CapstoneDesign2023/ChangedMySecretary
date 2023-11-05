@@ -85,6 +85,7 @@
             android:layout_marginEnd="16dp"
             android:gravity="center"
             android:hint="추억의 이름을 정해주세요"
+            android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider2" />

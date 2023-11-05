@@ -44,7 +44,6 @@ class AddFriendAdapter(val User: MutableList<User>) : RecyclerView.Adapter<AddFr
             // friendView 레이아웃 조작
             binding.friendName.text = user.nickname
             binding.buttonFollow.visibility = View.VISIBLE
-            binding.imageCal.visibility = View.GONE
 
             val database = Firebase.database
             val auth = FirebaseAuth.getInstance()
