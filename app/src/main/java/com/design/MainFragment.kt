@@ -29,7 +29,6 @@ class MainFragment : Fragment() {
     private val alarmList = mutableListOf<AlarmItem>()
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,7 +58,7 @@ class MainFragment : Fragment() {
                 val searchDialogBinding = SearchDialogBinding.inflate(layoutInflater)
                 val dialog = SearchDialog(searchDialogBinding)
                 dialog.isCancelable = false
-                dialog.show(requireFragmentManager(),"친구 태그")
+                dialog.show(requireFragmentManager(), "친구 태그")
             },
             onDeleteClick = {
                 val notificationId = it.notificationId ?: ""
@@ -150,16 +149,52 @@ class MainFragment : Fragment() {
     }
 
     private fun setTitleTextView(binding: FragmentMainBinding) {
+
+        //todo 계속해서 옵저버 역할을 해줘야함
         FirebaseUtil.userDataBase.child("user_info").get()
             .addOnSuccessListener {
                 val value = it.getValue(User::class.java)
                 binding.titleTextView.text = "${value?.nickname}님\n기분 좋은 하루 되세요"
             }
+
+        FirebaseUtil.userDataBase.child("user_info")
+            .addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                    val changedNickName = snapshot.value
+                    binding.titleTextView.text = "${changedNickName}님\n기분 좋은 하루 되세요"
+                }
+
+                override fun onChildRemoved(snapshot: DataSnapshot) {
+
+                }
+
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+    }
+
+    override fun onStart() {
+        super.onStart()
+        FirebaseUtil.userDataBase.child("user_info").get()
+            .addOnSuccessListener {
+                val value = it.getValue(User::class.java)
+                binding?.titleTextView?.text = "${value?.nickname}님\n기분 좋은 하루 되세요"
+            }
     }
 
     private fun alarmItemPair(snapshot: DataSnapshot): Pair<String?, AlarmItem> {

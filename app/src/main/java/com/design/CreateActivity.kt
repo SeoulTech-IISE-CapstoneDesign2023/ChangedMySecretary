@@ -1197,6 +1197,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun notificationIdPlusReadyTime() {
+        if(notificationId == "0") return
         val fullNotificationId = "202$notificationId"
         val dateNotificationId = SimpleDateFormat("yyyyMMddHHmm").parse(fullNotificationId)
         val date = Calendar.getInstance()

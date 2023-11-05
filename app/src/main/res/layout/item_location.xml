@@ -3,38 +3,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="100dp"
+    android:layout_margin="15dp"
+    android:background="@drawable/white_8">
 
-    <LinearLayout
-        android:gravity="center_vertical"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/addressNameText"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:background="@drawable/item_background"
-        android:orientation="vertical"
-        android:layout_margin="15dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/address_name_background"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:text="장소"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/fullAddressNameText"
+        app:layout_constraintEnd_toEndOf="@id/fullAddressNameText"
+        app:layout_constraintStart_toStartOf="@id/fullAddressNameText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/nameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/addressNameText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fullAddressNameText"
+        app:layout_constraintTop_toTopOf="@id/addressNameText"
+        tools:text="청정빌딩" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/fullAddressNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/address_name_background"
+        android:backgroundTint="#FFF3DA"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:text="도로명 주소"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/addressNameText" />
 
-        <TextView
-            android:id="@+id/nameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            tools:text="청정빌딩" />
-
-        <TextView
-            android:id="@+id/fullAddressRoadTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            tools:text="서울 서초구 주흥16길 14" />
-
-    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/fullAddressRoadTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="2dp"
+        android:textColor="#B1B1B1"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/fullAddressNameText"
+        app:layout_constraintStart_toEndOf="@id/fullAddressNameText"
+        app:layout_constraintTop_toTopOf="@id/fullAddressNameText"
+        tools:text="서울 서초구 주흥16길 14" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
