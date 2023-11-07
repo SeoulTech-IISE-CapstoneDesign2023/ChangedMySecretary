@@ -24,10 +24,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Day of Memories..."
+        android:text="@string/day_of_memories"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view" />
+
     <LinearLayout
         android:id="@+id/shareFriendView"
         android:layout_width="0dp"
@@ -59,7 +60,7 @@
             android:layout_marginBottom="3dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="추억을 공유할 친구" />
+            android:text="@string/friend_to_share" />
 
     </LinearLayout>
 
@@ -94,7 +95,7 @@
             android:layout_marginBottom="3dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="알람 설정" />
+            android:text="@string/set_alarm" />
 
     </LinearLayout>
 
@@ -122,8 +123,8 @@
         android:layout_height="33dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/textview_background"
+        android:hint="@string/enter_start_date"
         android:padding="4dp"
-        android:hint="추억의 시작 날짜를 정해주세요"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@id/startCalendarImageView"
         app:layout_constraintStart_toEndOf="@id/startCalendarImageView"
@@ -136,7 +137,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/textview_background"
-        android:hint="추억의 종료 날짜를 정해주세요"
+        android:hint="@string/enter_arrival_date"
         android:padding="4dp"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@id/endCalendarImageView"
@@ -147,13 +148,11 @@
         android:id="@+id/startTimeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="16dp"
         android:background="@drawable/time_edit_text_background"
         android:orientation="horizontal"
         android:padding="4dp"
-        android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/startDateTextView"
-        app:layout_constraintEnd_toEndOf="@+id/calendarView"
         app:layout_constraintStart_toEndOf="@+id/startDateTextView"
         app:layout_constraintTop_toTopOf="@+id/startDateTextView">
 
@@ -163,7 +162,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:clickable="false"
-            android:hint="00:00"
+            android:hint="@string/default_time"
             android:inputType="time"
             android:maxLines="1"
             android:padding="3dp"
@@ -174,11 +173,10 @@
         android:id="@+id/endTimeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="16dp"
         android:background="@drawable/time_edit_text_background"
         android:orientation="horizontal"
         android:padding="4dp"
-        android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/endDateTextView"
         app:layout_constraintStart_toEndOf="@+id/endDateTextView"
         app:layout_constraintTop_toTopOf="@+id/endDateTextView">
@@ -189,7 +187,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:clickable="false"
-            android:hint="00:00"
+            android:hint="@string/default_time"
             android:inputType="time"
             android:maxLines="1"
             android:padding="3dp"
@@ -202,7 +200,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:text="일기장"
+        android:text="@string/diary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingAlarmView" />
 
@@ -211,10 +209,10 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_gravity="center"
-        android:background="@null"
-        android:gravity="left"
         android:layout_marginTop="5dp"
-        android:hint="추억을 자세히 기록해봐요"
+        android:background="@null"
+        android:gravity="start"
+        android:hint="@string/enter_diary_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/memoTextVeiw" />
@@ -229,10 +227,10 @@
         android:background="@drawable/textview_background"
         android:backgroundTint="@color/gray"
         android:padding="12dp"
-        android:text="오늘 날짜 적용"
+        android:text="@string/set_today"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/okButton"
@@ -244,11 +242,11 @@
         android:background="@drawable/textview_background"
         android:backgroundTint="@color/white"
         android:padding="12dp"
-        android:text="확인"
+        android:text="@string/ok"
         android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/currentTimeButton"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/currentTimeButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

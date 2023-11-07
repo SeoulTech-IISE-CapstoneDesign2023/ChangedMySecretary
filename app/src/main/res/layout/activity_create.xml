@@ -56,7 +56,7 @@
             android:id="@+id/createButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/baseline_check_24"
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:text="추억의 시간을 지정해주세요"
+            android:text="@string/specify_time"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/titleEditText"
             app:layout_constraintStart_toStartOf="@+id/titleEditText"
@@ -84,7 +84,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:hint="추억의 이름을 정해주세요"
+            android:hint="@string/enter_todo_title"
             android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -99,15 +99,14 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/textview_background"
             android:drawableStart="@drawable/baseline_place_24"
-            android:hint="출발 장소를 입력해주세요"
-            android:padding="5dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
+            android:hint="@string/enter_start_place"
+            android:padding="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mapView"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/arrivalEditText"
@@ -118,10 +117,10 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/textview_background"
             android:drawableStart="@drawable/baseline_place_24"
-            android:hint="도착 장소를 입력해주세요"
-            android:padding="5dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
+            android:hint="@string/enter_arrive_place"
+            android:padding="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -132,7 +131,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="이동수단을 클릭해주세요."
+            android:text="@string/click_transportation"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -222,24 +221,24 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_weight="1"
-                android:src="@drawable/icons_car"
-                android:clickable="true" />
+                android:clickable="true"
+                android:src="@drawable/icons_car" />
 
             <ImageView
                 android:id="@+id/publicTransportationButton"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_weight="1"
-                android:src="@drawable/icons_bus"
-                android:clickable="true" />
+                android:clickable="true"
+                android:src="@drawable/icons_bus" />
 
             <ImageView
                 android:id="@+id/walkButton"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_weight="1"
-                android:src="@drawable/icons_walk"
-                android:clickable="true" />
+                android:clickable="true"
+                android:src="@drawable/icons_walk" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

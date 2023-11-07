@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bottom_sheet_background"
@@ -27,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="25dp"
-        android:text="추억의 장소"
+        android:text="@string/place_of_memories"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,8 +36,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:lineSpacingExtra="5dp"
+        android:text="@string/empty_place_of_memories"
         android:textSize="16sp"
-        android:text="추억의 장소가 없어요.\n 추억의 일정의 별을 눌러서 추가하세요."
         app:layout_constraintBottom_toBottomOf="@id/favoriteRecyclerView"
         app:layout_constraintEnd_toEndOf="@id/favoriteRecyclerView"
         app:layout_constraintStart_toStartOf="@id/favoriteRecyclerView"

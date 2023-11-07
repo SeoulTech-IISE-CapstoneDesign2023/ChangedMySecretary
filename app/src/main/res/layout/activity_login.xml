@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="로그인"
+            android:text="@string/sign_in"
             android:textColor="#5C5C5C"
             android:textSize="18sp"
             tools:layout_editor_absoluteX="144dp"
@@ -45,7 +45,7 @@
             android:id="@+id/inputID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="이메일 주소" />
+            android:hint="@string/email_address" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -63,7 +63,7 @@
             android:id="@+id/inputPW"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="비밀번호"
+            android:hint="@string/password"
             android:inputType="text|textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,7 +74,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="8dp"
-        android:text="로그인"
+        android:text="@string/sign_in"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -86,10 +86,10 @@
         android:layout_width="0dp"
         android:layout_height="58dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="#DBD3EA"
-        android:text="가입하기"
+        android:text="@string/sign_up"
         android:textColor="#7448C3"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +103,7 @@
         android:layout_marginTop="15dp"
         android:gravity="center"
         android:singleLine="true"
-        android:text="비밀번호를 잊으셨나요?"
+        android:text="@string/do_you_forget_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
