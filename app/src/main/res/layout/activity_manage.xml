@@ -19,7 +19,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#DAD2E9"
+        android:background="@color/lavender_gray"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/manageListView"
@@ -37,16 +37,16 @@
                 android:id="@+id/nameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                tools:text="textview"
-                android:textColor="#807097"
-                android:textSize="20sp" />
+                android:layout_marginEnd="10dp"
+                android:textColor="@color/slate_gray"
+                android:textSize="20sp"
+                tools:text="textview" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hello_sir"
-                android:textColor="#807097" />
+                android:textColor="@color/slate_gray" />
         </LinearLayout>
 
         <TextView
@@ -54,8 +54,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            tools:text="TextView"
-            android:textColor="#807097" />
+            android:textColor="@color/slate_gray"
+            tools:text="TextView" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#EFEFEF"
+    android:background="@color/lighter_gray"
     android:paddingBottom="1dp">
 
     <LinearLayout
         android:id="@+id/itemView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="3dp"

@@ -37,9 +37,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
-        android:backgroundTint="#E3DDEF"
+        android:backgroundTint="@color/lavender"
         android:text="@string/save_changes"
-        android:textColor="#807097"
+        android:textColor="@color/slate_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="닉네임은 숫자, 영문, -(하이픈)과 _(언더바)만 사용 가능합니다."
+        android:text="@string/info_nickname_form"
         android:textColor="#737373"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
