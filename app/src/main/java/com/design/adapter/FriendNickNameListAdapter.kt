@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.design.databinding.ItemNicknameBinding
 import com.design.model.friend.Friend
 
-class FriendNickNameListAdapter(private val onClick : (Friend) -> Unit) :
+class FriendNickNameListAdapter(private val onClick: (Friend) -> Unit) :
     ListAdapter<Friend, FriendNickNameListAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,7 +28,7 @@ class FriendNickNameListAdapter(private val onClick : (Friend) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Friend) {
             binding.nickNameTextView.text = item.nickName
-            binding.root.setOnClickListener{
+            binding.root.setOnClickListener {
                 onClick(item)
             }
         }

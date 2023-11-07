@@ -19,7 +19,13 @@ class TodoListAdapter(
 ) : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemTodoBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+        return ViewHolder(
+            ItemTodoBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -57,13 +63,13 @@ class TodoListAdapter(
                     if (todo.importance == true) {
                         //즐찾이 되어있는데 클릭했을 때
                         //즐찾을 해제해주기
-                        onImportanceClickListener.onClick(position,false) //todo data update
+                        onImportanceClickListener.onClick(position, false) //todo data update
                         setImageResource(R.drawable.baseline_gray_star_24)
                         //데이터 삭제해주기
                         FirebaseUtil.importanceDataBase.child(todo.todoId).removeValue()
                     } else {
                         //즐찾 추가
-                        onImportanceClickListener.onClick(position,true)//todo data update
+                        onImportanceClickListener.onClick(position, true)//todo data update
                         setImageResource(R.drawable.baseline_star_24)
                         //데이터추가해주기
                         val importance = mutableMapOf<String, Any>()
@@ -72,7 +78,8 @@ class TodoListAdapter(
                         importance["todoId"] = todo.todoId
                         importance["place"] = todo.arrivePlace ?: ""
                         importance["title"] = todo.title
-                        FirebaseUtil.importanceDataBase.child(todo.todoId).updateChildren(importance)
+                        FirebaseUtil.importanceDataBase.child(todo.todoId)
+                            .updateChildren(importance)
                     }
                 }
             }

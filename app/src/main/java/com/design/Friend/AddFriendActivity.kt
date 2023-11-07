@@ -1,12 +1,11 @@
 package com.design.Friend
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.design.R
-import com.design.User
+import com.design.model.User
 import com.design.databinding.ActivityAddFriendBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

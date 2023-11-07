@@ -4,17 +4,19 @@ import com.design.util.LocationRetrofitManager
 import retrofit2.Call
 import retrofit2.Response
 
-class LocationProvider(private val callback : Callback) {
+class LocationProvider(private val callback: Callback) {
 
-    fun searchLocation(searchKeyWord : String) {
-        LocationRetrofitManager.searchLocationService.getLocation("1",
+    fun searchLocation(searchKeyWord: String) {
+        LocationRetrofitManager.searchLocationService.getLocation(
+            "1",
             searchKeyWord,
             "WGS84GEO",
             "WGS84GEO",
-            200)
+            200
+        )
             .enqueue(object : retrofit2.Callback<Location> {
                 override fun onResponse(call: Call<Location>, response: Response<Location>) {
-                    if(response.isSuccessful){
+                    if (response.isSuccessful) {
                         response.body()?.let {
                             callback.loadLocation(it)
                         }
@@ -29,6 +31,6 @@ class LocationProvider(private val callback : Callback) {
     }
 
     interface Callback {
-        fun loadLocation(data : Location)
+        fun loadLocation(data: Location)
     }
 }

@@ -12,7 +12,7 @@ class AlarmDataProvider(private val callback: Callback) {
                     callback.loadAlarmData(data)
                 }
             }
-            .addOnFailureListener {  }
+            .addOnFailureListener { }
     }
 
     interface Callback {

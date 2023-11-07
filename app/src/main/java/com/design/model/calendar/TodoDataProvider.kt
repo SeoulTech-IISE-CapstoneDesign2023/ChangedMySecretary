@@ -3,9 +3,6 @@ package com.design.model.calendar
 import android.util.Log
 import com.design.model.Todo
 import com.design.util.FirebaseUtil
-import com.design.util.Key
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class TodoDataProvider(private val callback: Callback) {
 
@@ -22,7 +19,7 @@ class TodoDataProvider(private val callback: Callback) {
                     callback.loadTodoData(data)
                 }
             }
-            .addOnFailureListener {e ->
+            .addOnFailureListener { e ->
                 Log.e("TodoDataProvider", "Firebase 데이터 가져오기 실패: ${e.message}", e)
             }
     }

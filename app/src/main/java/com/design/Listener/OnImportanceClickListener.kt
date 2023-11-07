@@ -2,5 +2,5 @@ package com.design.Listener
 
 interface OnImportanceClickListener {
 
-    fun onClick(position:Int, importance : Boolean)
+    fun onClick(position: Int, importance: Boolean)
 }

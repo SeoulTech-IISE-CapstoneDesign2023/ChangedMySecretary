@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.design.databinding.ItemLocationBinding
 import com.design.model.location.Poi
 
-class LocationAdapter(private val onClick :(Poi) -> Unit) : ListAdapter<Poi, LocationAdapter.ViewHolder>(
-    diffUtil
-) {
+class LocationAdapter(private val onClick: (Poi) -> Unit) :
+    ListAdapter<Poi, LocationAdapter.ViewHolder>(
+        diffUtil
+    ) {
 
     inner class ViewHolder(private val binding: ItemLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {

@@ -13,6 +13,7 @@ import com.design.adapter.MainListAdapter
 import com.design.databinding.FragmentMainBinding
 import com.design.databinding.SearchDialogBinding
 import com.design.model.Todo
+import com.design.model.User
 import com.design.model.alarm.AlarmItem
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil

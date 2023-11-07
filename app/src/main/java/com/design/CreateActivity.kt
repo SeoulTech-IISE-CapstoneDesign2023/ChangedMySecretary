@@ -19,7 +19,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import android.widget.Toast
@@ -38,21 +37,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.lottie.LottieDrawable
 import com.design.adapter.InviteFriendAdapter
 import com.design.adapter.RouteAdapter
-import com.design.model.route.PublicTransitRoute
-import com.design.model.route.SubPath
 import com.design.databinding.ActivityCreateBinding
 import com.design.model.Todo
 import com.design.model.Type
+import com.design.model.User
 import com.design.model.calendar.TodoDataProvider
-import com.design.model.location.Location
-import com.design.model.location.LocationAdapter
 import com.design.model.car.CarRouteProvider
 import com.design.model.car.CarRouteRequest
 import com.design.model.car.DepartureInfo
 import com.design.model.car.DestinationInfo
 import com.design.model.car.RoutesInfo
+import com.design.model.location.Location
+import com.design.model.location.LocationAdapter
+import com.design.model.route.PublicTransitRoute
 import com.design.model.route.ResultInfo
 import com.design.model.route.RouteProvider
+import com.design.model.route.SubPath
 import com.design.model.route.bus.realLocation.BusRealTimeLocationProvider
 import com.design.model.route.bus.realtime.BusRealTimeProvider
 import com.design.model.route.subway.SubwayTimeTableProvider
@@ -85,7 +85,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.DecimalFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.CountDownLatch
@@ -1172,7 +1171,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun notificationIdPlusReadyTime() {
-        if(notificationId == "0") return
+        if (notificationId == "0") return
         val fullNotificationId = "202$notificationId"
         val dateNotificationId = SimpleDateFormat("yyyyMMddHHmm").parse(fullNotificationId)
         val date = Calendar.getInstance()

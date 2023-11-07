@@ -1,8 +1,5 @@
 package com.design.model.route
 
-import com.design.model.route.Lane
-import com.design.model.route.PassStopList
-
 data class SubPath(
     val distance: Int,
     val door: String,

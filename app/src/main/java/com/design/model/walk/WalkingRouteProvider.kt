@@ -5,11 +5,11 @@ import retrofit2.Call
 import retrofit2.Response
 
 class WalkingRouteProvider(private val callback: Callback) {
-    fun getWalkingRoot(body : RouteData){
+    fun getWalkingRoot(body: RouteData) {
         LocationRetrofitManager.searchWalkService.getWalkingTime(request = body)
-            .enqueue(object : retrofit2.Callback<Dto>{
+            .enqueue(object : retrofit2.Callback<Dto> {
                 override fun onResponse(call: Call<Dto>, response: Response<Dto>) {
-                    if(response.isSuccessful){
+                    if (response.isSuccessful) {
                         response.body()?.let {
                             callback.loadWalkingRoot(it)
                         }
@@ -24,6 +24,6 @@ class WalkingRouteProvider(private val callback: Callback) {
     }
 
     interface Callback {
-        fun loadWalkingRoot(data : Dto)
+        fun loadWalkingRoot(data: Dto)
     }
 }

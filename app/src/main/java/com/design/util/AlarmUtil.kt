@@ -15,9 +15,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import com.design.util.Key.Companion.NOTIFICATION_ID
 import com.design.alarm.NotificationReceiver
 import com.design.alarm.UpdateRouteService
+import com.design.util.Key.Companion.NOTIFICATION_ID
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -127,7 +127,7 @@ object AlarmUtil {
                 minusOneHour,
                 servicePendingIntent
             )
-        }else {
+        } else {
             //1시간전에 업데이트를 할 수 없다면은 그냥 바로 알람 설정해줌
             val notificationIntent = Intent(context, NotificationReceiver::class.java)
             notificationIntent.putExtra(Key.NOTIFICATION_ID, notificationId)
@@ -159,7 +159,7 @@ object AlarmUtil {
         }
     }
 
-    fun deleteAlarm(notificationId: Int,context:Context) {
+    fun deleteAlarm(notificationId: Int, context: Context) {
         FirebaseUtil.alarmDataBase.child(notificationId.toString()).removeValue()
         val notificationIntent = Intent(context, NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(

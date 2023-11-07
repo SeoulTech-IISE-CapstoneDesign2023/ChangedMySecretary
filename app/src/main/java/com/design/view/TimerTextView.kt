@@ -89,14 +89,14 @@ class TimerTextView @JvmOverloads constructor(
         val hours = TimeUnit.MILLISECONDS.toHours(millis)
         millis -= TimeUnit.HOURS.toMillis(hours)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
-        return if(days == 0L){
+        return if (days == 0L) {
             String.format(Locale.KOREA, "출발시간\n%02d시간%02d분\n남음", hours, minutes)
-        }else if (hours == 0L){
+        } else if (hours == 0L) {
             String.format(Locale.KOREA, "출발시간\n%02d분\n남음", minutes)
-        }else if(minutes == 0L) {
+        } else if (minutes == 0L) {
             String.format(Locale.KOREA, "출발하셔야 합니다!")
-        }else {
-            String.format(Locale.KOREA, "출발시간\n%02d일%02d시간%02d분\n남음", days,hours, minutes)
+        } else {
+            String.format(Locale.KOREA, "출발시간\n%02d일%02d시간%02d분\n남음", days, hours, minutes)
         }
 
     }

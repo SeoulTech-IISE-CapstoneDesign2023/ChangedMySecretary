@@ -1,7 +1,5 @@
 package com.design.model.route
 
-import com.design.model.route.Path
-
 data class Result(
     val busCount: Int,
     val endRadius: Int,

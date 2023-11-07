@@ -4,10 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.design.User
+import com.design.model.User
 import com.design.databinding.MyfriendsSelectBinding
 
-class InviteFriendAdapter(val User: MutableList<User>) : RecyclerView.Adapter<InviteFriendAdapter.ViewHolder>() {
+class InviteFriendAdapter(val User: MutableList<User>) :
+    RecyclerView.Adapter<InviteFriendAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context

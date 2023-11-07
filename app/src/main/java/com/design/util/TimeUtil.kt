@@ -38,7 +38,7 @@ object TimeUtil {
 
     //준비시간을 저장하기 위한 util
     fun openTimePickerForReadyTime(readyTime: String): MaterialTimePicker {
-        val preReadyTime = if(readyTime == "") "00:10" else readyTime
+        val preReadyTime = if (readyTime == "") "00:10" else readyTime
         val preHour = preReadyTime.substring(0, 2).toInt()
         val preMinute = preReadyTime.substring(3, 5).toInt()
 

@@ -9,11 +9,11 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.design.util.Key.Companion.MESSAGE
-import com.design.util.Key.Companion.NOTIFICATION_ID
 import com.design.MainActivity
 import com.design.R
 import com.design.util.FirebaseUtil
+import com.design.util.Key.Companion.MESSAGE
+import com.design.util.Key.Companion.NOTIFICATION_ID
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -73,11 +73,11 @@ class NotificationReceiver : BroadcastReceiver() {
         //알람이 나타나고 난후 firebase에서 데이터 삭제
         FirebaseUtil.alarmDataBase.child(notificationId.toString()).removeValue()
             .addOnSuccessListener {
-                Log.e("notificationReceiver","알람이 실행후 데이터삭제")
+                Log.e("notificationReceiver", "알람이 실행후 데이터삭제")
             }
             .addOnFailureListener {
                 it.printStackTrace()
-                Log.e("notificationReceiver","알람이 실행후 데이터삭제 실패")
+                Log.e("notificationReceiver", "알람이 실행후 데이터삭제 실패")
             }
 
     }

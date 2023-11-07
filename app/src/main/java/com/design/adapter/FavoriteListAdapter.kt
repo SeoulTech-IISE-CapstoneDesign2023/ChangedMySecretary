@@ -9,15 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.design.databinding.ItemFavoriteBinding
 import com.design.model.importance.Importance
 
-class FavoriteListAdapter(private val onClick : (Importance) -> Unit) : ListAdapter<Importance, FavoriteListAdapter.ViewHolder>(diffUtil) {
+class FavoriteListAdapter(private val onClick: (Importance) -> Unit) :
+    ListAdapter<Importance, FavoriteListAdapter.ViewHolder>(diffUtil) {
 
-    inner class ViewHolder(private val binding: ItemFavoriteBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemFavoriteBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Importance) {
             binding.titleTextView.text = item.title
 
             binding.addressTextView.text =
-                if(item.place == "") "추억의 장소는 없습니다." else item.place
-            if(item.endY =="0"){
+                if (item.place == "") "추억의 장소는 없습니다." else item.place
+            if (item.endY == "0") {
                 binding.arrowImageView.isVisible = false
             }
 

@@ -9,21 +9,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.design.Listener.OnImportanceClickListener
-import com.design.databinding.FragmentCalendarBinding
-import com.design.util.Key.Companion.DB_CALENDAR
 import com.design.Listener.OnItemLongClickListener
 import com.design.Listener.OnItemShortClickListener
 import com.design.adapter.TodoListAdapter
 import com.design.calendar.MySelectorDecorator
 import com.design.calendar.OneDayDecorator
 import com.design.calendar.SundayDecorator
+import com.design.databinding.FragmentCalendarBinding
 import com.design.model.Todo
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
+import com.design.util.Key.Companion.DB_CALENDAR
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -37,13 +36,14 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickListener, OnImportanceClickListener {
+class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickListener,
+    OnImportanceClickListener {
 
     private var binding: FragmentCalendarBinding? = null
 
     var todoKeys: ArrayList<String> = arrayListOf()     // 일정 ID (key) 리스트
     val todoList = arrayListOf<Todo>()                  // 일정 리스트
-    private val adapter = TodoListAdapter(todoList,this,this,this)
+    private val adapter = TodoListAdapter(todoList, this, this, this)
     lateinit var user: String
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
@@ -52,7 +52,8 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
     lateinit var clickedMonth: String
     lateinit var clickedDay: String
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return FragmentCalendarBinding.inflate(inflater, container, false).apply {
             binding = this
@@ -161,6 +162,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
                 }
             })
     }
+
     // 날짜 함수
     private fun splitDate(date: String): Array<String> {
         val splitText = date.split("/")
@@ -170,6 +172,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         resultDate[2] = splitText[2]  //day
         return resultDate
     }
+
     override fun onShortClick(position: Int) {
         Log.d("TimetableFragment", "$todoList")
         val todo = todoList[position] // 선택한 위치의 Todo객체를 가져옴
@@ -183,7 +186,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         val intent = Intent(requireContext(), CreateActivity::class.java)
         intent.putExtra("todo", todo)
         intent.putExtra("todoKey", todoKey)
-        intent.putExtra("startDate",startDate)
+        intent.putExtra("startDate", startDate)
         startActivity(intent)
     }
 
@@ -201,12 +204,13 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
             .setNegativeButton("No", null)
             .show()
     }
+
     private fun deleteTodo(position: Int) {
         val todoKey = todoList[position].todoId
         // 일정 삭제시 알람도 같이 삭제
         val notificationId = todoList[position].notificationId ?: "0"
         FirebaseUtil.alarmDataBase.child(notificationId).removeValue()
-        AlarmUtil.deleteAlarm(notificationId.toInt(),requireContext())
+        AlarmUtil.deleteAlarm(notificationId.toInt(), requireContext())
         todoList.removeAt(position)
         // 일정 삭제
         val deleteReference = Firebase.database.reference.child(DB_CALENDAR)
@@ -233,7 +237,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
                 .child(clickedMonth + "월")
                 .child(clickedDay + "일")
                 .child(todoKey)
-        val data = mutableMapOf<String,Any>()
+        val data = mutableMapOf<String, Any>()
         data["importance"] = importance
         reference.updateChildren(data)
     }

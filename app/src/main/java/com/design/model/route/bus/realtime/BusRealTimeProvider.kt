@@ -6,10 +6,10 @@ import retrofit2.Response
 
 class BusRealTimeProvider() {
 
-    fun getBusRealTime(stationId: Int, routeId: Int?,callback : (Int?) -> Unit) {
-        if(routeId == null){
+    fun getBusRealTime(stationId: Int, routeId: Int?, callback: (Int?) -> Unit) {
+        if (routeId == null) {
             callback(null)
-        }else {
+        } else {
             LocationRetrofitManager.searchBusRealTimeService.getBusRealTime(
                 "YGJ//L1rg7VWJ2Gc79XXv4aS2Evs19Ai+Iu66hzJpts",
                 stationId
