@@ -2,7 +2,6 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -32,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:text="나의 일상이 담긴 곳"
+        android:text="@string/places_of_my_daily_life"
         app:chipIcon="@drawable/baseline_place_24" />
 
 
@@ -50,6 +49,6 @@
 
     <include
         android:id="@+id/favoriteBottomSheetLayout"
-        layout="@layout/favorite_bottom_sheet"/>
+        layout="@layout/favorite_bottom_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

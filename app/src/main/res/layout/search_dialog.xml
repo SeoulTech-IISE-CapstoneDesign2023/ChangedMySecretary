@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/baseline_search_24"
-            android:hint="친구 닉네임" />
+            android:hint="@string/enter_friend_nickname" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="#D0BFFF"
-        android:text="태그하기"
+        android:text="@string/tag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/textInputLayout"
         app:layout_constraintStart_toEndOf="@+id/cancelButton" />
@@ -76,7 +76,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="검색된 친구가 없습니다."
+        android:text="@string/no_friend"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@id/recyclerView"
         app:layout_constraintEnd_toEndOf="@id/recyclerView"
