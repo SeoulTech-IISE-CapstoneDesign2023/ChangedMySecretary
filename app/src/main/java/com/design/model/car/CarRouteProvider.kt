@@ -4,13 +4,13 @@ import com.design.util.LocationRetrofitManager
 import retrofit2.Call
 import retrofit2.Response
 
-class CarRouteProvider(private val callback : Callback) {
+class CarRouteProvider(private val callback: Callback) {
 
-    fun getCarRoot(body : CarRouteRequest){
+    fun getCarRoot(body: CarRouteRequest) {
         LocationRetrofitManager.searchCarService.getCarRoute(request = body)
-            .enqueue(object : retrofit2.Callback<Dto>{
+            .enqueue(object : retrofit2.Callback<Dto> {
                 override fun onResponse(call: Call<Dto>, response: Response<Dto>) {
-                    if(response.isSuccessful){
+                    if (response.isSuccessful) {
                         response.body()?.let {
                             callback.loadCarRoot(it)
                         }
@@ -26,6 +26,6 @@ class CarRouteProvider(private val callback : Callback) {
     }
 
     interface Callback {
-        fun loadCarRoot(data : Dto)
+        fun loadCarRoot(data: Dto)
     }
 }

@@ -154,8 +154,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             favoriteBottomBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
-        binding.favoriteBottomSheetLayout.root.setOnClickListener {  }
-        binding.searchBottomSheetyLayout.root.setOnClickListener {  }
+        binding.favoriteBottomSheetLayout.root.setOnClickListener { }
+        binding.searchBottomSheetyLayout.root.setOnClickListener { }
 
     }
 

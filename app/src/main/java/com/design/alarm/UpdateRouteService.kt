@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.design.util.Key.Companion.NOTIFICATION_ID
 import com.design.model.Type
 import com.design.model.alarm.AlarmDataProvider
 import com.design.model.alarm.AlarmItem
@@ -22,6 +21,7 @@ import com.design.model.walk.RouteData
 import com.design.model.walk.WalkingRouteProvider
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
+import com.design.util.Key.Companion.NOTIFICATION_ID
 import com.design.util.TimeUtil
 import java.text.SimpleDateFormat
 import java.util.Calendar

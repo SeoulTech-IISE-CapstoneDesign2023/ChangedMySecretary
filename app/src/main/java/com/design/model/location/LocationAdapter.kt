@@ -8,18 +8,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.design.databinding.ItemLocationBinding
 
-class LocationAdapter(private val onClick :(Poi) -> Unit) : ListAdapter<Poi, LocationAdapter.ViewHolder>(
-    diffUtil
-) {
+class LocationAdapter(private val onClick: (Poi) -> Unit) :
+    ListAdapter<Poi, LocationAdapter.ViewHolder>(
+        diffUtil
+    ) {
 
     inner class ViewHolder(private val binding: ItemLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Poi) {
             binding.nameTextView.text = item.name
-            val rawFullAdressRoad =
+            val rawFullAddressRoad =
                 item.newAddressList.newAddress.map { it.fullAddressRoad }.toString()
-            val fullAdressRoad = rawFullAdressRoad.replace("[", "").replace("]", "")
-            binding.fullAddressRoadTextView.text = fullAdressRoad
+            val fullAddressRoad = rawFullAddressRoad.replace("[", "").replace("]", "")
+            binding.fullAddressRoadTextView.text = fullAddressRoad
             binding.root.setOnClickListener {
                 val x = item.frontLat
                 val y = item.frontLon

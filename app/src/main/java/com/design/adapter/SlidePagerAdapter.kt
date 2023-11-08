@@ -8,7 +8,8 @@ import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import com.design.R
 
-class SlidePagerAdapter(private val slideImages: IntArray, private val slideTexts: Array<String>) : PagerAdapter() {
+class SlidePagerAdapter(private val slideImages: IntArray, private val slideTexts: Array<String>) :
+    PagerAdapter() {
 
     override fun getCount(): Int {
         return slideImages.size

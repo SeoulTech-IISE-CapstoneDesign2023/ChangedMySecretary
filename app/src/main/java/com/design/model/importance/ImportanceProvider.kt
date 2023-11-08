@@ -3,11 +3,11 @@ package com.design.model.importance
 import com.design.util.FirebaseUtil
 
 class ImportanceProvider(private val callback: Callback) {
-    fun getImportanceData(){
+    fun getImportanceData() {
         FirebaseUtil.importanceDataBase.get()
             .addOnSuccessListener {
-                if(it.value == null) return@addOnSuccessListener
-                val data = it.value as Map<String,Any>
+                if (it.value == null) return@addOnSuccessListener
+                val data = it.value as Map<String, Any>
                 val dataList = data.values.toList()
                 val importanceList = dataList.map { item ->
                     val itemData = item as Map<String, Any>
@@ -21,10 +21,10 @@ class ImportanceProvider(private val callback: Callback) {
                 }
                 callback.loadImportanceList(importanceList)
             }
-            .addOnFailureListener {  }
+            .addOnFailureListener { }
     }
 
     interface Callback {
-        fun loadImportanceList(list : List<Importance>)
+        fun loadImportanceList(list: List<Importance>)
     }
 }

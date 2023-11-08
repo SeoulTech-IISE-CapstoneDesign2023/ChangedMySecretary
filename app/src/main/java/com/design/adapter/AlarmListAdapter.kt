@@ -1,6 +1,5 @@
 package com.design.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,7 +10,8 @@ import com.design.model.alarm.AlarmItem
 import me.thanel.swipeactionview.SwipeActionView
 import me.thanel.swipeactionview.SwipeGestureListener
 
-class AlarmListAdapter(private val onSwipe : (AlarmItem) -> Unit) : ListAdapter<AlarmItem, AlarmListAdapter.ViewHolder>(diffUtil) {
+class AlarmListAdapter(private val onSwipe: (AlarmItem) -> Unit) :
+    ListAdapter<AlarmItem, AlarmListAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -32,7 +32,7 @@ class AlarmListAdapter(private val onSwipe : (AlarmItem) -> Unit) : ListAdapter<
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: AlarmItem) {
             binding.resultTextView.text = "${item.dateTime}\n${item.message}"
-            binding.root.swipeGestureListener = object : SwipeGestureListener{
+            binding.root.swipeGestureListener = object : SwipeGestureListener {
                 override fun onSwipedLeft(swipeActionView: SwipeActionView): Boolean {
                     onSwipe(item)
                     return true

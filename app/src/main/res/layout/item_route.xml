@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="15dp">
@@ -9,34 +10,33 @@
         android:id="@+id/trafficTypeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="이동수단"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="이동수단" />
 
     <TextView
         android:id="@+id/sectionTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="이동시간"
         app:layout_constraintBaseline_toBaselineOf="@+id/detailTypeTextView"
         app:layout_constraintEnd_toStartOf="@id/waitingTimeTextView"
-        app:layout_constraintStart_toEndOf="@+id/detailTypeTextView" />
+        app:layout_constraintStart_toEndOf="@+id/detailTypeTextView"
+        tools:text="이동시간" />
 
     <TextView
         android:id="@+id/waitingTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="대기"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/sectionTimeTextView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="대기" />
 
     <TextView
         android:id="@+id/detailTypeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:visibility="invisible"
         app:layout_constraintBaseline_toBaselineOf="@id/trafficTypeTextView"
         app:layout_constraintEnd_toStartOf="@id/sectionTimeTextView"
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="시작지점"
+        tools:text="시작지점"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/arrowImageView"
         app:layout_constraintHorizontal_bias="0.5"
@@ -75,7 +75,7 @@
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
-        android:text="도착지점"
+        tools:text="도착지점"
         app:layout_constraintBaseline_toBaselineOf="@+id/startAreaTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

@@ -1,10 +1,10 @@
 package com.design.model.location
 
 data class Location(
-    val searchPoiInfo : SearchPoiInfo
+    val searchPoiInfo: SearchPoiInfo
 )
 
-data class SearchPoiInfo (
+data class SearchPoiInfo(
     val count: String,
     val page: String,
     val pois: Pois,

@@ -1,7 +1,6 @@
 package com.design.model.friend
 
-import android.util.Log
-import com.design.User
+import com.design.model.User
 import com.design.util.FirebaseUtil
 import com.design.util.Key.Companion.DB_USERS
 import com.google.firebase.database.ktx.database

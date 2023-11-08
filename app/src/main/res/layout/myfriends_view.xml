@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#EFEFEF"
+    android:background="@color/lighter_gray"
     android:paddingBottom="1dp">
 
     <LinearLayout
         android:id="@+id/itemView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="3dp"
@@ -25,7 +25,7 @@
             android:id="@+id/imageFriend"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_weight="0"
             app:srcCompat="@drawable/user" />
 
@@ -33,47 +33,47 @@
             android:id="@+id/friendName"
             android:layout_width="0dp"
             android:layout_height="60dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="3dp"
-            android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="TextView" />
+            tools:text="TextView" />
 
         <Button
             android:id="@+id/buttonAccept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
             android:layout_weight="0"
-            android:text="수락"
+            android:text="@string/accept"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonRefuse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
             android:layout_weight="0"
-            android:text="거절"
+            android:text="@string/decline"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
             android:layout_weight="0"
-            android:text="취소"
+            android:text="@string/cancel"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonFollow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
             android:layout_weight="0"
-            android:text="팔로우"
+            android:text="@string/follow"
             android:visibility="gone" />
 
     </LinearLayout>

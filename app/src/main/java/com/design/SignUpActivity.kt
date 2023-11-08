@@ -2,7 +2,6 @@ package com.design
 
 import android.content.Intent
 import android.content.res.ColorStateList
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +10,7 @@ import android.text.TextWatcher
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.design.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -57,7 +57,6 @@ class SignUpActivity : AppCompatActivity() {
         val editPW = binding.editPW
         val editCheckPW = binding.editCheckPW
         val editNickname = binding.editNickname
-
 
 
         var checkStatusPW = 0
@@ -127,8 +126,12 @@ class SignUpActivity : AppCompatActivity() {
                 if (editPW.text.toString() == editCheckPW.text.toString()) {
                     checkStatusPW = 2
                     textCheckPW.text = "비밀번호가 일치합니다"
-                    textCheckPW.setTextColor(ContextCompat.getColor(applicationContext, R.color
-                        .black))
+                    textCheckPW.setTextColor(
+                        ContextCompat.getColor(
+                            applicationContext, R.color
+                                .black
+                        )
+                    )
                     textCheckPW.visibility = View.VISIBLE
 
                     // 계정 생성 함수 (파이어베이스에)
@@ -139,50 +142,53 @@ class SignUpActivity : AppCompatActivity() {
 
                         auth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(this) { task ->
-                                    if (task.isSuccessful) {
-                                        val user = auth.currentUser
-                                        var count = 0
-                                        val userData = FirebaseDatabase.getInstance().getReference("user")
-                                        userData.addListenerForSingleValueEvent(object : ValueEventListener {
-                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                for (snapshot in dataSnapshot.children) {
-                                                    if (snapshot.key == user?.uid) {
-                                                        count = 1
-                                                        break
-                                                    } else continue
-                                                }
-                                                if (count == 0) {
-                                                    textStep.text = "2단계"
-                                                    bigGuide.text = "이메일 인증을 진행해주세요!"
-                                                    smallGuide.text = "나중에 비밀번호를 찾을 때 필요합니다"
-                                                    progressBar2.progress = 1
-
-                                                    inputLayout1Step.visibility = View.GONE
-                                                    inputLayout2Step.visibility = View.VISIBLE
-                                                    auth.createUserWithEmailAndPassword(email, password)
-                                                } else {
-                                                    Toast.makeText(
-                                                        baseContext,
-                                                        "이미 가입된 사용자입니다.",
-                                                        Toast.LENGTH_SHORT
-                                                    )
-                                                        .show()
-                                                    return
-                                                }
+                                if (task.isSuccessful) {
+                                    val user = auth.currentUser
+                                    var count = 0
+                                    val userData =
+                                        FirebaseDatabase.getInstance().getReference("user")
+                                    userData.addListenerForSingleValueEvent(object :
+                                        ValueEventListener {
+                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                            for (snapshot in dataSnapshot.children) {
+                                                if (snapshot.key == user?.uid) {
+                                                    count = 1
+                                                    break
+                                                } else continue
                                             }
-                                            override fun onCancelled(error: DatabaseError) {
-                                            }
-                                        })
-                                    } else {
-                                        textStep.text = "2단계"
-                                        bigGuide.text = "이메일 인증을 진행해주세요!"
-                                        smallGuide.text = "나중에 비밀번호를 찾을 때 필요합니다"
-                                        progressBar2.progress = 1
+                                            if (count == 0) {
+                                                textStep.text = "2단계"
+                                                bigGuide.text = "이메일 인증을 진행해주세요!"
+                                                smallGuide.text = "나중에 비밀번호를 찾을 때 필요합니다"
+                                                progressBar2.progress = 1
 
-                                        inputLayout1Step.visibility = View.GONE
-                                        inputLayout2Step.visibility = View.VISIBLE
-                                        auth.createUserWithEmailAndPassword(email, password)
-                                    }
+                                                inputLayout1Step.visibility = View.GONE
+                                                inputLayout2Step.visibility = View.VISIBLE
+                                                auth.createUserWithEmailAndPassword(email, password)
+                                            } else {
+                                                Toast.makeText(
+                                                    baseContext,
+                                                    "이미 가입된 사용자입니다.",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                    .show()
+                                                return
+                                            }
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                        }
+                                    })
+                                } else {
+                                    textStep.text = "2단계"
+                                    bigGuide.text = "이메일 인증을 진행해주세요!"
+                                    smallGuide.text = "나중에 비밀번호를 찾을 때 필요합니다"
+                                    progressBar2.progress = 1
+
+                                    inputLayout1Step.visibility = View.GONE
+                                    inputLayout2Step.visibility = View.VISIBLE
+                                    auth.createUserWithEmailAndPassword(email, password)
+                                }
                             }
 
                     } else if (checkStatusPW == 1) {
@@ -196,7 +202,12 @@ class SignUpActivity : AppCompatActivity() {
                 } else {
                     checkStatusPW = 1
                     textCheckPW.text = "비밀번호가 일치하지 않습니다"
-                    textCheckPW.setTextColor(ContextCompat.getColor(applicationContext, R.color.ready))
+                    textCheckPW.setTextColor(
+                        ContextCompat.getColor(
+                            applicationContext,
+                            R.color.red
+                        )
+                    )
                     textCheckPW.visibility = View.VISIBLE
                 }
             }

@@ -13,6 +13,7 @@ object FirebaseUtil {
 
     //알람 db연결
     val alarmDataBase = Firebase.database.reference.child(DB_ALARMS).child(userUid)
+
     //캘린더 DB 연결
     val todoDataBase = Firebase.database.reference.child(Key.DB_CALENDAR).child(userUid)
     val importanceDataBase = Firebase.database.reference.child(DB_IMPORTANCE).child(userUid)

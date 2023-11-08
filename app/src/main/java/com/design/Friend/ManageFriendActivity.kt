@@ -1,7 +1,7 @@
 package com.design.Friend
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.design.databinding.ActivityManageFriendBinding
 import com.google.android.material.tabs.TabLayoutMediator
 

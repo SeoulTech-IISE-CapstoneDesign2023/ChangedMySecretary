@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -15,9 +16,9 @@
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
-        android:text="사용자 이름"
         android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        tools:text="사용자 이름" />
 
     <!-- 기타 정보를 표시할 TextView (예: 이메일 등) -->
     <TextView
@@ -28,7 +29,7 @@
         android:paddingTop="4dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
-        android:text="안녕하세요!"
+        android:text="@string/hello"
         android:textColor="@android:color/darker_gray"
         android:textSize="14sp" />
 </LinearLayout>

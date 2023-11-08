@@ -1,14 +1,12 @@
 package com.design
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.design.databinding.ActivityManageBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -34,7 +32,7 @@ class ManageActivity : AppCompatActivity() {
         getUserNickname(user?.uid.toString()) { nickname ->
             binding.nameText.text = nickname
         }
-        binding.emailText.text= user?.email
+        binding.emailText.text = user?.email
 
         val itemList = arrayOf("닉네임 변경하기", "비밀번호 변경하기", "로그아웃")
         val adapter = ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, itemList)
@@ -49,17 +47,21 @@ class ManageActivity : AppCompatActivity() {
                         Intent(this, ChangeNicknameActivity::class.java)
                     startActivity(intent)
                 }
+
                 1 -> {
                     showResetPasswordConfirmationDialog()
                 }
+
                 2 -> {
                     showLogoutConfirmationDialog()
                 }
+
                 else -> {
                 }
             }
         }
     }
+
     override fun onResume() {
         super.onResume()
 
@@ -91,13 +93,15 @@ class ManageActivity : AppCompatActivity() {
             }
             .show()
     }
+
     fun getUserNickname(userId: String, onDataChangeCallback: (String?) -> Unit) {
         val userData = FirebaseDatabase.getInstance().getReference("user")
         userData.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (snapshot in dataSnapshot.children) {
                     if (userId == snapshot.key) {
-                        val nicknameValue = snapshot.child("user_info").child("nickname").value?.toString()
+                        val nicknameValue =
+                            snapshot.child("user_info").child("nickname").value?.toString()
                         onDataChangeCallback(nicknameValue)
                         return // 원하는 데이터를 찾았으므로 루프를 종료
                     }
@@ -139,7 +143,7 @@ class ManageActivity : AppCompatActivity() {
             .setMessage("비밀번호 변경 이메일 전송과 함께 로그아웃됩니다. 실행하시겠습니까?")
             .setPositiveButton("예") { dialog, which ->
 
-                resetPassword(user?.email.toString()) {success ->
+                resetPassword(user?.email.toString()) { success ->
                     Toast.makeText(this, "이메일을 확인해주세요", Toast.LENGTH_SHORT).show()
                 }
 

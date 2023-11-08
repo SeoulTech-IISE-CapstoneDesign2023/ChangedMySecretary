@@ -2,20 +2,15 @@ package com.design
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.design.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 
-class LoginActivity  : AppCompatActivity(){
+class LoginActivity : AppCompatActivity() {
 
     val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
     private lateinit var auth: FirebaseAuth
@@ -48,7 +43,7 @@ class LoginActivity  : AppCompatActivity(){
                 Toast.makeText(
                     baseContext, "아이디를 입력해주세요",
                     Toast.LENGTH_SHORT,
-                    ).show()
+                ).show()
             } else if (password == "") {
                 Toast.makeText(
                     baseContext, "비밀번호를 입력해주세요",

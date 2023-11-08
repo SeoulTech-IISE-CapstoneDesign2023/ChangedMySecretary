@@ -1,10 +1,9 @@
 package com.design
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.design.databinding.ActivityChangeNicknameBinding
-import com.design.databinding.ActivityManageBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -26,15 +25,16 @@ class ChangeNicknameActivity : AppCompatActivity() {
         auth = Firebase.auth
         val user = auth.currentUser
 
-        binding.editNicknameBtn.setOnClickListener{
+        binding.editNicknameBtn.setOnClickListener {
             val inputNickname = binding.editNewNickname.text.toString();
 
             if (validateInput(inputNickname)) {
-                saveNicknameIfNotExists(user?.uid.toString(), inputNickname) {
-                        isSuccess ->
+                saveNicknameIfNotExists(user?.uid.toString(), inputNickname) { isSuccess ->
                     if (isSuccess) {
-                        Toast.makeText(baseContext, "닉네임이 성공적으로 변경되었습니다", Toast
-                            .LENGTH_SHORT).show()
+                        Toast.makeText(
+                            baseContext, "닉네임이 성공적으로 변경되었습니다", Toast
+                                .LENGTH_SHORT
+                        ).show()
                         finish()
                     } else {
                         Toast.makeText(baseContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT).show()
@@ -54,7 +54,11 @@ class ChangeNicknameActivity : AppCompatActivity() {
         return regex.matches(input)
     }
 
-    fun saveNicknameIfNotExists(myUid: String, nickname: String, onDataChangeCallback: (Boolean) -> Unit) {
+    fun saveNicknameIfNotExists(
+        myUid: String,
+        nickname: String,
+        onDataChangeCallback: (Boolean) -> Unit
+    ) {
         val userData = FirebaseDatabase.getInstance().getReference("user")
 
         userData.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -62,7 +66,8 @@ class ChangeNicknameActivity : AppCompatActivity() {
                 var isNicknameAvailable = true // 닉네임 사용 가능 여부를 나타내는 플래그
 
                 for (snapshot in dataSnapshot.children) {
-                    val nicknameValue = snapshot.child("user_info").child("nickname").value.toString()
+                    val nicknameValue =
+                        snapshot.child("user_info").child("nickname").value.toString()
                     if (nickname == nicknameValue) {
                         isNicknameAvailable = false
                         break
@@ -78,6 +83,7 @@ class ChangeNicknameActivity : AppCompatActivity() {
                     onDataChangeCallback(false) // 실패 콜백 호출
                 }
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 onDataChangeCallback(false) // 데이터베이스 오류 발생 시 실패 콜백 호출
             }
