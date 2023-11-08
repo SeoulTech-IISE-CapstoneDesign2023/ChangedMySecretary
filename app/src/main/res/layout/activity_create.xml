@@ -262,9 +262,4 @@
         layout="@layout/search_bottom_sheet"
         tools:visibility="gone" />
 
-    <include
-        android:id="@+id/friendBottomSheetLayout"
-        layout="@layout/friend_select_bottom_sheet"
-        tools:visibility="gone" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

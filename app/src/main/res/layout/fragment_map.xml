@@ -31,8 +31,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:text="@string/places_of_my_daily_life"
-        app:chipIcon="@drawable/baseline_place_24" />
+        android:text="나의 추억상자"
+        android:textStyle="bold"
+        app:chipIcon="@drawable/baseline_diversity_3_24"
+        app:chipBackgroundColor="@color/select" />
 
 
     <com.naver.maps.map.widget.LocationButtonView
@@ -44,11 +46,11 @@
         android:layout_marginEnd="16dp" />
 
     <include
-        android:id="@+id/searchBottomSheetyLayout"
+        android:id="@+id/searchBottomSheetLayout"
         layout="@layout/search_bottom_sheet" />
 
     <include
-        android:id="@+id/favoriteBottomSheetLayout"
-        layout="@layout/favorite_bottom_sheet" />
+        android:id="@+id/memoryBottomSheetLayout"
+        layout="@layout/memory_bottom_sheet"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

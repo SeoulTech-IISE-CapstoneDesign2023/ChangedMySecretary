@@ -1,10 +1,11 @@
-package com.design
+package com.design.Profile
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.design.R
 import com.design.adapter.SlidePagerAdapter
 import com.design.databinding.ActivityIntroBinding
 

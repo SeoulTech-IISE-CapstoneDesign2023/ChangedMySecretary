@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.RequiresApi
+import java.util.ArrayList
 
 data class Todo(
     var todoId: String = "",            // 일정 구별 아이디
@@ -25,8 +26,11 @@ data class Todo(
     val arrivalLng: Double? = null,     // 도착 경도
     val usingAlarm: Boolean? = null,  // 알람 사용 여부
     var readyTime: String? = null,
-    val shareFriend: String? = null  // 공유한 친구 아이디
-) : Parcelable {
+    val usingShare: Boolean? =null,
+    var tagId: String? =null,
+    val friendUid: ArrayList<String>? =null,
+)
+    : Parcelable {
     @RequiresApi(Build.VERSION_CODES.Q)
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -47,7 +51,9 @@ data class Todo(
         arrivalLng = parcel.readDouble(),
         usingAlarm = parcel.readBoolean(),
         readyTime = parcel.readString(),
-        shareFriend = parcel.readString() ?: ""
+        usingShare = parcel.readBoolean(),
+        tagId = parcel.readString(),
+        friendUid = parcel.createStringArrayList()
     )
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -71,8 +77,11 @@ data class Todo(
         arrivalLng?.let { parcel.writeDouble(it) }
         usingAlarm?.let { parcel.writeBoolean(it) }
         parcel.writeString(readyTime)
-        parcel.writeString(shareFriend)
+        usingShare?.let { parcel.writeBoolean(it) }
+        parcel.writeString(tagId)
+        friendUid?.let { parcel.writeStringList(it) }
     }
+
 
     override fun describeContents(): Int {
         return 0
