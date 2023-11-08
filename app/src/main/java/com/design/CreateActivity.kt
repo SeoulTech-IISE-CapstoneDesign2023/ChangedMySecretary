@@ -313,13 +313,13 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             endX = arrivalLng!!
             endY = arrivalLat!!
 
-//            if (data.usingAlarm == true) {
-//                this@CreateActivity.usingAlarm = true
-//                binding.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_24)
-//            } else {
-//                this@CreateActivity.usingAlarm = false
-//                binding.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_off_24)
-//            }
+            if (data.usingAlarm == true) {
+                this@CreateActivity.usingAlarm = true
+                binding.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_24)
+            } else {
+                this@CreateActivity.usingAlarm = false
+                binding.alarmImageView.setBackgroundResource(R.drawable.baseline_notifications_off_24)
+            }
         }
         isEditMode = true  // 기존 Todo를 수정하는 편집 모드임을 나타냄
 
@@ -746,6 +746,26 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
             })
         }
+
+        binding.apply {
+            alarmImageView.setOnClickListener {
+                if (!usingAlarm) {
+                    it.setBackgroundResource(R.drawable.baseline_notifications_24)
+                    usingAlarm = true
+                    Toast.makeText(this@CreateActivity, "알람설정 on", Toast.LENGTH_SHORT).show()
+                    val picker = TimeUtil.openTimePickerForReadyTime(readyTime)
+                    picker.addOnPositiveButtonClickListener {
+                        readyTime = String.format("%02d:%02d", picker.hour, picker.minute)
+                    }
+                    picker.show(supportFragmentManager, "준비시간")
+                } else {
+                    it.setBackgroundResource(R.drawable.baseline_notifications_off_24)
+                    usingAlarm = false
+                    Toast.makeText(this@CreateActivity, "알람설정 off", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
 
         binding.apply {
             startEditText.setOnClickListener {
