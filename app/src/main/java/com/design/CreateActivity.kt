@@ -35,9 +35,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.lottie.LottieDrawable
-import com.design.adapter.InviteFriendAdapter
 import com.design.adapter.RouteAdapter
 import com.design.databinding.ActivityCreateBinding
+import com.design.databinding.SearchDialogBinding
 import com.design.model.Todo
 import com.design.model.Type
 import com.design.model.User
@@ -56,11 +56,13 @@ import com.design.model.route.SubPath
 import com.design.model.route.bus.realLocation.BusRealTimeLocationProvider
 import com.design.model.route.bus.realtime.BusRealTimeProvider
 import com.design.model.route.subway.SubwayTimeTableProvider
+import com.design.model.tag.Tag
 import com.design.model.walk.Dto
 import com.design.model.walk.RouteData
 import com.design.model.walk.WalkingRouteProvider
 import com.design.util.*
 import com.design.util.Key.Companion.DB_CALENDAR
+import com.design.view.SearchDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -96,8 +98,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     private lateinit var dateBottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var searchBottomBehavior: BottomSheetBehavior<ConstraintLayout>
-    private lateinit var friendBottomBehavior: BottomSheetBehavior<ConstraintLayout>
-
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
@@ -133,7 +133,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
         .build()
 
-    //알람권한요청
+    // 알람 권한 요청
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
@@ -187,6 +187,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var endDate = ""
     private var endTime = ""
     private var todoId = ""
+    private var tagId = ""
     private var isEditMode = false  // 편집 모드 여부를 나타내는 변수
     private var usingAlarm = false
     private var startTimeToString = "" //약속시간을 저장하는 변수
@@ -197,6 +198,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var readyTime = ""
     private var myFriends = mutableListOf<User>()
     private var todoKey = ""
+    private var tagKey = ""
+    private var usingShare = false
+    private var tagList: ArrayList<String> = arrayListOf()
+    private var friendUids: ArrayList<String> = arrayListOf()
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -486,19 +491,16 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         dateBottomBehavior = BottomSheetBehavior.from(binding.dateBottomSheetLayout.root)
         searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetLayout.root)
-        friendBottomBehavior = BottomSheetBehavior.from(binding.friendBottomSheetLayout.root)
 
         binding.dateTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
         dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         binding.layout.setOnTouchListener { _, _ ->
             imm.hideSoftInputFromWindow(binding.dateBottomSheetLayout.memoEditText.windowToken, 0)
             dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            friendBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             false
         }
 
@@ -600,6 +602,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     Log.d("create", "initailize create mode")
                     // 새로운 Todo를 생성하는 경우
                     createTodo()
+                    createTag()
                     if (notificationId != "0") {//알람을 설정할때
                         if (usingAlarm) {
                             setAlarm(calendar, ALARM, this@CreateActivity.todoKey)
@@ -630,8 +633,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 setTime(1)
             }
             shareFriendView.setOnClickListener {
-                dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                friendBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                val searchDialogBinding = SearchDialogBinding.inflate(layoutInflater)
+                val dialog = SearchDialog(searchDialogBinding)
+                dialog.isCancelable = false
+                dialog.show(supportFragmentManager,"친구 태그")
             }
 
             memoEditText.apply {
@@ -664,6 +669,11 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                         } else null
                     }
                 }
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(
+                    binding.dateBottomSheetLayout.memoEditText.windowToken,
+                    0
+                )
             }
             // 현재 날짜 적용 선택 시
             currentTimeButton.setOnClickListener(View.OnClickListener {
@@ -693,58 +703,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     isTimeChange = true
                 }
             }
-        }
-        binding.friendBottomSheetLayout.apply {
-            Firebase.database.reference.child(Key.DB_USERS)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        // 친구들 저장할 리스트 생성
-                        this@CreateActivity.myFriends = mutableListOf<User>()
-
-                        val friendsSnapshot =
-                            dataSnapshot.child(user)
-                                .child("friend_info")
-                                .child("friends")
-
-                        for (friendSnapshot in friendsSnapshot.children) {
-                            val friendUid = friendSnapshot.key  // 유저의 친구들 식별자 가져오기
-
-                            // 해당 친구의 정보를 가져오기
-                            val friend = dataSnapshot.child(friendUid.toString())
-
-                            val nickname = friend.child("user_info")
-                                .child("nickname").value.toString()
-
-                            val friendData = User(friendUid, nickname)
-                            myFriends.add(friendData)
-
-                            // 친구들 정보가 다 담아졌을 때 리사이클러 뷰 연결
-                            if (myFriends.size == friendsSnapshot.childrenCount.toInt()) {
-                                updateSearchRecyclerView(myFriends)
-                            }
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                    }
-                })
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
-                androidx.appcompat.widget.SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    // 검색 버튼을 눌렀을 때 호출됩니다.
-                    performSearch(query)
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String): Boolean {
-                    if (newText.isEmpty()) {
-                        // 검색창 빈칸될 경우 처리 (x) 버튼 구현?
-                        var emptyList = mutableListOf<User>()
-                        updateSearchRecyclerView(emptyList)
-                    }
-                    return true
-                }
-            })
         }
 
         binding.apply {
@@ -873,6 +831,87 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     }
 
+    fun receiveTagFriends(tagFriends: ArrayList<String>) {
+        // tagFriends 목록을 이용해 필요한 작업 수행
+        if (tagFriends.isNotEmpty()) {
+            usingShare = true
+            if (tagFriends.size == 1) {
+                Log.d("tag", "$tagFriends")
+                binding.dateBottomSheetLayout.friendCount.text = "$tagFriends"
+                binding.dateBottomSheetLayout.friendCount.visibility = View.VISIBLE
+            }
+            else{
+                val count = tagFriends.size
+                Log.d("tag", "$count")
+                binding.dateBottomSheetLayout.friendCount.text = "$count 명"
+                binding.dateBottomSheetLayout.friendCount.visibility = View.VISIBLE
+            }
+        }
+        for (nick in tagFriends)
+            getUidByNickname(nick) { uid ->
+                friendUids.add(uid.toString())
+                if (friendUids.size == tagFriends.size) {
+                    Log.d("tag", "$friendUids")
+                }
+            }
+    }
+
+    private fun getUidByNickname(nickname: String, completion: (String?) -> Unit) {
+        val usersRef = Firebase.database.reference.child(Key.DB_USERS)
+        val query = usersRef.orderByChild("user_info/nickname").equalTo(nickname)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // 일치하는 닉네임을 가진 사용자가 여러 명이 아닌 경우
+                    for (userSnapshot in dataSnapshot.children) {
+                        val userUid = userSnapshot.key // 사용자의 UID
+                        completion(userUid)
+                        return
+                    }
+                }
+                // 닉네임과 일치하는 사용자를 찾을 수 없음
+                completion(null)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                // 에러 처리
+                completion(null)
+            }
+        })
+    }
+    private fun createTag() {
+        val title = binding.titleEditText.text.toString()
+        val stDate = binding.dateBottomSheetLayout.startDateTextView.text.toString()
+        val todoId = todoId
+        val tagId = tagId
+
+        notificationIdPlusReadyTime()
+
+        val tag =
+            Tag(
+                tagId = tagId,
+                todoId = todoId,
+                title = title,
+                date = stDate,
+                place = arrivalPlace,
+                endY = endY,
+                endX = endX,
+                usingShare = usingShare,
+                friendUid = friendUids,
+            )
+
+        for (index in friendUids) {
+            val tagRef = FirebaseUtil.tagDataBase.child(index).push()
+            tagKey = tagRef.key!!
+            tagList.add(tagKey!!)     // 가져온 키 값을 todoKeys 목록에 추가
+            tag.tagId = tagKey
+            tag.todoId = todoKey       // 생성된 키 값을 객체에 할당
+
+            tagRef.setValue(tag).addOnSuccessListener {
+                Toast.makeText(applicationContext, "친구 태그", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     @RequiresApi(Build.VERSION_CODES.S)
     private fun createAlarm() {
         FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
@@ -1038,8 +1077,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 arrivalLng = endX,
                 usingAlarm = usingAlarm,
                 importance = false,
-                readyTime = readyTime
-            )
+                readyTime = readyTime,
+                usingShare = usingShare,
+                friendUid = friendUids            )
 
         val todoRef = Firebase.database.reference.child(DB_CALENDAR)
             .child(user)
@@ -1101,6 +1141,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         todoUpdates["importance"] = importance
         todoUpdates["usingAlarm"] = usingAlarm
         todoUpdates["readyTime"] = readyTime
+        todoUpdates["usingShare"] = usingShare
+        todoUpdates["friendUid"] = friendUids
 
 
         // 변경된 일정 시작 날짜
@@ -1553,24 +1595,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 callback(info)
             }
         }
-    }
-
-    private fun updateSearchRecyclerView(dataList: List<User>) {
-        // 어댑터에 새로운 데이터 설정하여 업데이트
-        val searchAdapter = InviteFriendAdapter(dataList as MutableList<User>)
-        binding.friendBottomSheetLayout.friendRecyclerView.adapter = searchAdapter
-        binding.friendBottomSheetLayout.friendRecyclerView.layoutManager =
-            LinearLayoutManager(binding.root.context)
-
-        searchAdapter.notifyDataSetChanged()
-    }
-
-    private fun performSearch(query: String) {
-        // 검색어를 사용
-        val filteredList = myFriends.filter { item ->
-            item.nickname!!.contains(query, ignoreCase = true) // 대소문자를 구분하지 않고 검색어를 포함하는지 확인합니다.
-        }
-        updateSearchRecyclerView(filteredList)
     }
 
     companion object {

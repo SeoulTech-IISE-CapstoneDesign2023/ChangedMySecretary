@@ -4,18 +4,20 @@ import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
-import com.design.CreateActivity
+import com.design.MapFragment
 import com.design.adapter.FriendNickNameListAdapter
-import com.design.databinding.SearchDialogBinding
+import com.design.databinding.MemoryDialogBinding
 import com.design.model.friend.Friend
 import com.design.model.friend.FriendNickNameProvider
 import com.google.android.material.chip.Chip
 
-class SearchDialog(private val binding: SearchDialogBinding) : DialogFragment(),
+class MemoryDialog(private val binding: MemoryDialogBinding, private val dataTransferListener: MapFragment)
+    : DialogFragment(),
     FriendNickNameProvider.Callback {
     private val friendNickNameProvider = FriendNickNameProvider(this)
 
@@ -25,7 +27,11 @@ class SearchDialog(private val binding: SearchDialogBinding) : DialogFragment(),
 
     private val addedChips = HashSet<String>()
 
-    private var tagFriends: ArrayList<String> = arrayListOf()
+    private var selectedFriend: String = ""
+
+    interface DataTransferListener {
+        fun onDataTransfer(data: String)
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -41,6 +47,7 @@ class SearchDialog(private val binding: SearchDialogBinding) : DialogFragment(),
         return dialogBuilder.create()
     }
 
+
     private fun setAdapter() {
         adapter = FriendNickNameListAdapter { friend ->
             if (!addedChips.contains(friend.nickName)) {
@@ -50,11 +57,10 @@ class SearchDialog(private val binding: SearchDialogBinding) : DialogFragment(),
                 chip.setOnCloseIconClickListener {
                     binding.chipGroup.removeView(chip)
                     addedChips.remove(friend.nickName)
-                    tagFriends.remove(friend.nickName)
                 }
                 binding.chipGroup.addView(chip)
                 addedChips.add(friend.nickName)
-                tagFriends.add(friend.nickName)
+                selectedFriend = friend.nickName
             }
         }
         binding.recyclerView.adapter = adapter
@@ -77,7 +83,8 @@ class SearchDialog(private val binding: SearchDialogBinding) : DialogFragment(),
         }
 
         binding.okButton.setOnClickListener {
-            (requireActivity() as CreateActivity).receiveTagFriends(tagFriends)
+            dataTransferListener.onDataTransfer(selectedFriend)
+            Log.d("tag", "selectedFriend is $selectedFriend")
             dialog?.dismiss()
         }
     }
@@ -88,4 +95,5 @@ class SearchDialog(private val binding: SearchDialogBinding) : DialogFragment(),
         adapter.notifyDataSetChanged()
         binding.emptyTextView.isVisible = list.size == 0
     }
+
 }

@@ -1,4 +1,4 @@
-package com.design
+package com.design.Profile
 
 import android.os.Bundle
 import android.widget.Toast

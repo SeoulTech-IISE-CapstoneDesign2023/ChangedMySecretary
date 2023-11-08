@@ -7,6 +7,9 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.design.Profile.ChangeNicknameActivity
+import com.design.Profile.IntroActivity
+import com.design.Profile.LoginActivity
 import com.design.databinding.ActivityManageBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth

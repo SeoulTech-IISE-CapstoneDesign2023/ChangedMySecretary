@@ -18,18 +18,29 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import com.design.adapter.FavoriteListAdapter
+import com.design.adapter.FriendNickNameListAdapter
+import com.design.adapter.MemoryListAdapter
 import com.design.databinding.FragmentMapBinding
+import com.design.databinding.MemoryDialogBinding
+import com.design.model.friend.Friend
+import com.design.model.friend.FriendNickNameProvider
 import com.design.model.importance.Importance
 import com.design.model.importance.ImportanceProvider
 import com.design.model.location.Location
 import com.design.model.location.LocationAdapter
 import com.design.model.location.LocationProvider
+import com.design.model.tag.Tag
+import com.design.model.tag.TagProvider
 import com.design.util.FirebaseUtil
+import com.design.util.Key
+import com.design.view.MemoryDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -42,19 +53,24 @@ import com.naver.maps.map.util.FusedLocationSource
 import java.util.Random
 
 class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
-    ImportanceProvider.Callback {
+    FriendNickNameProvider.Callback,
+    TagProvider.Callback,
+    MemoryDialog.DataTransferListener {
     private var binding: FragmentMapBinding? = null
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var locationAdapter: LocationAdapter
-    private lateinit var favoriteAdapter: FavoriteListAdapter
+    private lateinit var memoryAdapter: MemoryListAdapter
+    private lateinit var friendAdapter: FriendNickNameListAdapter
     private val handler = Handler(Looper.getMainLooper())
     private val locationProvider = LocationProvider(this)
-    private val importanceProvider = ImportanceProvider(this)
+    private val friendNickNameProvider = FriendNickNameProvider(this)
     private val random = Random()
     private val favoriteList = mutableListOf<Importance>()
     private val markerList = mutableListOf<Marker>()
+    private var friendUid: String =""
+    private var friendNick: String =""
 
 
     override fun onCreateView(
@@ -75,15 +91,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             mapView.onCreate(savedInstanceState)
             mapView.getMapAsync(this)
 
-            val favoriteBottomBehavior =
-                BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
-
             initBottomSheet(binding)
             initAdapter(binding)
-            binding.favoriteBottomSheetLayout.favoriteRecyclerView.adapter = favoriteAdapter
-            binding.searchBottomSheetyLayout.searchRecyclerView.adapter = locationAdapter
-            importanceProvider.getImportanceData()
-            binding.searchBottomSheetyLayout.searchEditText.addTextChangedListener {
+            binding.memoryBottomSheetLayout.memoryRecyclerView.adapter = memoryAdapter
+            binding.searchBottomSheetLayout.searchRecyclerView.adapter = locationAdapter
+            binding.searchBottomSheetLayout.searchEditText.addTextChangedListener {
                 val runnable = Runnable {
                     locationProvider.searchLocation(it.toString())
                 }
@@ -91,77 +103,56 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 handler.postDelayed(runnable, 300)
             }
             initChip(binding)
-            updateBottomSheetRecyclerView()
         }
 
     }
 
-    private fun initChip(binding: FragmentMapBinding) {
-        val favoriteBottomBehavior =
-            BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
-        binding.chip.setOnClickListener {
-            FirebaseUtil.importanceDataBase.get()
-                .addOnSuccessListener {
-                    val data = it.value as Map<String, Any>
-                    val dataList = data.values.toList()
-                    val importanceList = dataList.map { item ->
-                        val itemData = item as Map<String, Any>
-                        Importance(
-                            endY = (itemData["endY"] as Any).toString() ?: "0.0",
-                            endX = (itemData["endX"] as Any).toString() ?: "0.0",
-                            place = itemData["place"] as String,
-                            title = itemData["title"] as String,
-                            todoId = itemData["todoId"] as String
-                        )
-                    }
-                    importanceList.forEach { data ->
-                        if (data.endY != "0") {
-                            val red = random.nextInt(256) // 0부터 255 사이의 랜덤 값
-                            val green = random.nextInt(256)
-                            val blue = random.nextInt(256)
-                            Marker().apply {
-                                position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
-                                captionText = data.title!!
-                                iconTintColor = Color.rgb(red, green, blue)//random한 색깔
-                                map = naverMap
-                                markerList.add(this)
-                            }
-                        }
-                    }
-                    val lastData = importanceList.findLast { importance -> importance.endY != "0" }
-                    val cameraUpdate = CameraUpdate.scrollTo(
-                        LatLng(
-                            lastData?.endY?.toDouble() ?: return@addOnSuccessListener,
-                            lastData?.endX?.toDouble() ?: 0.0
-                        )
-                    )
-                    cameraUpdate.animate(CameraAnimation.Fly, 500)
-                    naverMap.moveCamera(cameraUpdate)
-                    favoriteBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                }
+    override fun onDataTransfer(data: String) {
+        Log.d("tag", "datatransfer get data is $data")
+        getUidByNickname(data) { uid ->
+            friendNick = data
+            friendUid = uid.toString()
+            Log.d("tag", "$friendUid")
+            updateMemoryBottomSheetRecyclerView()
+        }
+    }
+    override fun loadFriendNickNameList(list: MutableList<Friend>) {
+        //이부분에서 정보가 넘어오게되면 여기서 recyclerview를 업데이트 해줘야한다
+        friendAdapter.submitList(list)
+        friendAdapter.notifyDataSetChanged()
+    }
+    override fun loadShareList(list: List<Tag>) {
+        memoryAdapter.submitList(list)
+    }
 
+    private fun initChip(binding: FragmentMapBinding) {
+        binding.chip.setOnClickListener {
+            val memoryBottomBehavior = BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
+            memoryBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
 
     private fun initBottomSheet(binding: FragmentMapBinding) {
-        val searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetyLayout.root)
-        val favoriteBottomBehavior =
-            BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
+        val searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetLayout.root)
+        val memoryBottomBehavior = BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        favoriteBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        memoryBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         binding.searchButton.setOnClickListener {
             //완전 펴져있으면은 접어버림 아니면은 닫아버림
-            favoriteBottomBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
-        binding.favoriteBottomSheetLayout.root.setOnClickListener { }
-        binding.searchBottomSheetyLayout.root.setOnClickListener { }
-
+        binding.searchBottomSheetLayout.root.setOnClickListener {  }
+        binding.memoryBottomSheetLayout.friendImageView.setOnClickListener {
+            val MemoryDialogBinding = MemoryDialogBinding.inflate(layoutInflater)
+            val dialog = MemoryDialog(MemoryDialogBinding, this)
+            dialog.isCancelable = false
+            dialog.show(requireFragmentManager(),"친구 태그")
+        }
     }
 
     private fun initAdapter(binding: FragmentMapBinding) {
-        val favoriteBottomBehavior =
-            BottomSheetBehavior.from(binding.favoriteBottomSheetLayout.root)
+        val memoryBottomSheetLayout = BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
+
         locationAdapter = LocationAdapter {
             val name = it.name
             val lat = it.frontLat.toDouble()
@@ -171,17 +162,28 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             naverMap.moveCamera(cameraUpdate)
             naverMap.minZoom = 5.0
             naverMap.maxZoom = 18.0
-            val bottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetyLayout.root)
+            val bottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetLayout.root)
             bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             val imm =
                 requireActivity().getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(
-                binding.searchBottomSheetyLayout.searchEditText.windowToken,
+                binding.searchBottomSheetLayout.searchEditText.windowToken,
                 0
             )
         }
-
-        favoriteAdapter = FavoriteListAdapter { data ->
+        memoryAdapter = MemoryListAdapter { data ->
+            if (data.endY != 0.0) {
+                val red = random.nextInt(256) // 0부터 255 사이의 랜덤 값
+                val green = random.nextInt(256)
+                val blue = random.nextInt(256)
+                Marker().apply {
+                    position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
+                    captionText = data.title!!
+                    iconTintColor = Color.rgb(red, green, blue)//random한 색깔
+                    map = naverMap
+                    markerList.add(this)
+                }
+            }
             val cameraUpdate = CameraUpdate.scrollTo(
                 LatLng(
                     data.endY?.toDouble() ?: 0.0,
@@ -190,67 +192,73 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             )
             cameraUpdate.animate(CameraAnimation.Fly, 500)
             naverMap.moveCamera(cameraUpdate)
-            favoriteBottomBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            memoryBottomSheetLayout.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
-    private fun updateBottomSheetRecyclerView() {
-        FirebaseUtil.importanceDataBase.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val data = snapshot.value as Map<*, *>
-                val importanceItem = Importance(
-                    endY = (data["endY"] as Any).toString(),
-                    endX = (data["endX"] as Any).toString(),
-                    place = data["place"] as String?,
-                    title = data["title"] as String?,
-                    todoId = data["todoId"] as String?
-                )
-                favoriteList.add(importanceItem)
-                favoriteAdapter.apply {
-                    submitList(favoriteList)
-                    notifyDataSetChanged()
-                }
-                binding?.favoriteBottomSheetLayout?.emptyTextView?.isVisible =
-                    favoriteAdapter.itemCount == 0
-            }
+    private fun getUidByNickname(nickname: String, completion: (String?) -> Unit) {
+        val usersRef = Firebase.database.reference.child(Key.DB_USERS)
+        val query = usersRef.orderByChild("user_info/nickname").equalTo(nickname)
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                val data = snapshot.value as Map<*, *>
-                val importanceItem = Importance(
-                    endY = (data["endY"] as Any).toString(),
-                    endX = (data["endX"] as Any).toString(),
-                    place = data["place"] as String?,
-                    title = data["title"] as String?,
-                    todoId = data["todoId"] as String?
-                )
-                favoriteList.remove(importanceItem)
-                favoriteAdapter.notifyDataSetChanged()
-                binding?.favoriteBottomSheetLayout?.emptyTextView?.isVisible =
-                    favoriteAdapter.itemCount == 0
-
-                var removeMarker = Marker()
-                markerList.forEach { marker ->
-                    if (marker.captionText == importanceItem.title) {
-                        marker.map = null
-                        removeMarker = marker
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // 일치하는 닉네임을 가진 사용자가 여러 명이 아닌 경우
+                    for (userSnapshot in dataSnapshot.children) {
+                        val userUid = userSnapshot.key // 사용자의 UID
+                        completion(userUid)
+                        return
                     }
                 }
-                markerList.remove(removeMarker)
+                // 닉네임과 일치하는 사용자를 찾을 수 없음
+                completion(null)
             }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
+            override fun onCancelled(databaseError: DatabaseError) {
+                // 에러 처리
+                completion(null)
             }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-
         })
+    }
+    private fun updateMemoryBottomSheetRecyclerView() {
+        FirebaseUtil.tagDataBase.child(friendUid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val sharedTodos = mutableListOf<Tag>()
+                    for (todoSnapshot in dataSnapshot.children) {
+                        val tag = todoSnapshot.getValue(Tag::class.java)
+                        // 해당 일정의 friendUid 리스트와 비교
+                        if (tag != null) {
+                            // friendUid가 원하는 값인 "0010qwer"와 일치하면 이 부분 실행
+                            val shareItem = Tag(
+                                tagId = tag.tagId,
+                                todoId = tag.todoId,
+                                title = tag.title,
+                                date = tag.date,
+                                place = tag.place,
+                                endY = tag.endY,
+                                endX = tag.endX,
+                                usingShare = tag.usingShare,
+                                friendUid = tag.friendUid,
+                            )
+                            sharedTodos.add(shareItem)
+                        }
+                    }
+                    memoryAdapter.apply {
+                        submitList(sharedTodos)
+                        notifyDataSetChanged()
+                        binding?.memoryBottomSheetLayout?.titleTextView?.text = "${friendNick}님과의 추억"
+                        if(sharedTodos.isEmpty()){
+                            binding?.memoryBottomSheetLayout?.emptyTextView?.text = "${friendNick}님과의 추억이 없습니다. \n 추억을 쌓아봐요"
+                            binding?.memoryBottomSheetLayout?.emptyTextView?.visibility = View.VISIBLE
+                        }
+                        else{
+                            binding?.memoryBottomSheetLayout?.emptyTextView?.visibility = View.GONE
+                        }
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                }
+            })
     }
 
     override fun onStart() {
@@ -364,10 +372,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
 
     override fun loadLocation(data: Location) {
         locationAdapter.submitList(data.searchPoiInfo?.pois?.poi)
-    }
-
-    override fun loadImportanceList(list: List<Importance>) {
-        favoriteAdapter.submitList(list)
     }
 
 

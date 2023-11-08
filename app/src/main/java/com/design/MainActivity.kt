@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.drawerlayout.widget.DrawerLayout
 import com.design.Friend.FriendListActivity
+import com.design.Profile.IntroActivity
 import com.design.adapter.ViewPagerAdapter
 import com.design.databinding.ActivityMainBinding
 import com.design.databinding.HeaderBinding

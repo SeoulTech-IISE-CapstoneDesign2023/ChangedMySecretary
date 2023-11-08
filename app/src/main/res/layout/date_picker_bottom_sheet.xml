@@ -62,42 +62,19 @@
             android:gravity="center_vertical"
             android:text="@string/friend_to_share" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/settingAlarmView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="3dp"
-        android:paddingEnd="3dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shareFriendView">
-
-        <ImageView
-            android:id="@+id/imageAlarm"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="4dp"
-            android:layout_weight="0"
-            app:srcCompat="@drawable/baseline_notifications_24" />
-
         <TextView
-            android:id="@+id/shareWithFriendText"
+            android:id="@+id/friendCount"
             android:layout_width="0dp"
-            android:layout_height="45dp"
+            android:layout_height="30dp"
             android:layout_marginStart="2dp"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="3dp"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
+            android:visibility="gone"
             android:gravity="center_vertical"
-            android:text="@string/set_alarm" />
-
+            android:text="닉네임" />
     </LinearLayout>
+
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/startCalendarImageView"
@@ -202,7 +179,7 @@
         android:layout_marginTop="10dp"
         android:text="@string/diary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingAlarmView" />
+        app:layout_constraintTop_toBottomOf="@+id/shareFriendView" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/memoEditText"

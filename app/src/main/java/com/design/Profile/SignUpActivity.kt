@@ -1,4 +1,4 @@
-package com.design
+package com.design.Profile
 
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -12,6 +12,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.design.MainActivity
+import com.design.R
 import com.design.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -128,8 +130,7 @@ class SignUpActivity : AppCompatActivity() {
                     textCheckPW.text = "비밀번호가 일치합니다"
                     textCheckPW.setTextColor(
                         ContextCompat.getColor(
-                            applicationContext, R.color
-                                .black
+                            applicationContext, R.color.black
                         )
                     )
                     textCheckPW.visibility = View.VISIBLE

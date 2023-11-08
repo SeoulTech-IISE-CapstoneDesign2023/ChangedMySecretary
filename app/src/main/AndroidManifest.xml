@@ -24,16 +24,16 @@
             android:name=".SampleCreateUI"
             android:exported="false" />
         <activity
-            android:name=".ChangeNicknameActivity"
+            android:name=".Profile.ChangeNicknameActivity"
             android:exported="false" />
         <activity
             android:name=".ManageActivity"
             android:exported="false" />
         <activity
-            android:name=".IntroActivity"
+            android:name=".Profile.IntroActivity"
             android:exported="false" />
         <activity
-            android:name=".SignUpActivity"
+            android:name=".Profile.SignUpActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -46,7 +46,7 @@
         </activity>
         <activity android:name=".CreateActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".Profile.LoginActivity"
             android:exported="false" />
         <activity android:name=".AlarmActivity" />
 

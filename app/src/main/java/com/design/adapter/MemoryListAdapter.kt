@@ -6,20 +6,18 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.design.databinding.ItemFavoriteBinding
-import com.design.model.importance.Importance
+import com.design.databinding.ItemMemoryBinding
+import com.design.model.tag.Tag
 
-class FavoriteListAdapter(private val onClick: (Importance) -> Unit) :
-    ListAdapter<Importance, FavoriteListAdapter.ViewHolder>(diffUtil) {
+class MemoryListAdapter(private val onClick : (Tag) -> Unit) : ListAdapter<Tag, MemoryListAdapter.ViewHolder>(diffUtil) {
 
-    inner class ViewHolder(private val binding: ItemFavoriteBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Importance) {
+    inner class ViewHolder(private val binding: ItemMemoryBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Tag) {
             binding.titleTextView.text = item.title
-
+            binding.dateTextView.text = item.date
             binding.addressTextView.text =
-                if (item.place == "") "추억의 장소는 없습니다." else item.place
-            if (item.endY == "0") {
+                if(item.place == "") "추억의 장소는 없습니다." else item.place
+            if(item.endY == 0.0){
                 binding.arrowImageView.isVisible = false
             }
 
@@ -31,7 +29,7 @@ class FavoriteListAdapter(private val onClick: (Importance) -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ItemFavoriteBinding.inflate(
+            ItemMemoryBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -44,12 +42,12 @@ class FavoriteListAdapter(private val onClick: (Importance) -> Unit) :
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<Importance>() {
-            override fun areItemsTheSame(oldItem: Importance, newItem: Importance): Boolean {
+        val diffUtil = object : DiffUtil.ItemCallback<Tag>() {
+            override fun areItemsTheSame(oldItem: Tag, newItem: Tag): Boolean {
                 return oldItem.todoId == newItem.todoId
             }
 
-            override fun areContentsTheSame(oldItem: Importance, newItem: Importance): Boolean {
+            override fun areContentsTheSame(oldItem: Tag, newItem: Tag): Boolean {
                 return oldItem == newItem
             }
 
