@@ -636,7 +636,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 val searchDialogBinding = SearchDialogBinding.inflate(layoutInflater)
                 val dialog = SearchDialog(searchDialogBinding)
                 dialog.isCancelable = false
-                dialog.show(supportFragmentManager,"친구 태그")
+                dialog.show(supportFragmentManager, "친구 태그")
             }
 
             memoEditText.apply {
@@ -669,11 +669,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                         } else null
                     }
                 }
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(
-                    binding.dateBottomSheetLayout.memoEditText.windowToken,
-                    0
-                )
             }
             // 현재 날짜 적용 선택 시
             currentTimeButton.setOnClickListener(View.OnClickListener {
@@ -692,6 +687,10 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             })
             // 확인 선택 시
             okButton.setOnClickListener {
+                imm.hideSoftInputFromWindow(
+                    binding.dateBottomSheetLayout.memoEditText.windowToken,
+                    0
+                )
                 if (!checkDate()) {
                     // 일정 종료 시간이 시작 시간보다 빠를 경우 다시 설정
                     binding.dateBottomSheetLayout.endDateTextView.text = "추억의 끝을 다시 입력해 주세요"
@@ -701,6 +700,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     binding.dateTextView.text = "${startDateTextView.text}, ${startTimeText.text}"
                     isTimeChange = true
+//                    dateBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
         }
@@ -839,8 +839,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 Log.d("tag", "$tagFriends")
                 binding.dateBottomSheetLayout.friendCount.text = "$tagFriends"
                 binding.dateBottomSheetLayout.friendCount.visibility = View.VISIBLE
-            }
-            else{
+            } else {
                 val count = tagFriends.size
                 Log.d("tag", "$count")
                 binding.dateBottomSheetLayout.friendCount.text = "$count 명"
@@ -873,12 +872,14 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 // 닉네임과 일치하는 사용자를 찾을 수 없음
                 completion(null)
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 // 에러 처리
                 completion(null)
             }
         })
     }
+
     private fun createTag() {
         val title = binding.titleEditText.text.toString()
         val stDate = binding.dateBottomSheetLayout.startDateTextView.text.toString()
@@ -912,6 +913,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.S)
     private fun createAlarm() {
         FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
@@ -1079,7 +1081,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 importance = false,
                 readyTime = readyTime,
                 usingShare = usingShare,
-                friendUid = friendUids            )
+                friendUid = friendUids
+            )
 
         val todoRef = Firebase.database.reference.child(DB_CALENDAR)
             .child(user)

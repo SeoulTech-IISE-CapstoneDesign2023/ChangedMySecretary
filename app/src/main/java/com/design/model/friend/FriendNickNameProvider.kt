@@ -36,6 +36,10 @@ class FriendNickNameProvider(private val callback: Callback) {
             }
     }
 
+    fun getSharedFriend(){
+
+    }
+
     interface Callback {
         fun loadFriendNickNameList(list: MutableList<Friend>)
     }
