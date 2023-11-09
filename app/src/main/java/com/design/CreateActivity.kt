@@ -918,9 +918,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private fun createAlarm() {
         FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
         val memo = binding.titleEditText.text.toString()
-        val message = "${memo}할 시간이에요~"
         val appointmentTime = alarmData["appointmentTime"].toString() //여기서 readyTime을 빼주자
-        AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, message)
+        AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, memo)
     }
 
     private fun initializeCreateMode(startDate: String?) {

@@ -87,19 +87,13 @@ object AlarmUtil {
         val dateFormat = SimpleDateFormat("yyyyMMddHHmm")
         val alarmTime = dateFormat.format(calendar.time)
 
-        //현재 시간과 알람 시간을 비교해서 알람 시간이 과거면은 알람 설정
-//        if (calendar.timeInMillis <= System.currentTimeMillis()) {
-//            Log.e("fcmService", "현재시간보다 늦게 알람 설정은 안됨")
-//            return
-//        }
-
         val notificationId = alarmTime.substring(3).toInt()
         Log.e("fcm", "notificationId $notificationId")
         scheduleNotification(calendar, context, notificationId, message)
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    fun scheduleNotification(
+    private fun scheduleNotification(
         calendar: Calendar,
         context: Context,
         notificationId: Int,
