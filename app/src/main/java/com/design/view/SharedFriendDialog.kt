@@ -10,7 +10,13 @@ import com.design.databinding.ShareFriendDialogBinding
 import com.design.model.friend.Friend
 import com.design.model.friend.FriendNickNameProvider
 
-class SharedFriendDialog(private val binding: ShareFriendDialogBinding) : DialogFragment(),
+class SharedFriendDialog(
+    private val binding: ShareFriendDialogBinding,
+    private val todoId: String?,
+    private val year: String?,
+    private val month: String?,
+    private val day: String?
+) : DialogFragment(),
     FriendNickNameProvider.Callback {
     private val friendNickNameProvider = FriendNickNameProvider(this)
 
@@ -21,7 +27,7 @@ class SharedFriendDialog(private val binding: ShareFriendDialogBinding) : Dialog
         dialogBuilder.setView(binding.root)
         setAdapter()
 
-        friendNickNameProvider.getFriendNickName("")
+        friendNickNameProvider.getSharedFriend(todoId, year, month, day)
 
         return dialogBuilder.create()
     }
