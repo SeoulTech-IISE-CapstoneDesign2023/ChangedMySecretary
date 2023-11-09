@@ -1,7 +1,10 @@
 package com.design.view
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Window
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -9,6 +12,7 @@ import com.design.adapter.FriendNickNameListAdapter
 import com.design.databinding.ShareFriendDialogBinding
 import com.design.model.friend.Friend
 import com.design.model.friend.FriendNickNameProvider
+import java.util.Objects
 
 class SharedFriendDialog(
     private val binding: ShareFriendDialogBinding,
@@ -25,6 +29,7 @@ class SharedFriendDialog(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         dialogBuilder.setView(binding.root)
+        binding.root.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         setAdapter()
 
         friendNickNameProvider.getSharedFriend(todoId, year, month, day)
