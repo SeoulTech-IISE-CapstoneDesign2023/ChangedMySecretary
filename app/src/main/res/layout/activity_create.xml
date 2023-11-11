@@ -241,6 +241,14 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/imageFriend"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/baseline_emoji_people_24" />
+
+        <ImageView
             android:id="@+id/alarmImageView"
             android:layout_width="51dp"
             android:layout_height="48dp"

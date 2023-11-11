@@ -62,6 +62,7 @@ import com.design.model.walk.RouteData
 import com.design.model.walk.WalkingRouteProvider
 import com.design.util.*
 import com.design.util.Key.Companion.DB_CALENDAR
+import com.design.util.Key.Companion.DB_TAG
 import com.design.view.SearchDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -901,13 +902,17 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             )
 
         for (index in friendUids) {
-            val tagRef = FirebaseUtil.tagDataBase.child(index).push()
-            tagKey = tagRef.key!!
-            tagList.add(tagKey!!)     // 가져온 키 값을 todoKeys 목록에 추가
+            val myTagRef = FirebaseUtil.tagDataBase.child(index).push()
+            tagKey = myTagRef.key!!
             tag.tagId = tagKey
             tag.todoId = todoKey       // 생성된 키 값을 객체에 할당
 
-            tagRef.setValue(tag).addOnSuccessListener {
+            val friendTagRef = Firebase.database.reference.child(DB_TAG).child(index).child(tagKey)
+
+            myTagRef.setValue(tag).addOnSuccessListener {
+                Log.d("tag", "Success")
+            }
+            friendTagRef.setValue(tag).addOnSuccessListener {
                 Toast.makeText(applicationContext, "친구 태그", Toast.LENGTH_SHORT).show()
             }
         }
