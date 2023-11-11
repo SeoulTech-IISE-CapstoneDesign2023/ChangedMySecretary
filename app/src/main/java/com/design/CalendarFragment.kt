@@ -151,7 +151,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
                         todoKeys.add(data.key!!)
                         todoList.add(data.getValue<Todo>()!!)
                     }
-                    todoList.sortBy { it.stTime }
+                    todoList.sortBy { it.time }
                     adapter.notifyDataSetChanged()
                     // 데이터를 받아온 후에 데이터가 비어 있는지 확인
                     if (todoList.isEmpty()) {
@@ -177,7 +177,7 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         Log.d("TimetableFragment", "$todoList")
         val todo = todoList[position] // 선택한 위치의 Todo객체를 가져옴
         val todoKey = todoList[position].todoId
-        val startDate = todoList[position].stDate
+        val startDate = todoList[position].date
         //Fragment로 데이터 전송
         val bundle = Bundle()
         bundle.putParcelable("todo", todo)
