@@ -241,6 +241,17 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/imageFriendView"
+            android:layout_width="51dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            app:srcCompat="@drawable/baseline_emoji_people_24"
+            app:layout_constraintBottom_toTopOf="@+id/alarmImageView"
+            app:layout_constraintStart_toEndOf="@+id/startEditText"/>
+
+
+        <ImageView
             android:id="@+id/alarmImageView"
             android:layout_width="51dp"
             android:layout_height="48dp"
@@ -251,11 +262,6 @@
             app:layout_constraintStart_toEndOf="@+id/arrivalEditText"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <include
-        android:id="@+id/dateBottomSheetLayout"
-        layout="@layout/date_picker_bottom_sheet"
-        tools:visibility="gone" />
 
     <include
         android:id="@+id/searchBottomSheetLayout"

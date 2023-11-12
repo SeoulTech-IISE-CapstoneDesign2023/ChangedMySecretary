@@ -92,7 +92,7 @@ class MainFragment : Fragment() {
                         val intent = Intent(requireContext(), CreateActivity::class.java)
                         intent.putExtra("todo", todo)
                         intent.putExtra("todoKey", todoId)
-                        intent.putExtra("startDate", todo?.stDate)
+                        intent.putExtra("startDate", todo?.date)
                         startActivity(intent)
                     }
             }

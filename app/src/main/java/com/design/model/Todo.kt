@@ -9,13 +9,8 @@ import java.util.ArrayList
 data class Todo(
     var todoId: String = "",            // 일정 구별 아이디
     val title: String = "",             // 일정 제목
-    val stDate: String = "",           // 일정 시작 날짜
-    val stTime: String = "",           // 일정 시작 시간
-    val enDate: String? = null,         // 일정 종료 날짜
-    val enTime: String? = null,         // 일정 종료 시간
-    val place: String? = null,          // 일정 장소
-    val memo: String? = null,           // 일정 관련 메모
-    var importance: Boolean? = false,           // 중요도
+    val date: String = "",           // 일정 시작 날짜
+    val time: String = "",           // 일정 시작 시간
     val startPlace: String? = null,     // 일정 출발지
     val arrivePlace: String? = null,    // 일정 도착지
     val trackTime: String? = null,      // 알림 추적 시간
@@ -40,11 +35,6 @@ data class Todo(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        importance = parcel.readBoolean(),
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
         startLat = parcel.readDouble(),
         startLng = parcel.readDouble(),
         arrivalLat = parcel.readDouble(),
@@ -60,13 +50,8 @@ data class Todo(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(todoId)
         parcel.writeString(title)
-        parcel.writeString(stDate)
-        parcel.writeString(stTime)
-        parcel.writeString(enDate)
-        parcel.writeString(enTime)
-        parcel.writeString(place)
-        parcel.writeString(memo)
-        importance?.let { parcel.writeBoolean(it) }
+        parcel.writeString(date)
+        parcel.writeString(time)
         parcel.writeString(startPlace)
         parcel.writeString(arrivePlace)
         parcel.writeString(trackTime)
