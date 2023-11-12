@@ -124,8 +124,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
 
     private fun initChip(binding: FragmentMapBinding) {
         binding.chip.setOnClickListener {
+            val MemoryDialogBinding = MemoryDialogBinding.inflate(layoutInflater)
+            val dialog = MemoryDialog(MemoryDialogBinding, this)
+            dialog.isCancelable = false
+            dialog.show(requireFragmentManager(),"추억상자")
             val memoryBottomBehavior = BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
-            memoryBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            memoryBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
     }
 
@@ -135,7 +139,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         memoryBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         binding.searchButton.setOnClickListener {
-            //완전 펴져있으면은 접어버림 아니면은 닫아버림
             searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         binding.searchBottomSheetLayout.root.setOnClickListener {  }
@@ -143,7 +146,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             val MemoryDialogBinding = MemoryDialogBinding.inflate(layoutInflater)
             val dialog = MemoryDialog(MemoryDialogBinding, this)
             dialog.isCancelable = false
-            dialog.show(requireFragmentManager(),"친구 태그")
+            dialog.show(requireFragmentManager(),"추억상자")
         }
     }
 
