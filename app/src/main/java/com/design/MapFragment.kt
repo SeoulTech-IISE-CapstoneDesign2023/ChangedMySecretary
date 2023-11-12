@@ -15,7 +15,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.design.adapter.FriendNickNameListAdapter
@@ -25,7 +24,6 @@ import com.design.databinding.MemoryDialogBinding
 import com.design.model.friend.Friend
 import com.design.model.friend.FriendNickNameProvider
 import com.design.model.importance.Importance
-import com.design.model.importance.ImportanceProvider
 import com.design.model.location.Location
 import com.design.model.location.LocationAdapter
 import com.design.model.location.LocationProvider
@@ -35,7 +33,6 @@ import com.design.util.FirebaseUtil
 import com.design.util.Key
 import com.design.view.MemoryDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener

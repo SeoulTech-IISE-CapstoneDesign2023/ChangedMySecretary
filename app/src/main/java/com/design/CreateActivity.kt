@@ -469,8 +469,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     this@CreateActivity, R.drawable.baseline_check_gray_24
                 )
                 Toast.makeText(this, "추억의 제목은 30자까지만 입력해주세요", Toast.LENGTH_SHORT).show()
-            }
-            else {
+            } else {
                 if (isEditMode) {
                     Log.d("create", "initailize edit mode")
 
@@ -534,7 +533,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
             true
         }
-
 
         binding.apply {
             titleEditText.setOnKeyListener { v, keyCode, event ->
@@ -686,8 +684,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             usingShare = true
             if (tagFriends.size == 1) {
                 Log.d("tag", "$tagFriends")
-            }
-            else{
+
+            } else {
+
                 val count = tagFriends.size
                 Log.d("tag", "$count")
             }
@@ -718,12 +717,14 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 // 닉네임과 일치하는 사용자를 찾을 수 없음
                 completion(null)
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 // 에러 처리
                 completion(null)
             }
         })
     }
+
     private fun createTag() {
         val title = binding.titleEditText.text.toString()
         val date = binding.dateTextView.text.toString()
@@ -751,7 +752,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             tag.tagId = tagKey
             tag.todoId = todoKey       // 생성된 키 값을 객체에 할당
 
-            val friendTagRef = Firebase.database.reference.child(DB_TAG).child(index).child(user).child(tagKey)
+            val friendTagRef =
+                Firebase.database.reference.child(DB_TAG).child(index).child(user).child(tagKey)
 
             myTagRef.setValue(tag).addOnSuccessListener {
                 Log.d("tag", "Success")
@@ -761,13 +763,13 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             }
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.S)
     private fun createAlarm() {
         FirebaseUtil.alarmDataBase.child(notificationId!!).updateChildren(alarmData)
         val memo = binding.titleEditText.text.toString()
-        val message = "${memo}할 시간이에요~"
         val appointmentTime = alarmData["appointmentTime"].toString() //여기서 readyTime을 빼주자
-        AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, message)
+        AlarmUtil.createAlarm(appointmentTime, this@CreateActivity, memo)
     }
 
     private fun setDateAndTime() {
@@ -831,7 +833,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 usingAlarm = usingAlarm,
                 readyTime = readyTime,
                 usingShare = usingShare,
-                friendUid = friendUids            )
+                friendUid = friendUids
+            )
 
         val todoRef = Firebase.database.reference.child(DB_CALENDAR)
             .child(user)

@@ -12,12 +12,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.design.adapter.MainListAdapter
 import com.design.databinding.FragmentMainBinding
 import com.design.databinding.SearchDialogBinding
+import com.design.databinding.ShareFriendDialogBinding
 import com.design.model.Todo
 import com.design.model.User
 import com.design.model.alarm.AlarmItem
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
 import com.design.view.SearchDialog
+import com.design.view.SharedFriendDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -55,10 +57,14 @@ class MainFragment : Fragment() {
     private fun setRecyclerView(binding: FragmentMainBinding): ChildEventListener {
         mainListAdapter = MainListAdapter(
             onSharedClick = {
+                val todoId = it.todoId
+                val year = it.dateTime?.substring(0, 5)
+                val month = it.dateTime?.substring(6, 9)
+                val day = it.dateTime?.substring(10, 13)
                 //todo 친구에게 AlarmItem을 전송해줘야함 친구를 선택하는 창이 뜨고 그 창에서 친구에게 공유
-                val searchDialogBinding = SearchDialogBinding.inflate(layoutInflater)
-                val dialog = SearchDialog(searchDialogBinding)
-                dialog.isCancelable = false
+                val sharedFriendDialogBinding = ShareFriendDialogBinding.inflate(layoutInflater)
+                val dialog = SharedFriendDialog(sharedFriendDialogBinding,todoId, year, month, day)
+                dialog.isCancelable = true
                 dialog.show(requireFragmentManager(), "친구 태그")
             },
             onDeleteClick = {
@@ -80,7 +86,6 @@ class MainFragment : Fragment() {
                 val year = it.dateTime?.substring(0, 5)
                 val month = it.dateTime?.substring(6, 9)
                 val day = it.dateTime?.substring(10, 13)
-                Log.e("click", "$year $month $day")
                 //todokey를 가져오고 todo를 가져온다음 intent로 다 넘겨줘야함
                 FirebaseUtil.todoDataBase.child(year!!).child(month!!).child(day!!).child(todoId!!)
                     .get()
