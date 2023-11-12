@@ -751,7 +751,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             tag.tagId = tagKey
             tag.todoId = todoKey       // 생성된 키 값을 객체에 할당
 
-            val friendTagRef = Firebase.database.reference.child(DB_TAG).child(index).child(tagKey)
+            val friendTagRef = Firebase.database.reference.child(DB_TAG).child(index).child(user).child(tagKey)
 
             myTagRef.setValue(tag).addOnSuccessListener {
                 Log.d("tag", "Success")
