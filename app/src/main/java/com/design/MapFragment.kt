@@ -46,6 +46,7 @@ import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import java.util.Random
 
@@ -66,8 +67,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
     private val random = Random()
     private val favoriteList = mutableListOf<Importance>()
     private val markerList = mutableListOf<Marker>()
-    private var friendUid: String =""
-    private var friendNick: String =""
+    private var friendUid: String = ""
+    private var friendNick: String = ""
 
 
     override fun onCreateView(
@@ -113,11 +114,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             updateMemoryBottomSheetRecyclerView()
         }
     }
+
     override fun loadFriendNickNameList(list: MutableList<Friend>) {
         //이부분에서 정보가 넘어오게되면 여기서 recyclerview를 업데이트 해줘야한다
         friendAdapter.submitList(list)
         friendAdapter.notifyDataSetChanged()
     }
+
     override fun loadShareList(list: List<Tag>) {
         memoryAdapter.submitList(list)
     }
@@ -127,8 +130,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             val MemoryDialogBinding = MemoryDialogBinding.inflate(layoutInflater)
             val dialog = MemoryDialog(MemoryDialogBinding, this)
             dialog.isCancelable = false
-            dialog.show(requireFragmentManager(),"추억상자")
-            val memoryBottomBehavior = BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
+            dialog.show(requireFragmentManager(), "추억상자")
+            val memoryBottomBehavior =
+                BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
             memoryBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
     }
@@ -141,12 +145,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
         binding.searchButton.setOnClickListener {
             searchBottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
-        binding.searchBottomSheetLayout.root.setOnClickListener {  }
+        binding.searchBottomSheetLayout.root.setOnClickListener { }
         binding.memoryBottomSheetLayout.friendImageView.setOnClickListener {
             val MemoryDialogBinding = MemoryDialogBinding.inflate(layoutInflater)
             val dialog = MemoryDialog(MemoryDialogBinding, this)
             dialog.isCancelable = false
-            dialog.show(requireFragmentManager(),"추억상자")
+            dialog.show(requireFragmentManager(), "추억상자")
         }
     }
 
@@ -179,15 +183,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 Marker().apply {
                     position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
                     captionText = data.title!!
-                    iconTintColor = Color.rgb(red, green, blue)//random한 색깔
+                    icon = OverlayImage.fromResource(R.drawable.marker)
+                    width = 240
+                    height = 240
                     map = naverMap
                     markerList.add(this)
                 }
+
             }
             val cameraUpdate = CameraUpdate.scrollTo(
                 LatLng(
-                    data.endY?.toDouble() ?: 0.0,
-                    data?.endX?.toDouble() ?: 0.0
+                    data.endY ?: 0.0,
+                    data?.endX ?: 0.0
                 )
             )
             cameraUpdate.animate(CameraAnimation.Fly, 500)
@@ -213,12 +220,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 // 닉네임과 일치하는 사용자를 찾을 수 없음
                 completion(null)
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 // 에러 처리
                 completion(null)
             }
         })
     }
+
     private fun updateMemoryBottomSheetRecyclerView() {
         FirebaseUtil.tagDataBase.child(friendUid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -246,16 +255,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                     memoryAdapter.apply {
                         submitList(sharedTodos)
                         notifyDataSetChanged()
-                        binding?.memoryBottomSheetLayout?.titleTextView?.text = "${friendNick}님과의 추억"
-                        if(sharedTodos.isEmpty()){
-                            binding?.memoryBottomSheetLayout?.emptyTextView?.text = "${friendNick}님과의 추억이 없습니다. \n 추억을 쌓아봐요"
-                            binding?.memoryBottomSheetLayout?.emptyTextView?.visibility = View.VISIBLE
-                        }
-                        else{
+                        binding?.memoryBottomSheetLayout?.titleTextView?.text =
+                            "${friendNick}님과의 추억"
+                        if (sharedTodos.isEmpty()) {
+                            binding?.memoryBottomSheetLayout?.emptyTextView?.text =
+                                "${friendNick}님과의 추억이 없습니다. \n 추억을 쌓아봐요"
+                            binding?.memoryBottomSheetLayout?.emptyTextView?.visibility =
+                                View.VISIBLE
+                        } else {
                             binding?.memoryBottomSheetLayout?.emptyTextView?.visibility = View.GONE
                         }
                     }
                 }
+
                 override fun onCancelled(databaseError: DatabaseError) {
                 }
             })
