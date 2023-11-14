@@ -3,7 +3,6 @@ package com.design
 import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -63,12 +62,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
     private lateinit var friendAdapter: FriendNickNameListAdapter
     private val handler = Handler(Looper.getMainLooper())
     private val locationProvider = LocationProvider(this)
-    private val friendNickNameProvider = FriendNickNameProvider(this)
     private val random = Random()
-    private val favoriteList = mutableListOf<Importance>()
     private val markerList = mutableListOf<Marker>()
     private var friendUid: String = ""
     private var friendNick: String = ""
+    private val markerIconList = listOf<OverlayImage>(
+        OverlayImage.fromResource(R.drawable.marker_yellow),
+        OverlayImage.fromResource(R.drawable.marker_red),
+        OverlayImage.fromResource(R.drawable.marker_blue),
+        OverlayImage.fromResource(R.drawable.marker_green),
+        OverlayImage.fromResource(R.drawable.marker_purple)
+    )
 
 
     override fun onCreateView(
@@ -176,14 +180,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             )
         }
         memoryAdapter = MemoryListAdapter { data ->
+            val randomInt = random.nextInt(5)
             if (data.endY != 0.0) {
-                val red = random.nextInt(256) // 0부터 255 사이의 랜덤 값
-                val green = random.nextInt(256)
-                val blue = random.nextInt(256)
                 Marker().apply {
                     position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
                     captionText = data.title!!
-                    icon = OverlayImage.fromResource(R.drawable.marker)
+                    icon = markerIconList[randomInt]
                     width = 240
                     height = 240
                     map = naverMap
