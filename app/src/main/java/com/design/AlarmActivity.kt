@@ -28,12 +28,20 @@ class AlarmActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         alarmAdapter = AlarmListAdapter {
             val notificationId = it.notificationId ?: ""
+            val year = it.dateTime?.substring(0,5)
+            val month = it.dateTime?.substring(6,9)
+            val day = it.dateTime?.substring(10,13)
+            val todoId = it.todoId
+            Log.e("todoid","${it.dateTime} ${it.notificationId} ${it.todoId}")
             //알람 데이터 삭제
             MaterialAlertDialogBuilder(this)
                 .setTitle("알람 삭제")
                 .setMessage("알람을 삭제하시겠습니까?")
                 .setPositiveButton("예") { _, _ ->
                     AlarmUtil.deleteAlarm(notificationId.toInt(), this)
+                    val item = mutableMapOf<String,Any>()
+                    item["usingAlarm"] = false
+                    FirebaseUtil.todoDataBase.child(year!!).child(month!!).child(day!!).child(todoId!!).updateChildren(item)
                 }
                 .setNegativeButton("아니요") { dialog, _ ->
                     dialog.dismiss()
@@ -111,7 +119,8 @@ class AlarmActivity : AppCompatActivity() {
             startPlace = data["startPlace"] as String?,
             arrivalPlace = data["arrivalPlace"] as String?,
             dateTime = data["dateTime"] as String?,
-            message = data["message"] as String?
+            message = data["message"] as String?,
+            todoId = data["todoId"] as String?
         )
         return Pair(notificationId, alarmItem)
     }
