@@ -1030,12 +1030,22 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun showAlertDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("추억 생성 취소")
-            .setMessage("추억 생성을 그만두시겠습니까?")
-            .setNegativeButton("아니요") { _, _ -> }
-            .setPositiveButton("네") { _, _ -> finish() }
-            .show()
+        if (isEditMode) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("추억 수정 취소")
+                .setMessage("추억 수정을 그만두시겠습니까?")
+                .setNegativeButton("아니요") { _, _ -> }
+                .setPositiveButton("네") { _, _ -> finish() }
+                .show()
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("추억 생성 취소")
+                .setMessage("추억 생성을 그만두시겠습니까?")
+                .setNegativeButton("아니요") { _, _ -> }
+                .setPositiveButton("네") { _, _ -> finish() }
+                .show()
+        }
+
     }
 
     private fun checkPlace(): Boolean {
