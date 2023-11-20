@@ -146,6 +146,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private val todoDataProvider = TodoDataProvider(this)
     private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (EEE), HH:mm", Locale.KOREA)
     private val calendar = Calendar.getInstance()
+    private val imm by lazy { getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager }
     private var isStart = true
     private var startPlace = ""
     private var arrivalPlace = ""
@@ -402,7 +403,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
             }
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(
                 binding.searchBottomSheetLayout.searchEditText.windowToken,
                 0
@@ -448,13 +448,16 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
 
         //키보드 통제
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetLayout.root)
 
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         binding.layout.setOnTouchListener { _, _ ->
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            imm.hideSoftInputFromWindow(
+                binding.titleEditText.windowToken,
+                0
+            )
             false
         }
 
@@ -550,7 +553,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
                 false
             }
-            dateTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             dateTextView.setOnClickListener {
                 setDateAndTime()
             }
@@ -987,7 +989,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     private fun notificationIdPlusReadyTime() {
         if (notificationId == "0") return
-        if(readyTime == "") return
+        if (readyTime == "") return
         val fullNotificationId = "202$notificationId"
         val dateNotificationId = SimpleDateFormat("yyyyMMddHHmm").parse(fullNotificationId)
         val date = Calendar.getInstance()
