@@ -104,19 +104,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     private lateinit var backPressedCallback: OnBackPressedCallback
 
-    private val timePicker = MaterialTimePicker.Builder()
-        .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
-        .setTimeFormat(TimeFormat.CLOCK_12H)
-        .setHour(0)
-        .setMinute(0)
-        .setTitleText("시간을 정해주세요.")
-        .build()
-
-    private val datePicker = MaterialDatePicker.Builder.datePicker()
-        .setTitleText("날짜를 정해주세요")
-        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-        .build()
-
     // 알람 권한 요청
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -780,6 +767,18 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun setDateAndTime() {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("날짜를 정해주세요")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .build()
+
+        val timePicker = MaterialTimePicker.Builder()
+            .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .setHour(0)
+            .setMinute(0)
+            .setTitleText("시간을 정해주세요.")
+            .build()
         datePicker.addOnPositiveButtonClickListener {
             val calendar = Calendar.getInstance()
             val selectedDate = Date(datePicker.selection!!)
@@ -1053,7 +1052,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 .setPositiveButton("네") { _, _ -> finish() }
                 .show()
         }
-
     }
 
     private fun checkPlace(): Boolean {
