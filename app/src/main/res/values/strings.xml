@@ -55,14 +55,14 @@
     <string name="place_of_memories">추억의 장소</string>
     <string name="empty_place_of_memories">추억의 장소가 없어요.\n 추억의 일정의 별을 눌러서 추가하세요.</string>
 
-    <string name="empty_todo">추억이 아직 없습니다.\n새로운 추억을 만들어봐요</string>
+    <string name="empty_todo">추억이 아직 없어요.\n새로운 추억을 만들어주세요!</string>
     
     <string name="schedule">일정</string>
     <string name="check_today_schedule">오늘의 일정을 확인하세요</string>
     
     <string name="places_of_my_daily_life">나의 일상이 담긴 곳</string>
 
-    <string name="enter_friend_nickname">친구의 닉네임을 입력하세요</string>
+    <string name="enter_friend_nickname">친구의 닉네임을 입력해주세요</string>
     <string name="hello">안녕하세요!</string>
     <string name="place">장소</string>
     <string name="road_name_place">도로명 주소</string>

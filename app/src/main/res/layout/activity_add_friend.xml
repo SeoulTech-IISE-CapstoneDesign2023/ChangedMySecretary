@@ -6,26 +6,65 @@
     android:layout_height="match_parent"
     tools:context=".Friend.AddFriendActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/friendListToolbar"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@color/lavender"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="친구 검색"
+            android:textColor="@color/slate_gray"
+            android:textSize="19sp"
+            tools:layout_editor_absoluteX="144dp"
+            tools:layout_editor_absoluteY="19dp" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="-8dp"
         android:layout_marginEnd="8dp"
+        app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="@string/enter_nickname" />
+        app:layout_constraintTop_toBottomOf="@+id/friendListToolbar"
+        app:queryHint="@string/enter_friend_nickname" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRcView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+    <TextView
+        android:id="@+id/emptySearchNickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="찾으시는 닉네임이 없습니다! \n 다시 입력해주세요!"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/searchRcView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/searchRcView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
