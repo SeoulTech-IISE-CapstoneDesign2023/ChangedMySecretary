@@ -18,12 +18,16 @@ import com.design.model.User
 import com.design.model.alarm.AlarmItem
 import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
+import com.design.util.Key
 import com.design.view.SearchDialog
 import com.design.view.SharedFriendDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class MainFragment : Fragment() {
 
@@ -54,16 +58,20 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun setRecyclerView(binding: FragmentMainBinding): ChildEventListener {
+    override fun onResume() {
+        super.onResume()
+        binding?.let { setTitleTextView(it) }
+    }
+
+    private fun setRecyclerView(binding: FragmentMainBinding) {
         mainListAdapter = MainListAdapter(
             onSharedClick = {
                 val todoId = it.todoId
                 val year = it.dateTime?.substring(0, 5)
                 val month = it.dateTime?.substring(6, 9)
                 val day = it.dateTime?.substring(10, 13)
-                //todo 친구에게 AlarmItem을 전송해줘야함 친구를 선택하는 창이 뜨고 그 창에서 친구에게 공유
                 val sharedFriendDialogBinding = ShareFriendDialogBinding.inflate(layoutInflater)
-                val dialog = SharedFriendDialog(sharedFriendDialogBinding,todoId, year, month, day)
+                val dialog = SharedFriendDialog(sharedFriendDialogBinding, todoId, year, month, day)
                 dialog.isCancelable = true
                 dialog.show(requireFragmentManager(), "친구 태그")
             },
@@ -104,7 +112,7 @@ class MainFragment : Fragment() {
         )
         binding.alarmRecyclerView.adapter = mainListAdapter
 
-        return FirebaseUtil.alarmDataBase.addChildEventListener(object : ChildEventListener {
+        FirebaseUtil.alarmDataBase.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val (notificationId, alarmItem) = alarmItemPair(snapshot)
                 if (notificationId != null && !listContainNotificationId(notificationId)) {
@@ -157,8 +165,10 @@ class MainFragment : Fragment() {
     private fun setTitleTextView(binding: FragmentMainBinding) {
 
         //todo 계속해서 옵저버 역할을 해줘야함
-        FirebaseUtil.userDataBase.child("user_info").get()
+        Firebase.database.reference.child(Key.DB_USERS).child(Firebase.auth.currentUser?.uid ?: "")
+            .child("user_info").get()
             .addOnSuccessListener {
+                Log.e("title success", "성공")
                 val value = it.getValue(User::class.java)
                 binding.titleTextView.text = "${value?.nickname}님\n기분 좋은 하루 되세요"
             }
