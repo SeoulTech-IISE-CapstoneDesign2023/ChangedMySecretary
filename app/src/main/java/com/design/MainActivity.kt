@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(navView)
         }
 
-        val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
 
         navView.setNavigationItemSelectedListener { menuItem ->
