@@ -7,7 +7,6 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
@@ -15,13 +14,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -84,6 +80,7 @@ import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import retrofit2.Call
 import retrofit2.Callback
@@ -107,19 +104,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private lateinit var locationAdapter: LocationAdapter
 
     private lateinit var backPressedCallback: OnBackPressedCallback
-
-    private val timePicker = MaterialTimePicker.Builder()
-        .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
-        .setTimeFormat(TimeFormat.CLOCK_12H)
-        .setHour(0)
-        .setMinute(0)
-        .setTitleText("시간을 정해주세요.")
-        .build()
-
-    private val datePicker = MaterialDatePicker.Builder.datePicker()
-        .setTitleText("날짜를 정해주세요")
-        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-        .build()
 
     // 알람 권한 요청
     private val requestPermissionLauncher = registerForActivityResult(
@@ -150,6 +134,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private val todoDataProvider = TodoDataProvider(this)
     private val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 (EEE), HH:mm", Locale.KOREA)
     private val calendar = Calendar.getInstance()
+    private val imm by lazy { getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager }
     private var isStart = true
     private var startPlace = ""
     private var arrivalPlace = ""
@@ -257,14 +242,18 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             startMarker.apply {
                 position = LatLng(startY, startX)
                 captionText = "출발지"
-                iconTintColor = Color.MAGENTA
+                icon = OverlayImage.fromResource(R.drawable.marker_yellow)
+                width = 240
+                height = 240
                 this.map = naverMap
             }
 
             arrivalMarker.apply {
                 position = LatLng(endY, endX)
                 captionText = "도착지"
-                iconTintColor = Color.BLUE
+                icon = OverlayImage.fromResource(R.drawable.marker_red)
+                width = 240
+                height = 240
                 this.map = naverMap
             }
 
@@ -380,7 +369,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     startMarker.apply {
                         position = LatLng(lat, lng)
                         captionText = "출발지"
-                        iconTintColor = Color.MAGENTA
+                        icon = OverlayImage.fromResource(R.drawable.marker_yellow)
+                        width = 240
+                        height = 240
                         map = naverMap
                     }
                     startPlace = name
@@ -391,7 +382,9 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                     arrivalMarker.apply {
                         position = LatLng(lat, lng)
                         captionText = "도착지"
-                        iconTintColor = Color.BLUE
+                        icon = OverlayImage.fromResource(R.drawable.marker_red)
+                        width = 240
+                        height = 240
                         map = naverMap
                     }
                     arrivalPlace = name
@@ -400,7 +393,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
             }
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(
                 binding.searchBottomSheetLayout.searchEditText.windowToken,
                 0
@@ -446,13 +438,16 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
 
         //키보드 통제
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         searchBottomBehavior = BottomSheetBehavior.from(binding.searchBottomSheetLayout.root)
 
         searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         binding.layout.setOnTouchListener { _, _ ->
             searchBottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            imm.hideSoftInputFromWindow(
+                binding.titleEditText.windowToken,
+                0
+            )
             false
         }
 
@@ -548,7 +543,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 }
                 false
             }
-            dateTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             dateTextView.setOnClickListener {
                 setDateAndTime()
             }
@@ -778,6 +772,18 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun setDateAndTime() {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("날짜를 정해주세요")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .build()
+
+        val timePicker = MaterialTimePicker.Builder()
+            .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .setHour(0)
+            .setMinute(0)
+            .setTitleText("시간을 정해주세요.")
+            .build()
         datePicker.addOnPositiveButtonClickListener {
             val calendar = Calendar.getInstance()
             selectedDate = Date(datePicker.selection!!)
@@ -990,6 +996,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
 
     private fun notificationIdPlusReadyTime() {
         if (notificationId == "0") return
+        if (readyTime == "") return
         val fullNotificationId = "202$notificationId"
         val dateNotificationId = SimpleDateFormat("yyyyMMddHHmm").parse(fullNotificationId)
         val date = Calendar.getInstance()
@@ -1038,12 +1045,21 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     }
 
     private fun showAlertDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("추억 생성 취소")
-            .setMessage("추억 생성을 그만두시겠습니까?")
-            .setNegativeButton("아니요") { _, _ -> }
-            .setPositiveButton("네") { _, _ -> finish() }
-            .show()
+        if (isEditMode) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("추억 수정 취소")
+                .setMessage("추억 수정을 그만두시겠습니까?")
+                .setNegativeButton("아니요") { _, _ -> }
+                .setPositiveButton("네") { _, _ -> finish() }
+                .show()
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("추억 생성 취소")
+                .setMessage("추억 생성을 그만두시겠습니까?")
+                .setNegativeButton("아니요") { _, _ -> }
+                .setPositiveButton("네") { _, _ -> finish() }
+                .show()
+        }
     }
 
     private fun checkPlace(): Boolean {

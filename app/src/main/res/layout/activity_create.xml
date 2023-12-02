@@ -63,12 +63,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/dateTextView"
+            android:padding="8dp"
+            android:drawablePadding="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
+            android:drawableStart="@drawable/baseline_access_time_24"
             android:text="@string/specify_time"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/titleEditText"
@@ -84,6 +87,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
+            android:textStyle="bold"
             android:hint="@string/enter_todo_title"
             android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -246,9 +250,9 @@
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
-            app:srcCompat="@drawable/baseline_emoji_people_24"
             app:layout_constraintBottom_toTopOf="@+id/alarmImageView"
-            app:layout_constraintStart_toEndOf="@+id/startEditText"/>
+            app:layout_constraintStart_toEndOf="@+id/startEditText"
+            app:srcCompat="@drawable/baseline_emoji_people_24" />
 
 
         <ImageView
@@ -259,7 +263,7 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/baseline_notifications_off_24"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-            app:layout_constraintStart_toEndOf="@+id/arrivalEditText"/>
+            app:layout_constraintStart_toEndOf="@+id/arrivalEditText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.design.Listener.OnImportanceClickListener
 import com.design.Listener.OnItemLongClickListener
 import com.design.Listener.OnItemShortClickListener
 import com.design.adapter.TodoListAdapter

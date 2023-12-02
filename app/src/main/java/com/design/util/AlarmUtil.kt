@@ -101,7 +101,7 @@ object AlarmUtil {
     ) {
         val alarmTime = calendar.timeInMillis
         Log.e("fcm", "${calendar.time}")
-        calendar.add(Calendar.HOUR, -1) //1시간을 뺌
+        calendar.add(Calendar.MINUTE,-15) //15분을 뺌
         Log.e("fcm", "${calendar.time}")
         val minusOneHour = calendar.timeInMillis
         //이동수단이 걷기가 아닐경우만 service를 통한 알람 업데이트 + 서비스를 불러오기로한 1시간전 시간이 현재시간보다 빠르게되면 그냥 지금 것을 사용

@@ -7,6 +7,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.design.Listener.OnItemLongClickListener
+import com.design.Listener.OnTagLongClickListener
 import com.design.databinding.ItemMemoryBinding
 import com.design.model.tag.Tag
 import com.design.util.FirebaseUtil
@@ -14,8 +16,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import me.thanel.swipeactionview.SwipeActionView
 import me.thanel.swipeactionview.SwipeGestureListener
 
-class MemoryListAdapter(private val onClick: (Tag) -> Unit, private val onDeleteClick: (Tag) -> Unit) :
-    ListAdapter<Tag, MemoryListAdapter.ViewHolder>(diffUtil) {
+class MemoryListAdapter(
+    private val onClick: (Tag) -> Unit,
+    private val itemLongClicklistener: OnTagLongClickListener,
+) : ListAdapter<Tag, MemoryListAdapter.ViewHolder>(diffUtil) {
 
     inner class ViewHolder(private val binding: ItemMemoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Tag) {
@@ -30,16 +34,10 @@ class MemoryListAdapter(private val onClick: (Tag) -> Unit, private val onDelete
             binding.mappingImageView.setOnClickListener {
                 onClick(item)
             }
-            binding.deleteImageView.setOnClickListener {
-                onDeleteClick(item)
+            binding.mappingImageView.setOnLongClickListener {
+                itemLongClicklistener.onLongTagClick(item.tagId!!)
+                true
             }
-
-//            binding.root.swipeGestureListener = object : SwipeGestureListener {
-//                override fun onSwipedLeft(swipeActionView: SwipeActionView): Boolean {
-//                    onSwipe(item)
-//                    return true
-//                }
-//            }
         }
     }
 

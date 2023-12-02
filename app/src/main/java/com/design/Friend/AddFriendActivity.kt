@@ -2,6 +2,7 @@ package com.design.Friend
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -94,6 +95,11 @@ class AddFriendActivity : AppCompatActivity() {
         // 검색어를 사용
         val filteredList = originalList.filter { item ->
             item.nickname!!.contains(query, ignoreCase = true) // 대소문자를 구분하지 않고 검색어를 포함하는지 확인합니다.
+        }
+        if (filteredList.isEmpty()) {
+            binding.emptySearchNickname.visibility = View.VISIBLE
+        } else {
+            binding.emptySearchNickname.visibility = View.GONE
         }
 
         updateRecyclerView(filteredList)

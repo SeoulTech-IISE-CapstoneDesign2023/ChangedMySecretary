@@ -3,7 +3,6 @@ package com.design.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.design.Listener.OnImportanceClickListener
 import com.design.Listener.OnItemLongClickListener
 import com.design.Listener.OnItemShortClickListener
 import com.design.R
