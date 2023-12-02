@@ -59,20 +59,10 @@ class LoginActivity : AppCompatActivity() {
                             val currentUser = auth.currentUser
                             val userId = currentUser?.uid ?: ""
 
-                            //로그인이 된후에 fcm토큰 생성 한후 realTimeDataBase에 업데이트
-//                            Firebase.messaging.token.addOnCompleteListener {
-//                                val token = it.result
-//                                val user = mutableMapOf<String, Any>()
-//                                user["userId"] = userId
-//                                user["fcmToken"] = token
-//
-//                                Firebase.database(DB_URL).reference.child(DB_USERS).child(userId)
-//                                    .child(DB_USER_INFO).updateChildren(user)
-//
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                             finish()
-//                            }
+
                         } else {
                             binding.inputPW.text?.clear()
                             // If sign in fails, display a message to the user.

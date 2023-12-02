@@ -36,14 +36,13 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickListener,
-    OnImportanceClickListener {
+class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickListener{
 
     private var binding: FragmentCalendarBinding? = null
 
     var todoKeys: ArrayList<String> = arrayListOf()     // 일정 ID (key) 리스트
     val todoList = arrayListOf<Todo>()                  // 일정 리스트
-    private val adapter = TodoListAdapter(todoList, this, this, this)
+    private val adapter = TodoListAdapter(todoList, this, this)
     lateinit var user: String
     private var dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
@@ -123,13 +122,6 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
         clickedDate(todayStr)
     }
 
-    private fun FragmentCalendarBinding.toggleCalendarVisibility() {
-        if (calendarView.visibility == View.VISIBLE) {
-            calendarView.visibility = View.GONE
-        } else {
-            calendarView.visibility = View.VISIBLE
-        }
-    }
 
     private fun clickedDate(date: String) {
         val clicked = splitDate(date)
@@ -226,20 +218,6 @@ class CalendarFragment : Fragment(), OnItemLongClickListener, OnItemShortClickLi
                         .show()
                 }
             }
-    }
-
-    override fun onClick(position: Int, importance: Boolean) {
-        val todoKey = todoList[position].todoId
-        val reference =
-            Firebase.database.reference.child(DB_CALENDAR)
-                .child(user)
-                .child(clickedYear + "년")
-                .child(clickedMonth + "월")
-                .child(clickedDay + "일")
-                .child(todoKey)
-        val data = mutableMapOf<String, Any>()
-        data["importance"] = importance
-        reference.updateChildren(data)
     }
 
 }

@@ -57,15 +57,6 @@
             android:textStyle="bold"
             tools:text="일정 내용" />
 
-        <ImageView
-            android:id="@+id/importanceView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="15dp"
-            android:layout_weight="1"
-            android:src="@drawable/baseline_gray_star_24"
-            app:layout_constraintEnd_toEndOf="parent" />
     </LinearLayout>
 
 

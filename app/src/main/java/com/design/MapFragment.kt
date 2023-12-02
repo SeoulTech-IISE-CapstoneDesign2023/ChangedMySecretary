@@ -1,7 +1,11 @@
 package com.design
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -12,27 +16,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.design.adapter.AlarmListAdapter
 import com.design.adapter.FriendNickNameListAdapter
 import com.design.adapter.MemoryListAdapter
+import com.design.alarm.NotificationReceiver
 import com.design.databinding.FragmentMapBinding
 import com.design.databinding.MemoryDialogBinding
 import com.design.model.friend.Friend
 import com.design.model.friend.FriendNickNameProvider
-import com.design.model.importance.Importance
 import com.design.model.location.Location
 import com.design.model.location.LocationAdapter
 import com.design.model.location.LocationProvider
 import com.design.model.tag.Tag
 import com.design.model.tag.TagProvider
+import com.design.util.AlarmUtil
 import com.design.util.FirebaseUtil
 import com.design.util.Key
 import com.design.view.MemoryDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -64,7 +72,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
     private val locationProvider = LocationProvider(this)
     private val friendNickNameProvider = FriendNickNameProvider(this)
     private val random = Random()
-    private val favoriteList = mutableListOf<Importance>()
     private val markerList = mutableListOf<Marker>()
     private var friendUid: String =""
     private var friendNick: String =""
@@ -128,8 +135,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             val dialog = MemoryDialog(MemoryDialogBinding, this)
             dialog.isCancelable = false
             dialog.show(requireFragmentManager(),"추억상자")
-            val memoryBottomBehavior = BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
-            memoryBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
     }
 
@@ -171,29 +176,44 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 0
             )
         }
-        memoryAdapter = MemoryListAdapter { data ->
-            if (data.endY != 0.0) {
-                val red = random.nextInt(256) // 0부터 255 사이의 랜덤 값
-                val green = random.nextInt(256)
-                val blue = random.nextInt(256)
-                Marker().apply {
-                    position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
-                    captionText = data.title!!
-                    iconTintColor = Color.rgb(red, green, blue)//random한 색깔
-                    map = naverMap
-                    markerList.add(this)
+        memoryAdapter = MemoryListAdapter(
+            onClick = { data ->
+                if (data.endY != 0.0) {
+                    val red = random.nextInt(256) // 0부터 255 사이의 랜덤 값
+                    val green = random.nextInt(256)
+                    val blue = random.nextInt(256)
+                    Marker().apply {
+                        position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
+                        captionText = data.title!!
+                        iconTintColor = Color.rgb(red, green, blue)//random한 색깔
+                        map = naverMap
+                        markerList.add(this)
+                    }
                 }
-            }
-            val cameraUpdate = CameraUpdate.scrollTo(
-                LatLng(
-                    data.endY?.toDouble() ?: 0.0,
-                    data?.endX?.toDouble() ?: 0.0
+                val cameraUpdate = CameraUpdate.scrollTo(
+                    LatLng(
+                        data.endY?.toDouble() ?: 0.0,
+                        data?.endX?.toDouble() ?: 0.0
+                    )
                 )
-            )
-            cameraUpdate.animate(CameraAnimation.Fly, 500)
-            naverMap.moveCamera(cameraUpdate)
-            memoryBottomSheetLayout.state = BottomSheetBehavior.STATE_HIDDEN
-        }
+                cameraUpdate.animate(CameraAnimation.Fly, 500)
+                naverMap.moveCamera(cameraUpdate)
+                memoryBottomSheetLayout.state = BottomSheetBehavior.STATE_HIDDEN
+            },
+            onDeleteClick = { data ->
+                //태그 데이터 삭제
+                val tagId = data.tagId
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("태그 삭제")
+                    .setMessage("태그를 삭제하시겠습니까?")
+                    .setPositiveButton("예") { _, _ ->
+                        deleteTag(tagId!!)
+                    }
+                    .setNegativeButton("아니요") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            })
     }
 
     private fun getUidByNickname(nickname: String, completion: (String?) -> Unit) {
@@ -220,6 +240,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
         })
     }
     private fun updateMemoryBottomSheetRecyclerView() {
+        val memoryBottomBehavior = BottomSheetBehavior.from(binding!!.memoryBottomSheetLayout.root)
+        memoryBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         FirebaseUtil.tagDataBase.child(friendUid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -259,6 +281,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 override fun onCancelled(databaseError: DatabaseError) {
                 }
             })
+    }
+    private fun deleteTag(tagId: String) {
+        FirebaseUtil.tagDataBase.child(friendUid).child(tagId).removeValue()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "추억을 삭제했습니다.", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        updateMemoryBottomSheetRecyclerView()
     }
 
     override fun onStart() {

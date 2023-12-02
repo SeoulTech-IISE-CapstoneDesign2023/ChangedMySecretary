@@ -41,15 +41,13 @@ class IntroActivity : AppCompatActivity() {
             R.drawable.img_4,
             R.drawable.img_3,
             R.drawable.img_2,
-            R.drawable.img_5
         )
 
-        val slideTexts = arrayOf(
-            "설명 1",
-            "설명 2",
-            "설명 3",
-            "설명 4",
-            "설명 5"
+        val slideTexts = arrayOf("알람으로 늦지않게 도착하도록 도와드릴게요",
+            "날짜별로 여러 일정들을 관리해드릴게요",
+            "친구들과 공유해서 추억을 쌓아보아요",
+            "일정을 생성할 때 이동 경로를 알려드릴게요"
+
         )
 
         // ViewPager와 PagerAdapter 초기화
