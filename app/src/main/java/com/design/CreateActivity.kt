@@ -3,6 +3,7 @@ package com.design
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -165,6 +166,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     private var usingShare = false
     private var friendUids: ArrayList<String> = arrayListOf()
     private var getDate = ""
+    private var selectedDate: Date? = null
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -564,6 +567,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
                 val dialog = SearchDialog(searchDialogBinding)
                 dialog.isCancelable = false
                 dialog.show(supportFragmentManager, "친구 태그")
+
             }
             startEditText.setOnClickListener {
                 isStart = true
@@ -675,6 +679,7 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
     fun receiveTagFriends(tagFriends: ArrayList<String>) {
         // tagFriends 목록을 이용해 필요한 작업 수행
         if (tagFriends.isNotEmpty()) {
+            binding.imageFriendView.setImageResource(R.drawable.baseline_people_24)
             usingShare = true
             if (tagFriends.size == 1) {
                 Log.d("tag", "$tagFriends")
@@ -781,8 +786,8 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
             .build()
         datePicker.addOnPositiveButtonClickListener {
             val calendar = Calendar.getInstance()
-            val selectedDate = Date(datePicker.selection!!)
-            calendar.time = selectedDate
+            selectedDate = Date(datePicker.selection!!)
+            calendar.time = selectedDate!!
             val dayOfWeek = when (calendar.get(Calendar.DAY_OF_WEEK)) {
                 Calendar.SUNDAY -> "일"
                 Calendar.MONDAY -> "월"
@@ -802,11 +807,14 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback, WalkingRouteProv
         }
         datePicker.show(supportFragmentManager, "datePickerDialog")
         timePicker.addOnPositiveButtonClickListener {
-            val formatHour = String.format("%02d", timePicker.hour)
-            val formatMinute = String.format("%02d", timePicker.minute)
-            val timeStrings = "${formatHour}:${formatMinute}"
-            binding.dateTextView.text = "$getDate, $timeStrings"
-            startTime = "$dateString ${formatHour}:${formatMinute}"
+            if(selectedDate != null){
+                val formatHour = String.format("%02d", timePicker.hour)
+                val formatMinute = String.format("%02d", timePicker.minute)
+                val timeStrings = "${formatHour}:${formatMinute}"
+                binding.dateTextView.text = "$getDate, $timeStrings"
+                startTime = "$dateString ${formatHour}:${formatMinute}"
+                selectedDate = null
+            }
         }
     }
 

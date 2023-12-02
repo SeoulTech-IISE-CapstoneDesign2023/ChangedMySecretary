@@ -13,7 +13,6 @@ data class Todo(
     val time: String = "",           // 일정 시작 시간
     val startPlace: String? = null,     // 일정 출발지
     val arrivePlace: String? = null,    // 일정 도착지
-    val trackTime: String? = null,      // 알림 추적 시간
     val notificationId: String? = null, // 알람 구별 아이디
     val startLat: Double? = null,       // 출발 위도?
     val startLng: Double? = null,       // 출발 경도?
@@ -28,7 +27,6 @@ data class Todo(
     : Parcelable {
     @RequiresApi(Build.VERSION_CODES.Q)
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
@@ -54,7 +52,6 @@ data class Todo(
         parcel.writeString(time)
         parcel.writeString(startPlace)
         parcel.writeString(arrivePlace)
-        parcel.writeString(trackTime)
         parcel.writeString(notificationId)
         startLat?.let { parcel.writeDouble(it) }
         startLng?.let { parcel.writeDouble(it) }

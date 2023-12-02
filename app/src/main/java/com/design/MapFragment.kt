@@ -11,18 +11,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.design.Listener.OnTagLongClickListener
 import com.design.adapter.FriendNickNameListAdapter
 import com.design.adapter.MemoryListAdapter
 import com.design.databinding.FragmentMapBinding
 import com.design.databinding.MemoryDialogBinding
 import com.design.model.friend.Friend
 import com.design.model.friend.FriendNickNameProvider
-import com.design.model.importance.Importance
 import com.design.model.location.Location
 import com.design.model.location.LocationAdapter
 import com.design.model.location.LocationProvider
@@ -32,6 +33,7 @@ import com.design.util.FirebaseUtil
 import com.design.util.Key
 import com.design.view.MemoryDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -51,7 +53,7 @@ import java.util.Random
 
 class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
     FriendNickNameProvider.Callback,
-    TagProvider.Callback,
+    TagProvider.Callback, OnTagLongClickListener,
     MemoryDialog.DataTransferListener {
     private var binding: FragmentMapBinding? = null
     private lateinit var mapView: MapView
@@ -134,10 +136,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
             val MemoryDialogBinding = MemoryDialogBinding.inflate(layoutInflater)
             val dialog = MemoryDialog(MemoryDialogBinding, this)
             dialog.isCancelable = false
-            dialog.show(requireFragmentManager(), "추억상자")
-            val memoryBottomBehavior =
-                BottomSheetBehavior.from(binding.memoryBottomSheetLayout.root)
-            memoryBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            dialog.show(requireFragmentManager(),"추억상자")
         }
     }
 
@@ -179,30 +178,31 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 0
             )
         }
-        memoryAdapter = MemoryListAdapter { data ->
-            val randomInt = random.nextInt(5)
-            if (data.endY != 0.0) {
-                Marker().apply {
-                    position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
-                    captionText = data.title!!
-                    icon = markerIconList[randomInt]
-                    width = 240
-                    height = 240
-                    map = naverMap
-                    markerList.add(this)
-                }
+        memoryAdapter = MemoryListAdapter(
+            onClick = { data ->
+                val randomInt = random.nextInt(5)
+                if (data.endY != 0.0) {
+                    Marker().apply {
+                        position = LatLng(data.endY!!.toDouble(), data.endX!!.toDouble())
+                        captionText = data.title!!
+                        icon = markerIconList[randomInt]
+                        width = 240
+                        height = 240
+                        map = naverMap
+                        markerList.add(this)
+                    }
 
-            }
-            val cameraUpdate = CameraUpdate.scrollTo(
-                LatLng(
-                    data.endY ?: 0.0,
-                    data?.endX ?: 0.0
+                }
+                val cameraUpdate = CameraUpdate.scrollTo(
+                    LatLng(
+                        data.endY ?: 0.0,
+                        data?.endX ?: 0.0
+                    )
                 )
-            )
-            cameraUpdate.animate(CameraAnimation.Fly, 500)
-            naverMap.moveCamera(cameraUpdate)
-            memoryBottomSheetLayout.state = BottomSheetBehavior.STATE_HIDDEN
-        }
+                cameraUpdate.animate(CameraAnimation.Fly, 500)
+                naverMap.moveCamera(cameraUpdate)
+                memoryBottomSheetLayout.state = BottomSheetBehavior.STATE_HIDDEN
+            }, this)
     }
 
     private fun getUidByNickname(nickname: String, completion: (String?) -> Unit) {
@@ -231,6 +231,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
     }
 
     private fun updateMemoryBottomSheetRecyclerView() {
+        val memoryBottomBehavior = BottomSheetBehavior.from(binding!!.memoryBottomSheetLayout.root)
+        memoryBottomBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         FirebaseUtil.tagDataBase.child(friendUid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -274,7 +276,28 @@ class MapFragment : Fragment(), OnMapReadyCallback, LocationProvider.Callback,
                 }
             })
     }
-
+    override fun onLongTagClick(tagId: String) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("태그 삭제")
+            .setMessage("태그를 삭제하시겠습니까?")
+            .setPositiveButton("예") { _, _ ->
+                deleteTag(tagId)
+            }
+            .setNegativeButton("아니요") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+    private fun deleteTag(tagId: String) {
+        FirebaseUtil.tagDataBase.child(friendUid).child(tagId).removeValue()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "추억을 삭제했습니다.", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        updateMemoryBottomSheetRecyclerView()
+    }
     override fun onStart() {
         super.onStart()
         mapView.onStart()
